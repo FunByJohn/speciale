@@ -1,0 +1,67 @@
+\usepackage[utf8]{inputenc}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{dsfont}
+\usepackage{xcolor}
+\usepackage{natbib}
+\usepackage{enumitem}
+\usepackage{verbatim}
+\usepackage{lipsum}
+\usepackage{tikz}
+\usepackage{mathtools}
+\usepackage{float}
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage{wrapfig}
+
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
+    
+\graphicspath{{"/Users/Johannes/Documents/TeX/Speciale/report/images/"}}
+\captionsetup[subfigure]{labelformat=empty}
+
+% Theorem enviroments, which all use the same counter
+\theoremstyle{definition}
+\newtheorem{thm}{Theorem}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{ex}[thm]{Example}
+\newtheorem{rmk}[thm]{Remark}
+\newtheorem{calc}[thm]{Calculation}
+\numberwithin{thm}{chapter}
+%\numberwithin{equation}{section}
+
+\numberwithin{equation}{chapter}
+\renewcommand{\theequation}{\thechapter.\arabic{equation}}
+
+% Sets
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\F}{\mathbb{F}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\Z}{\mathbb{Z}}
+
+% Misc
+\newcommand{\curly}[1]{\{#1\}}
+\newcommand{\abs}[1]{\left\lvert #1 \right\rvert}
+\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
+\newcommand{\ip}[2]{\left\langle #1, #2 \right\rangle}
+\newcommand{\para}[1]{\left(#1\right)}
+\newcommand{\makeset}[2]{\curly{#1 \mid #2}}
+
+% Todo
+\newcommand{\todo}[1]{{\color{red} (\textsc{todo}: #1)}}
+\newcommand{\ques}[1]{{\color{red} (\textsc{question}: #1)}}
+
+% CompGeo
+\DeclareMathOperator{\dist}{dist}
+\DeclareMathOperator{\Vor}{Vor}
+\DeclareMathOperator{\bi}{bi}

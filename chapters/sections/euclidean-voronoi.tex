@@ -41,7 +41,7 @@ For every Voronoi cell we have
 A Voronoi cell is thus the intersection of convex sets and is therefore convex. We conclude that the Voronoi cells are open and convex (possibly unbounded) polygons with at most $n - 1$ vertices and $n - 1$ edges. \\
 
 We now look at the shape of the entire Voronoi diagram:
-\begin{thm}
+\begin{thm} \label{prop:structureofentirevoronoidiagram}
 If the points in $P$ are collinear then $\Vor(P)$ consists of $n - 1$ parallel lines. Otherwise, $\Vor(P)$ is connected and its edges are either segments or half-lines.
 \end{thm}
 \begin{proof}
@@ -50,8 +50,26 @@ If the points in $P$ are collinear then $\Vor(P)$ consists of $n - 1$ parallel l
 
 Finally, we show that that the complexity of the vertices and edges is $\mathcal{O}(n)$:
 \begin{thm}
-For $n \geq 3$, the number of vertices in $\Vor(P)$ at most $2n - 5$ and the number of edges is at most $3n - 6$.
+For $n \geq 3$, the number of vertices in $\Vor(P)$ is at most $2n - 5$ and the number of edges is at most $3n - 6$.
 \end{thm}
 \begin{proof}
 \todo{.}
 \end{proof}
+
+In the next section we will present an algorithm which computes $\Vor(P)$ in $\mathcal{O}(n \log n)$ time. This is actually optimal, as we can use a Voronoi diagram for sorting:
+\begin{thm}
+We can't do better than $\mathcal{O}(n \log n)$.
+\end{thm}
+\begin{proof}
+Let $A = \curly{a_1, a_2, \ldots, a_n} \subset \R$. Now assume we have used an algorithm to compute a Voronoi diagram of the points
+\[
+    P = \curly{(a_1, 0), (a_2, 0), \ldots, (a_n, 0)}.
+\]
+By Theorem \ref{prop:structureofentirevoronoidiagram} we obtain a diagram which looks similar to this:
+\[
+    \includegraphics[scale=0.2]{voronoi-sorting}
+\]
+We assume without loss of generality that the algorithm outputs a DCEL $\Delta$ of $\Vor(P)$. Assume that the $\textsf{edge}$ pointer of every face of $\Delta$ points to the edge to the right of the face, and that the $\textsf{face}$ pointer of every edge of $\Delta$ points to the face to the right. Let $F_i$ be the face in $\Delta$ which contains the point $(0, a_i)$. Let $\ell \in \N$ such that $a_{\ell} < a_i$ for all $i \ne \ell$. Let $b_1 = a_{\ell}$ and if $b_i = a_{j}$ and $i < n$ then define $b_{i+1} = a_k$ where $F_{j}\textsf{.edge.face} = F_k$. Then $(b_1, b_2, \ldots, b_n)$ is the elements of $A$ in sorted order. This means that we can use the Voronoi diagram to sort, which proves the theorem.
+\end{proof}
+
+\todo{The statement of the above theorem is temporary. I originally phrased it like so: ``The optimal worst-case running time for computing $\Vor(P)$ is $\Omega(n \log n)$.'' What is the proper terminology here?}

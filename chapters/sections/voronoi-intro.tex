@@ -51,7 +51,7 @@ We now want to look at the graph structure of the Voronoi diagram. For $P = \cur
     G_P = \R^2 - \bigcup_{i=1}^n \mathcal{V}(p_i)
     = \makeset{q \in \R^2}{\dist(q, p_i) = \dist(q, p_j) \text{ for some } i \ne j}
 \]
-turns out to be an embedding of a graph, here's a visualization:
+turns out to be an embedding of a graph, where some of the edges are infinite, here's a visualization:
 \begin{figure}[H]
     \centering
     \subfloat[$p = 1$]{
@@ -69,4 +69,14 @@ turns out to be an embedding of a graph, here's a visualization:
     }
     \caption{$G_P$ of the 9 random points using different $\norm{\,\cdot\,}_p$.}
 \end{figure}
-Note that it's the black vertices and edges which make up the graph, the gray points from $P$ are just there for visualization. Rather than computing $\Vor(P)$, our algorithms will actually compute $G_P$, and from there be able to compute $\Vor(P)$. For this reason we shall actually refer to $G_P$ as $\Vor(P)$ from now on.
+Note that it's the black vertices and edges which make up the graph, the gray points from $P$ are just there for visualization. Rather than computing $\Vor(P)$, our algorithms will actually compute $G_P$, and from there be able to compute $\Vor(P)$. For this reason we may sometimes actually mean $G_P$ when we write $\Vor(P)$, this will clear from the context. \\
+
+Now, a natural question arises: how do we store Voronoi diagrams? We'll need the following geometric data structure:
+\begin{defn}[DCEL]
+\todo{Define the DCEL.}
+\end{defn}
+Note that the DCEL does not support infinite edges, so what we do is put a bounding box $B$ with some padding around the vertices of $\Vor(P)$, and then intersect the infinite edges and faces with the boundary of $B$ and only keep the part inside the bounding box.
+\[
+    \includegraphics[scale=0.25]{temp-fig-3}
+\]
+The aim of our algorithms will then be to calculate the DCEL in the right figure.

@@ -70,7 +70,7 @@ We have that $v \in \partial\mathcal{V}(p_j)$ by definition of $e$. Now note tha
     \partial \mathcal{V}(p_j) = \partial \para{\bigcap_{a \ne j} h(p_j, p_a)} \subset^{\footnotemark} \bigcup_{a \ne j} \partial h(p_j, p_a) = \bigcup_{a \ne j} \bi(p_j, p_a).
 \]
 \footnotetext{Here we used that $\partial(A \cap B) \subset \partial A \cup \partial B$, a proof is here: \url{https://proofwiki.org/wiki/Boundary_of_Intersection_is_Subset_of_Union_of_Boundaries} \todo{Remove this footnote and add the result to some topology appendix}}As $v \in h(p_k, p_j)$ we have that $\dist(v, p_k) < \dist(v, p_j)$, hence $v \not\in \bi(p_j, p_k)$, so $v \not\in \partial{V}(v_j)$ by the above characterization of $\partial \mathcal{V}(p_j)$.
-This is a contradiction, so $e$ can't be a full line. Now we show that $\VorG(P)$ is connected. \todo{Finish.}
+This is a contradiction, so $e$ can't be a full line. Now we show that $\VorG(P)$ is connected. Assume for the sake of a contradiction that $\VorG(P)$ is not connected. Then there exists a $\partial \mathcal{V}(p_i)$ which is not path connected. This can only happen if $\partial \mathcal{V}(p_i)$ consists of two parallel lines \todo{Why?}. This contradicts the fact that $\VorG(P)$ contains no lines. Thus $\VorG(P)$ is connected.
 \end{proof}
 
 Finally, we show that that the complexity of the vertices and edges is $\mathcal{O}(n)$:
@@ -78,7 +78,23 @@ Finally, we show that that the complexity of the vertices and edges is $\mathcal
 For $n \geq 3$, the number of vertices in $\VorG(P)$ is at most $2n - 5$ and the number of edges is at most $3n - 6$.
 \end{thm}
 \begin{proof}
-\todo{.}
+If the points in $P$ are collinear, then Theorem \ref{prop:structureofentirevoronoidiagram} implies the claim. Now assume that the points in $P$ are not collinear. As a first preprocessing step, we start by transforming $\VorG(P)$ into an actual plane graph, as some of the edges in $\VorG(P)$ may be half-lines. Let $v_1, \ldots, v_k$ denote the vertices of $\VorG(P)$. Let $p = \tfrac{1}{k}(v_1 + v_2 + \cdots + v_k) \in \R^2$ and let
+\[
+    r = 1 + \max\curly{\dist(p, v_1), \dist(p, v_2), \ldots, \dist(p, v_k)}.
+\]
+Then let $B_r(p) \subset \R^2$ denote the open ball with center $p$ and radius $r$. We have that $B_r(p)$ contains every vertex $v_i$ and that every half-line edge $e$ of $\VorG(P)$ intersects $\partial B_r(p)$ exactly once. Now define $v_{\infty} \in \R^2$ as any point in $\R^2 \setminus B_r(p)$ and transform every half-line edge $e$ into a path with finite length by connecting the half-lines to the point $v_{\infty}$. This is possible since $\R^2 \setminus B_p(r)$ only contains these half-lines, and every half-line is pointing in a unique direction so we may then transform the half-lines in order by starting with those which are closest to $v_{\infty}$. An example of this construction is given here:
+\[
+    \includegraphics[scale=0.2]{temp-fig-5}
+\]
+In this way we can turn $\VorG(P)$ into a planar graph. For a planar graph $G$, Euler's formula\footnote{\todo{Add a reference and/or proof of Euler's formula in some topology appendix}} states that
+\begin{equation} \label{eq:eulerformulainproof}
+    V - E + F = 2,
+\end{equation}
+where $V$ is the number of vertices, $E$ is the number of edges and $F$ is the number of faces of $G$. Let $n_v$ denote the number of vertices of the original $\VorG(P)$, and let $n_e$ denote the number of edges. In our modification, we only added a single vertex, so by plugging into (\ref{eq:eulerformulainproof}) we obtain the following relationship:
+\[
+    (n_v + 1) - n_e + n = 2.
+\]
+Note that $n$ is the number of faces, since we have a Voronoi cell for each point in $P$. \todo{Finish}
 \end{proof}
 
 In the next section we will present an algorithm which computes $\Vor(P)$ in $\mathcal{O}(n \log n)$ time. This is actually optimal, as we can use a Voronoi diagram for sorting:

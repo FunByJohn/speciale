@@ -1,0 +1,36 @@
+\chapter{Notation}
+
+\begin{table}[H]
+\begin{tabular}{ll}
+$X - Y$ & Set difference \\
+$\abs{X}$ & The number of elements in a finite set $X$. It is $\infty$ if $X$ is infinite. \\
+$\iff$ & If and only if \\
+$\implies$ & Implication \\
+$\mathbb{R}$ & The real numbers. \\
+$\mathbb{R}^n$ & The vector space of $n$-tuples of real numbers. \\
+$\norm{\,\cdot\,}$ & Norm. \\
+$\norm{\,\cdot\,}_p$ & The $L^p$ norm. \\
+$\abs{\,\cdot\,}$    & Absolute value. \\
+$\dist(p, q)$ & The distance between $p$ and $q$, given by $\norm{p - q}$. \\
+$\ip{\,\cdot\,}{\,\cdot\,}$ & An inner product. \\
+$\subset$    & Subset (not strict, e.g. $A = B \implies A \subset B$). \\
+$P$ & A set of points $\curly{p_1, p_2, \ldots, p_n}$ that we want to apply an algorithm to. \\
+$p_i$ & A point in $P$ (see above). \\
+$n$ & If not otherwise specified, $n$ is the number of points in $P$ (see above). \\
+$\Vor(P)$    & The Voronoi diagram of $P$. \\
+$\mathcal{V}(p_i)$    & The $i$th Voronoi cell. \\
+$\VorG(P)$    & Refers to $\R^2 - \Vor(P)$. \\
+$\mathcal{O}(f(n))$ & Big $O$-notation. \\
+$\bi(p,q)$    & Bisector of $p$ and $q$. \\
+$h(p,q)$    & Open half-plane containing $p$ with $\bi(p,q)$ as boundary. \\
+$\overline{X}$ & The closure of a set $X \subset \R^n$, given by the union of $X$ with its limit points. \\
+${}^{\circ}X$ & The interior of a set $X \subset \R^n$, given by the union of all interior points of $X$. \\
+$\partial X$  & The boundary of a set $X \subset \R^n$, given by $\overline{X} - {}^{\circ}X$. \\
+$\overline{B_r(p)}$ & $ = \makeset{x \in \R^n}{\dist(x, p) \leq r}$, the closed ball with center $p$ and radius $r$. \\
+$B_r(p)$ & $ = \makeset{x \in \R^n}{\dist(x, p) < r}$, the open ball with center $p$ and radius $r$. \\
+$\partial{B_r(p)}$ & $ = \makeset{x \in \R^n}{\dist(x, p) = r}$, the circle with center $p$ and radius $r$. \\
+$V(G)$ & The set of vertices for the graph $G$. \\
+$E(G)$ & The set of edges for the graph $G$. \\
+$\deg(v)$ & The degree of a vertex $v$ in a graph, e.g. the number of edges that touch $v$.
+\end{tabular}
+\end{table}

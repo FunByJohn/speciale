@@ -82,7 +82,7 @@ If the points in $P$ are collinear, then Theorem \ref{prop:structureofentirevoro
 \[
     r = 1 + \max\curly{\dist(p, v_1), \dist(p, v_2), \ldots, \dist(p, v_k)}.
 \]
-Then let $B_r(p) \subset \R^2$ denote the open ball with center $p$ and radius $r$. We have that $B_r(p)$ contains every vertex $v_i$ and that every half-line edge $e$ of $\VorG(P)$ intersects $\partial B_r(p)$ exactly once. Now define $v_{\infty} \in \R^2$ as any point in $\R^2 \setminus B_r(p)$ and transform every half-line edge $e$ into a path with finite length by connecting the half-lines to the point $v_{\infty}$. This is possible since $\R^2 \setminus B_p(r)$ only contains these half-lines, and every half-line is pointing in a unique direction so we may then transform the half-lines in order by starting with those which are closest to $v_{\infty}$. An example of this construction is given here:
+Then let $B_r(p) \subset \R^2$ denote the open ball with center $p$ and radius $r$. We have that $B_r(p)$ contains every vertex $v_i$ and that every half-line edge $e$ of $\VorG(P)$ intersects $\partial B_r(p)$ exactly once. Now define $v_{\infty} \in \R^2$ as any point in $\R^2 - B_r(p)$ and transform every half-line edge $e$ into a path with finite length by connecting the half-lines to the point $v_{\infty}$. This is possible since $\R^2 - \overline{B_p(r)}$ only contains these half-lines, and every half-line is pointing in a unique direction so we may then transform the half-lines in order by starting with those which are closest to $v_{\infty}$. An example of this construction is given here:
 \[
     \includegraphics[scale=0.2]{temp-fig-5}
 \]
@@ -91,10 +91,32 @@ In this way we can turn $\VorG(P)$ into a planar graph. For a planar graph $G$, 
     V - E + F = 2,
 \end{equation}
 where $V$ is the number of vertices, $E$ is the number of edges and $F$ is the number of faces of $G$. Let $n_v$ denote the number of vertices of the original $\VorG(P)$, and let $n_e$ denote the number of edges. In our modification, we only added a single vertex, so by plugging into (\ref{eq:eulerformulainproof}) we obtain the following relationship:
-\[
+\begin{equation} \label{eq:eulersformulaapplied}
     (n_v + 1) - n_e + n = 2.
+\end{equation}
+Note that $n$ is the number of faces, since we have a Voronoi cell for each point in $P$. Every vertex $v$ in $G$ has $\deg(v) \geq 3$, otherwise there would be a $\mathcal{V}(p_i)$ which is not convex. This means that
+\[
+    \sum_{v \in V(G)} \deg(v) \geq 3 \abs{V(G)} = 3(n_v + 1).
 \]
-Note that $n$ is the number of faces, since we have a Voronoi cell for each point in $P$. \todo{Finish}
+Now we want to compute the left side of the above inequality. Given a vertex $v$ we have that $\deg(v)$ counts the number of edges which touch $v$, and in $G$ every edge touches exactly 2 vertices, which gives us that $\sum_{v \in V(G)} \deg(v) = 2 n_e$. Combining these facts, we obtain the inequality:
+\begin{equation} \label{ineq:eulersformulacompanion}
+    2 n_e \geq 3(n_v + 1).
+\end{equation}
+Multiplying (\ref{eq:eulersformulaapplied}) by $2$, isolating $2 n_e$ and then applying (\ref{ineq:eulersformulacompanion}) we get:
+\begin{align*}
+    2 (n_v + 1) - 2 n_e + 2 n = 4
+    &\iff 2 n_e = (2 n_v + 1) + 2n - 4 \\
+    &\implies 3(n_v + 1) \leq 2 (n_v + 1) + 2n - 4 \\
+    &\implies n_v \leq 2n - 5.
+\end{align*}
+Multiplying (\ref{eq:eulersformulaapplied}) by $3$, isolating $3 (n_v + 1)$ and then applying (\ref{ineq:eulersformulacompanion}) we get:
+\begin{align*}
+    3 (n_v + 1) - 3 n_e + 3 n = 6
+    &\iff 3 (n_v + 1) = 3 n_e - 3n + 6 \\
+    &\implies 2 n_e \geq 3n_e - 3n + 6 \\
+    &\implies n_e \leq 3n - 6.
+\end{align*}
+This proves the theorem.
 \end{proof}
 
 In the next section we will present an algorithm which computes $\Vor(P)$ in $\mathcal{O}(n \log n)$ time. This is actually optimal, as we can use a Voronoi diagram for sorting:

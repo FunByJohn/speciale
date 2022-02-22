@@ -20,7 +20,7 @@ Let $P = \curly{p_1, p_2, \ldots, p_n} \subset \R^2$. The cells corresponding to
 \[
     \mathcal{V}(p_i) = \makeset{q \in \R^2}{\dist(q, p_i) < \dist(q, p_j) \text{ for all } i \ne j}.
 \]
-The Voronoi diagram of $P$, denoted $\Vor(P)$, is the subdivision of $\R^2$ consisting of the cells $\mathcal{V}(p_1), \mathcal{V}(p_2), \ldots, \mathcal{V}(p_n)$.
+The Voronoi diagram of $P$, denoted $\Vor(P)$, is the subdivision of $\R^2$ consisting of the union of the cells $\mathcal{V}(p_1), \mathcal{V}(p_2), \ldots, \mathcal{V}(p_n)$.
 \end{defn}
 
 The following figure shows how the Voronoi diagram for 9 random points looks like with regards to some different $L^p$ norms:
@@ -49,7 +49,7 @@ Note that some of the cells may be unbounded, for example the bottom left green 
 
 We now want to look at the graph structure of the Voronoi diagram. For $P = \curly{p_1, p_2, \ldots, p_n} \subset \R^2$ the set
 \[
-    \VorG(P) = \R^2 - \bigcup_{i=1}^n \mathcal{V}(p_i)
+    \VorG(P) = \R^2 - \Vor(P)
     = \makeset{q \in \R^2}{\dist(q, p_i) = \dist(q, p_j) \text{ for some } i \ne j}
 \]
 turns out to be an embedding of a graph, where some of the edges are infinite, here's a visualization:

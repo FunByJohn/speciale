@@ -1,2 +1,18 @@
 \section{Fortune's algorithm}
-Hello world.
+In this section we will present an algorithm which computes $\Vor(P)$ in $\mathcal{O}(n \log n)$ time. This is actually optimal, as we can use a Voronoi diagram for sorting:
+\begin{thm} \label{thm:voronoicansort}
+We can't do better than $\mathcal{O}(n \log n)$.
+\end{thm}
+\begin{proof}
+Let $A = \curly{a_1, a_2, \ldots, a_n} \subset \R$. Now assume we have used an algorithm to compute a Voronoi diagram of the points
+\[
+    P = \curly{(a_1, 0), (a_2, 0), \ldots, (a_n, 0)}.
+\]
+We obtain a diagram which looks similar to this:
+\[
+    \includegraphics[scale=0.2]{voronoi-sorting}
+\]
+We assume without loss of generality that the algorithm outputs a DCEL $\Delta$ of $\Vor(P)$. Assume that the $\textsf{edge}$ pointer of every face of $\Delta$ points to the edge to the right of the face, and that the $\textsf{face}$ pointer of every edge of $\Delta$ points to the face to the right. Let $F_i$ be the face in $\Delta$ which contains the point $(0, a_i)$. Let $\ell \in \N$ such that $a_{\ell} < a_i$ for all $i \ne \ell$. Let $b_1 = a_{\ell}$ and if $b_i = a_{j}$ and $i < n$ then define $b_{i+1} = a_k$ where $k$ comes from $F_{j}\textsf{.edge.face} = F_k$. Then $(b_1, b_2, \ldots, b_n)$ is the elements of $A$ in sorted order. This means that we can use the Voronoi diagram to sort, which proves the theorem.
+\end{proof}
+
+\todo{The statement of the above theorem is temporary. I originally phrased it like so: ``The optimal worst-case running time for computing $\Vor(P)$ is $\Omega(n \log n)$.'' What is the proper terminology here?}

@@ -118,21 +118,37 @@ Multiplying (\ref{eq:eulersformulaapplied}) by $3$, isolating $3 (n_v + 1)$ and 
 \end{align*}
 This proves the theorem.
 \end{proof}
-
-In the next section we will present an algorithm which computes $\Vor(P)$ in $\mathcal{O}(n \log n)$ time. This is actually optimal, as we can use a Voronoi diagram for sorting:
-\begin{thm} \label{thm:voronoicansort}
-We can't do better than $\mathcal{O}(n \log n)$.
+We thus have a linear number of vertices and edges $\VorG(P)$, but we have a quadratic number of bisectors $\bi(p_i, p_j)$ of which every edge of $\VorG(P)$ is a subset of, and every vertex in $\VorG(P)$ is an intersection point of two such bisectors. Thus it would be interesting to characterize when a particular bisector is a part of $\VorG(P)$. First, we need a definition:
+\newpage
+\begin{defn}[Largest empty circle]
+For a $q \in \R^2$ we define $C_P(q)$ to be \emph{the largest empty circle of $q$ with respect to $P$}, which is the largest empty circle with $q$ as its center that does not contain any point of $P$ in its interior. Formally,
+\[
+    C_P(q) = B_r(q), \quad \text{where} \quad r = \sup\makeset{\lambda \in \R^+}{B_{\lambda}(q) \cap P = \varnothing}.
+\]
+\end{defn}
+\begin{thm} \label{thm:characterizationofbisectors} The bisectors and their intersections are characterized by:
+\begin{enumerate}[{(}i{)}]
+    \item $q \in \R^2$ is a vertex of $\VorG(P)$ if and only if \[ \abs{\partial C_P(q) \cap P} \geq 3. \]
+    \item $\bi(p_i, p_j)$ defines an edge of $\VorG(P)$ if and only if \[ \exists q \in \bi(p_i, p_j) \colon \partial C_P(q) \cap P = \curly{p_i, p_j}. \]
+\end{enumerate}
 \end{thm}
 \begin{proof}
-Let $A = \curly{a_1, a_2, \ldots, a_n} \subset \R$. Now assume we have used an algorithm to compute a Voronoi diagram of the points
-\[
-    P = \curly{(a_1, 0), (a_2, 0), \ldots, (a_n, 0)}.
-\]
-We obtain a diagram which looks similar to this:
-\[
-    \includegraphics[scale=0.2]{voronoi-sorting}
-\]
-We assume without loss of generality that the algorithm outputs a DCEL $\Delta$ of $\Vor(P)$. Assume that the $\textsf{edge}$ pointer of every face of $\Delta$ points to the edge to the right of the face, and that the $\textsf{face}$ pointer of every edge of $\Delta$ points to the face to the right. Let $F_i$ be the face in $\Delta$ which contains the point $(0, a_i)$. Let $\ell \in \N$ such that $a_{\ell} < a_i$ for all $i \ne \ell$. Let $b_1 = a_{\ell}$ and if $b_i = a_{j}$ and $i < n$ then define $b_{i+1} = a_k$ where $k$ comes from $F_{j}\textsf{.edge.face} = F_k$. Then $(b_1, b_2, \ldots, b_n)$ is the elements of $A$ in sorted order. This means that we can use the Voronoi diagram to sort, which proves the theorem.
-\end{proof}
+We prove each statement individually:
+\begin{enumerate}[{(}i{):}]
+    \item ``$\Leftarrow$'': Let $q \in \R^2$ and assume that $\abs{\partial C_P(q) \cap P} \geq 3$. Let $p_i, p_j, p_k$ be three distinct points from $\partial C_P(q) \cap P$. Since $C_P(q) \cap P = \varnothing$ by definition, this means that $q$ is equally close to $p_i, p_j, p_k$ but not closer to any other points in $P$, so $q \in \partial\mathcal{V}(p_i) \cap \partial\mathcal{V}(p_j) \cap \partial\mathcal{V}(p_k) \subset \VorG(P)$, and it is a vertex since it is at an intersection of 3 or more bisectors.
 
-\todo{The statement of the above theorem is temporary. I originally phrased it like so: ``The optimal worst-case running time for computing $\Vor(P)$ is $\Omega(n \log n)$.'' What is the proper terminology here?}
+    ``$\Rightarrow$'': Let $q \in \R^2$ be a vertex of $\VorG(P)$. A vertex of $\VorG(P)$ touches at least 3 different edges, and thus touches at least 3 distinct Voronoi cells $\mathcal{V}(p_i), \mathcal{V}(p_j)$ and $\mathcal{V}(p_k)$. So $q \in \partial\mathcal{V}(p_i) \cap \partial\mathcal{V}(p_j) \cap \partial\mathcal{V}(p_k)$. This gives us that
+    \[
+        \dist(q, p_i) = \dist(q, p_j) = \dist(q, p_k).
+    \]
+    Denote the above distance by $D$. Now assume for the sake of a contradiction that there exists $p_\alpha \in P$ such that $\dist(q, p_{\alpha}) < D$. Then there are parts of the bisectors $\bi(p_{\alpha}, p_i), \bi(p_{\alpha}, p_j), \bi(p_{\alpha}, p_k)$ contained inside $B_D(q)$, which means that $\mathcal{V}(p_i), \mathcal{V}(p_j), \mathcal{V}(p_k)$ do not all meet at $q$, a contradiction. This means that $C_P(q) \cap P = \varnothing$ and $p_i, p_j, p_k \in \partial C_P(q)$.
+
+    \item ``$\Leftarrow$'': Let $q \in \bi(p_i, p_j)$ such that $\partial C_P(q) \cap P = \curly{p_i, p_j}$. So $C_P(q) \cap P = \varnothing$, which by definition of $C_P(q)$ means that
+    \[
+        \dist(q, p_i) = \dist(q, p_j) \leq \dist(q, p_k)
+    \]
+    for all $k$. So $q \in \VorG(P)$ and is either a vertex or an edge. Since $\abs{\partial C_P(q) \cap P} < 3$ part (i) gives us that $q$ is not a vertex, hence it must be an edge, which is a subset of $\bi(p_i, p_j)$. 
+
+    ``$\Rightarrow$'': Let $e \subset \bi(p_i, p_j)$ be an edge of $\VorG(P)$. For $q \in e$ we have that $\dist(q, p_i) = \dist(q, p_j)$, and that $q$ touches $\mathcal{V}(p_i)$ and $\mathcal{V}(p_j)$. By applying the same contradiction proof as in (i) ``$\Rightarrow$'' we have that there is no point in $P$ which is closer to $q$ than $p_i$ and $p_j$, thus $\partial C_P(q) \cap P = \curly{p_i, p_j}$.
+\end{enumerate}
+\end{proof}

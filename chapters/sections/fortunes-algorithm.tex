@@ -15,4 +15,51 @@ We obtain a diagram which looks similar to this:
 We assume without loss of generality that the algorithm outputs a DCEL $\Delta$ of $\Vor(P)$. Assume that the $\textsf{edge}$ pointer of every face of $\Delta$ points to the edge to the right of the face, and that the $\textsf{face}$ pointer of every edge of $\Delta$ points to the face to the right. Let $F_i$ be the face in $\Delta$ which contains the point $(0, a_i)$. Let $\ell \in \N$ such that $a_{\ell} < a_i$ for all $i \ne \ell$. Let $b_1 = a_{\ell}$ and if $b_i = a_{j}$ and $i < n$ then define $b_{i+1} = a_k$ where $k$ comes from $F_{j}\textsf{.edge.face} = F_k$. Then $(b_1, b_2, \ldots, b_n)$ is the elements of $A$ in sorted order. This means that we can use the Voronoi diagram to sort, which proves the theorem.
 \end{proof}
 
-\todo{The statement of the above theorem is temporary. I originally phrased it like so: ``The optimal worst-case running time for computing $\Vor(P)$ is $\Omega(n \log n)$.'' What is the proper terminology here?}
+\todo{The statement of the above theorem is temporary. I originally phrased it like so: ``The optimal worst-case running time for computing $\Vor(P)$ is $\Omega(n \log n)$.'' What is the proper terminology here?} \\
+
+\newpage
+Consider a point $p = (p_x, p_y) \in \R^2$ and a sweep line $y = \ell_y$ with $p_y > \ell_y$. We define the distance between $p$ and $\ell$ as
+\[
+    \dist(p, \ell) = p_y - \ell_y.
+\]
+We can split $\R \times (\ell_y, \infty)$ into two components $R_p$ and $R_{\ell}$ with a common boundary, where
+\begin{align*}
+    q \in R_p &\implies \dist(q, p) < \dist(q, \ell) \\ 
+    q \in R_\ell &\implies \dist(q, p) > \dist(q, \ell)
+\end{align*}
+and where their boundary $\partial R_p = \partial R_\ell$ is given as follows: We're interested in computing the $q \in \R \times [\ell_y, \infty)$ which satisfy $\dist(q, p) = \dist(q, \ell)$. Let $q = (x, y)$ with $y \geq \ell_y$ be such a point. Since distances are non-negative, it is equivalent to looking at satisfying $\dist(q, p)^2 = \dist(q, \ell)^2$. We have:
+\[
+    \dist(q, p)^2 = \dist(q, \ell)^2 \iff (p_x - x)^2 + (p_y - y)^2 = (y - \ell_y)^2.
+\]
+This can be transformed into the equation
+\begin{equation}
+    2 (p_y - \ell_y) y = x^2 - 2 p_x x + p_x^2 + p_y^2 - \ell_y^2.
+\end{equation}
+Since $p_y \ne \ell_y$ by assumption, we obtain the parabola:
+\begin{equation} \label{eq:parabola}
+    y = \frac{1}{2 (p_y - \ell_y)} (x^2 - 2 p_x x + p_x^2 + p_y^2 - \ell_y^2).
+\end{equation}
+Given points $P = \curly{p_1, p_2, \ldots, p_n}$ let $\beta_i(x)$ denote the parabola (\ref{eq:parabola}) for the point $p = p_i$.
+
+\begin{defn}[Beach line]
+The \emph{beach line for the points $P$ with regards to the sweep line $\ell$} is given by the graph of the function
+\[
+    \textsc{Beach}(x) = \min\curly{\beta_1(x), \beta_2(x), \ldots, \beta_n(x)}.
+\]
+\end{defn}
+
+\begin{defn}[Breakpoint]
+The intersection of two different $\beta_i$ and $\beta_j$ that lie on the beach line is called a \emph{breakpoint}.
+\end{defn}
+
+\begin{thm}
+The breakpoints exactly trace out $\VorG(P)$ as the sweep line $\ell$ moves from top to bottom.
+\end{thm}
+\begin{proof}
+\todo{Say some nice things}
+\end{proof}
+
+GeoGebra demo of two points and their beach line
+\[
+    \boxed{\text{\url{https://www.geogebra.org/calculator/zreutrt6}}}
+\]

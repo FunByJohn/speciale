@@ -39,8 +39,13 @@ Since $p_y \ne \ell_y$ by assumption, we obtain the parabola:
 \begin{equation} \label{eq:parabola}
     y = \frac{1}{2 (p_y - \ell_y)} (x^2 - 2 p_x x + p_x^2 + p_y^2 - \ell_y^2).
 \end{equation}
-Given points $P = \curly{p_1, p_2, \ldots, p_n}$ let $\beta_i(x)$ denote the parabola (\ref{eq:parabola}) for the point $p = p_i$.
-
+For each point $p_i \in P = \curly{p_1, p_2, \ldots, p_n}$ we now define
+\[
+    \beta_i(x) = \begin{cases}
+        \displaystyle \frac{1}{2 ((p_i)_y - \ell_y)} (x^2 - 2 (p_i)_x x + (p_i)_x^2 + (p_i)_y^2 - \ell_y^2) & \text{if } (p_i)_y > \ell_y \\
+        \infty & \text{otherwise}
+    \end{cases}
+\]
 \begin{defn}[Beach line]
 The \emph{beach line for the points $P$ with regards to the sweep line $\ell$} is given by the graph of the function
 \[
@@ -52,11 +57,24 @@ The \emph{beach line for the points $P$ with regards to the sweep line $\ell$} i
 The intersection of two different $\beta_i$ and $\beta_j$ that lie on the beach line is called a \emph{breakpoint}.
 \end{defn}
 
+Now we show that the breakpoints exactly trace out $\VorG(P)$ as the sweep line $\ell$ moves from top to bottom.
 \begin{thm}
-The breakpoints exactly trace out $\VorG(P)$ as the sweep line $\ell$ moves from top to bottom.
+We have the following:
+\begin{enumerate}[{(}i{)}]
+\item For every sweep line $\ell$: $y = \ell_y$ each breakpoint lies on $\VorG(P)$.
+\item For every point $q$ in $\VorG(P)$ there is a position of the sweep line $\ell$ such that $q$ is a breakpoint.
+\end{enumerate}
 \end{thm}
 \begin{proof}
-\todo{Say some nice things}
+We prove each statement individually:
+\begin{enumerate}[{(}i{):}]
+    \item Let $\ell$ be the sweep line, and assume that it has one or more breakpoints. Let $q \in \R^2$ be such a breakpoint. Let $\beta_i, \beta_j$ be two parabolas that meet at $q$, corresponding to the points $p_i, p_j$. Then
+    \[
+        \dist(q, \ell) = \dist(q, p_i) = \dist(q, p_j).
+    \]
+    The last equality gives us that $q \not\in \mathcal{V}(p_k)$ for all $k$, hence $q \in \VorG(P)$.
+    \item \todo{in progress on paper}
+\end{enumerate}
 \end{proof}
 
 GeoGebra demo of two points and their beach line

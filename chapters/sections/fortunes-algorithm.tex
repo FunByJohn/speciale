@@ -17,17 +17,15 @@ We assume without loss of generality that the algorithm outputs a DCEL $\Delta$ 
 
 \todo{The statement of the above theorem is temporary. I originally phrased it like so: ``The optimal worst-case running time for computing $\Vor(P)$ is $\Omega(n \log n)$.'' What is the proper terminology here?} \\
 
-\newpage
-Consider a point $p = (p_x, p_y) \in \R^2$ and a sweep line $y = \ell_y$ with $p_y > \ell_y$. We define the distance between $p$ and $\ell$ as
+For a point $p = (p_x, p_y) \in \R^2$ and a sweep line $\ell \colon y = \ell_y$ the distance between $p$ and $\ell$ is
 \[
-    \dist(p, \ell) = p_y - \ell_y.
+    \dist(p, \ell) = \abs{p_y - \ell_y}.
 \]
-We can split $\R \times (\ell_y, \infty)$ into two components $R_p$ and $R_{\ell}$ with a common boundary, where
-\begin{align*}
-    q \in R_p &\implies \dist(q, p) < \dist(q, \ell) \\ 
-    q \in R_\ell &\implies \dist(q, p) > \dist(q, \ell)
-\end{align*}
-and where their boundary $\partial R_p = \partial R_\ell$ is given as follows: We're interested in computing the $q \in \R \times [\ell_y, \infty)$ which satisfy $\dist(q, p) = \dist(q, \ell)$. Let $q = (x, y)$ with $y \geq \ell_y$ be such a point. Since distances are non-negative, it is equivalent to looking at satisfying $\dist(q, p)^2 = \dist(q, \ell)^2$. We have:
+Define
+\[
+    B_i = \makeset{q \in \R^2}{\dist(q, p_i) = \dist(q, \ell)}
+\]
+for all $i$. If $(p_i)_y > \ell_y$, it turns out we may parametrize $B_i$ by a parabola: Let $p = (p_x, p_y)$ denote $p_i$ and let $q = (x, y) \in B_i$. Since distances are non-negative, it is equivalent to looking at satisfying $\dist(q, p)^2 = \dist(q, \ell)^2$. We have:
 \[
     \dist(q, p)^2 = \dist(q, \ell)^2 \iff (p_x - x)^2 + (p_y - y)^2 = (y - \ell_y)^2.
 \]
@@ -37,47 +35,84 @@ This can be transformed into the equation
 \end{equation}
 Since $p_y \ne \ell_y$ by assumption, we obtain the parabola:
 \begin{equation} \label{eq:parabola}
-    y = \frac{1}{2 (p_y - \ell_y)} (x^2 - 2 p_x x + p_x^2 + p_y^2 - \ell_y^2).
+    y = \frac{1}{2 (p_y - \ell_y)} (x^2 - 2 p_x x + p_x^2 + p_y^2 - \ell_y^2),
 \end{equation}
-For each point $p_i \in P = \curly{p_1, p_2, \ldots, p_n}$ we now define
+which parametrizes $B_i$ if $(p_i)_y > \ell_y$. Now we look at the situation where $(p_i)_y = \ell_y$. Then
+\[
+    \dist(q, p)^2 = \dist(q, \ell)^2 \iff (p_x - x)^2 + (p_y - y)^2 = (p_y - y)^2.
+\]
+Then it must be the case that $p_x = x$, so $B_i$ is a subset of a vertical line, and is a line segment if there is some $B_k$ above $B_i$ and a half-line which starts at $p_i$ otherwise. Finally, if $(p_i)_y < \ell_y$, we let $B_i = \varnothing$. We now for all $i$ define the maps
 \[
     \beta_i(x) = \begin{cases}
-        \displaystyle \frac{1}{2 ((p_i)_y - \ell_y)} (x^2 - 2 (p_i)_x x + (p_i)_x^2 + (p_i)_y^2 - \ell_y^2) & \text{if } (p_i)_y > \ell_y \\
-        \infty & \text{otherwise}
+        \displaystyle \frac{x^2 - 2 (p_i)_x x + (p_i)_x^2 + (p_i)_y^2 - \ell_y^2}{2 ((p_i)_y - \ell_y)} & \text{if } (p_i)_y > \ell_y, \\
+        \infty & \text{otherwise.}
     \end{cases}
 \]
-\begin{defn}[Beach line]
-The \emph{beach line for the points $P$ with regards to the sweep line $\ell$} is given by the graph of the function
+Let $\textsf{LB}(x)$ denote the map which takes the minimum of each $\beta_i$, i.e.
 \[
-    \textsc{Beach}(x) = \min\curly{\beta_1(x), \beta_2(x), \ldots, \beta_n(x)}.
+    \textsf{LB}(x) = \min\curly{\beta_1(x), \beta_2(x), \ldots, \beta_n(x)}.
+\]
+\begin{defn}[Beach line]
+The \emph{beach line for the points $P$ with regards to the sweep line $\ell$} is given by the following subset of $\R^2$:
+\[
+    G \cup V,
+    %\makeset{(x, \textsf{LB}(x)) \in \R^2}{\textsf{LB}(x) < \infty} \cup \makeset{B_i - \curly{(p_i)_x} \times (\textsf{LB}((p_i)_x), \infty)}{(p_i)_y = \ell_y}.
+\]
+where $G$ is the graph of $\textsf{LB}$ when it is finite
+\[
+    G = \makeset{(x, \textsf{LB}(x)) \in \R^2}{\textsf{LB}(x) < \infty},
+\]
+and $V$ is all the vertical parts not hidden behind other parabolas
+\[
+    V = \makeset{B_i - \curly{(p_i)_x} \times (\textsf{LB}((p_i)_x), \infty)}{i = 1, \ldots, n \text{ where } (p_i)_y = \ell_y}.
 \]
 \end{defn}
-
+\begin{rmk}
+From the definition we see that the beach line consists of parts of parabolas, and vertical line segments or half-lines. For this reason, it is easy to see that the intersection between any vertical line and the beach line has at most one component.
+\end{rmk}
+\begin{rmk}
+For a sweep line $\ell$ which does not intersect any of the points in $P$, it follows from the definition of beach line that the map $\textsf{LB}(x)$ parametrizes the beach line. This was used to make a simple demo visualing the beach line, which can be found in $\boxed{\textsf{demos/beachline}}$.
+\end{rmk}
 \begin{defn}[Breakpoint]
-The intersection of two different $\beta_i$ and $\beta_j$ that lie on the beach line is called a \emph{breakpoint}.
+Every point $q$ on the beach line such that $q \in B_i \cap B_j$ for two different $i, j$ is called a \textit{breakpoint}.
 \end{defn}
 
+\begin{figure}[H]
+    \centering
+    \includegraphics[scale=0.24]{temp-fig-6}
+    \caption{The red crosses indicate breakpoints and the blue lines represent the beach line.}
+    \label{fig:example-of-breakpoint}
+\end{figure}
+
 Now we show that the breakpoints exactly trace out $\VorG(P)$ as the sweep line $\ell$ moves from top to bottom.
-\begin{thm}
+\begin{prop}
 We have the following:
 \begin{enumerate}[{(}i{)}]
 \item For every sweep line $\ell$: $y = \ell_y$ each breakpoint lies on $\VorG(P)$.
 \item For every point $q$ in $\VorG(P)$ there is a position of the sweep line $\ell$ such that $q$ is a breakpoint.
 \end{enumerate}
-\end{thm}
+\end{prop}
 \begin{proof}
 We prove each statement individually:
 \begin{enumerate}[{(}i{):}]
-    \item Let $\ell$ be the sweep line, and assume that it has one or more breakpoints. Let $q \in \R^2$ be such a breakpoint. Let $\beta_i, \beta_j$ be two parabolas that meet at $q$, corresponding to the points $p_i, p_j$. Then
+    \item Let $\ell$ be the sweep line, and assume that it has one or more breakpoints. Let $q \in \R^2$ be such a breakpoint. Then $q \in B_i \cap B_j$ for some $i \ne j$, which means that
     \[
         \dist(q, \ell) = \dist(q, p_i) = \dist(q, p_j).
     \]
     The last equality gives us that $q \not\in \mathcal{V}(p_k)$ for all $k$, hence $q \in \VorG(P)$.
-    \item \todo{in progress on paper}
+    \item Let $q = (q_x, q_y) \in \VorG(P)$. Since $q$ is either an edge or a vertex, Theorem \ref{thm:characterizationofbisectors} gives us that $\partial C_P(q) \cap P$ has at least two elements, so let $p_i, p_j \in \partial C_P(q) \cap P$ be two different elements. We have $\dist(q, p_i) = \dist(q, p_j)$ by definition of $C_P(q)$, and then we may set
+    \[
+        \ell_y := q_y - \dist(q, p_i),
+    \]
+    and obtain
+    \[
+        \dist(q, \ell) = \dist(q, p_i) = \dist(q, p_j).
+    \]
+    Then $B_i$ and $B_j$ intersect at $q$, and $q$ is on the beach line since there is no $B_k$ with a point $p_k$ closer to $q$ than $p_i$ and $p_j$, by definition of $C_P(q)$.
 \end{enumerate}
 \end{proof}
 
-GeoGebra demo of two points and their beach line
-\[
-    \boxed{\text{\url{https://www.geogebra.org/calculator/zreutrt6}}}
-\]
+%GeoGebra demo of two points and their beach line
+%\[
+%    \boxed{\text{\url{https://www.geogebra.org/calculator/zreutrt6}}}
+%\]

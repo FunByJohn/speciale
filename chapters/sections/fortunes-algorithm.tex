@@ -17,6 +17,8 @@ We assume without loss of generality that the algorithm outputs a DCEL $\Delta$ 
 
 \todo{The statement of the above theorem is temporary. I originally phrased it like so: ``The optimal worst-case running time for computing $\Vor(P)$ is $\Omega(n \log n)$.'' What is the proper terminology here?} \\
 
+We now present Fortune's algorithm. It is a sweep line algorithm which maintains a horizontal sweep line $\ell \colon y = \ell_y$, and $\ell$ sweeps the plane from top to bottom in order to uncover the structure of the Voronoi diagram. 
+
 For a point $p = (p_x, p_y) \in \R^2$ and a sweep line $\ell \colon y = \ell_y$ the distance between $p$ and $\ell$ is
 \[
     \dist(p, \ell) = \abs{p_y - \ell_y}.
@@ -110,6 +112,39 @@ We prove each statement individually:
     \]
     Then $B_i$ and $B_j$ intersect at $q$, and $q$ is on the beach line since there is no $B_k$ with a point $p_k$ closer to $q$ than $p_i$ and $p_j$, by definition of $C_P(q)$.
 \end{enumerate}
+\end{proof}
+As the sweep line $\ell$ sweeps the plane from top to bottom, the combinatorial structure of the beach line changes. We'll categorize these changes into \emph{events}.
+
+First we will consider when new arcs appear on the beach line. As $\ell$ sweeps down and hits a point, a vertical segment is added to the beach line, and then as $\ell$ continues to move, the vertical line spreads out into a new parabolic arc, as seen in this figure:
+\[
+    \includegraphics[scale=0.25]{temp-fig-7}
+\]
+\begin{defn}[Site event]
+When $\ell$ encounters a point $p_i \in P$, that is when $\ell_y = (p_i)_y$, we say that we encounter a \emph{site event}.
+\end{defn}
+
+\begin{lem}
+If $(p_i)_y = (p_j)_y$ then the parabolas $\beta_i$ and $\beta_j$ intersect in exactly one point. If $(p_i)_y \ne (q_i)_y$ then $\beta_i$ and $\beta_j$ intersect in 2 different points.
+\end{lem}
+\begin{proof}
+Let $p = (p_x, p_y)$ denote $p_i$ and $q = (q_x, q_y)$ denote $p_j$. If $p_y = q_y$ then
+\begin{equation}
+    \beta_i(x) - \beta_j(x) = \para{\frac{p_x - q_x}{\ell_y - p_y}}x + \frac{q_x^2 + q_y^2 - p_x^2 - p_y^2}{2 (\ell_y - p_y)}
+\end{equation}
+is a line with non-zero slope, since $p_y \ne \ell_y$ and $p_x \ne q_x$ since otherwise it would be the case that $p_i = p_j$. Such a line intersects the $x$-axis exactly once.
+
+If $p_y \ne q_y$ then $\beta_i(x) - \beta_j(x)$ is a second degree polynomial with discriminant
+\begin{equation}
+    D = \frac{(p_x - q_x)^2 + (p_y - q_y)^2}{(p_y - \ell_y)(q_y - \ell_y)}.
+\end{equation}
+Since $p_y, q_y > \ell_y$ the denominator is strictly positive, and since $p_i \ne p_j$ the numerator is also strictly positive, so $D > 0$. This means that $\beta_i$ and $\beta_j$ intersect in two different points.
+\end{proof}
+
+\begin{lem}
+The only way in which a new arc can appear on the beach line is through a site event.
+\end{lem}
+\begin{proof}
+\todo{working on this on paper}
 \end{proof}
 
 %GeoGebra demo of two points and their beach line

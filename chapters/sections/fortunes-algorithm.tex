@@ -123,7 +123,7 @@ First we will consider when new arcs appear on the beach line. As $\ell$ sweeps 
 When $\ell$ encounters a point $p_i \in P$, that is when $\ell_y = (p_i)_y$, we say that we encounter a \emph{site event}.
 \end{defn}
 
-\begin{lem}
+\begin{lem} \label{highschoollemma}
 If $(p_i)_y = (p_j)_y$ then the parabolas $\beta_i$ and $\beta_j$ intersect in exactly one point. If $(p_i)_y \ne (q_i)_y$ then $\beta_i$ and $\beta_j$ intersect in 2 different points.
 \end{lem}
 \begin{proof}
@@ -131,7 +131,7 @@ Let $p = (p_x, p_y)$ denote $p_i$ and $q = (q_x, q_y)$ denote $p_j$. If $p_y = q
 \begin{equation}
     \beta_i(x) - \beta_j(x) = \para{\frac{p_x - q_x}{\ell_y - p_y}}x + \frac{q_x^2 + q_y^2 - p_x^2 - p_y^2}{2 (\ell_y - p_y)}
 \end{equation}
-is a line with non-zero slope, since $p_y \ne \ell_y$ and $p_x \ne q_x$ since otherwise it would be the case that $p_i = p_j$. Such a line intersects the $x$-axis exactly once.
+is a line with non-zero slope since $p_y \ne \ell_y$ and $p_x \ne q_x$, because if $p_x = q_x$ then it would be the case that $p_i = p_j$. Such a line intersects the $x$-axis exactly once.
 
 If $p_y \ne q_y$ then $\beta_i(x) - \beta_j(x)$ is a second degree polynomial with discriminant
 \begin{equation}
@@ -144,8 +144,17 @@ Since $p_y, q_y > \ell_y$ the denominator is strictly positive, and since $p_i \
 The only way in which a new arc can appear on the beach line is through a site event.
 \end{lem}
 \begin{proof}
-\todo{working on this on paper}
+Assume for the sake of a contradiction that a new arc appears on the beach line but $\ell_y \ne p_i$ for all $i$. Let $\beta_j$ denote the parabola which contains the new arc, associated to the point $p_j \in P$, which appears on the beach line. We have that $\beta_j$ is a full parabola since $\ell_y \ne p_j$. Now, we look at the two cases in which $\beta_j$ can appear as a new arc on the beach line.
+
+The first possibility is that $\beta_j$ breaks through the middle of an another arc which is a part of the parabola $\beta_i$. For this to happen, there is a time at which $\beta_i$ and $\beta_j$ either coincide, or they are tangent which means they intersect in exactly one point which is on the beach line. They cannot coincide, since $p_i \ne p_j$, so they must intersect in exactly one point. If $(p_i)_y \ne (p_j)_y$ then Lemma \ref{highschoollemma} gives us our contradiction. Otherwise, we have $(p_i)_y = (p_j)_y$. In this case $\beta_i$ and $\beta_j$ have the same shape and the same $y$-coordinate of their inflection points, but their intersections with the $y$-axis differ. Let $q$ be the intersection point of $\beta_i$ and $\beta_j$. Since it is on the beach line, we have $\dist(q, \ell) = \dist(q, p_i) = \dist(q, p_j)$. \todo{Maybe find a contradiction which says that $q$ cannot be on the beach line?}
+
+The second possibility is that $\beta_j$ appears in between two arcs. Let these arcs be part of parabolas $\beta_i$ and $\beta_k$. Let $q$ be the intersection point between $\beta_i, \beta_j$ and $\beta_k$, and we assume that the arc on the beach line from $\beta_i$ is to the left of $q$, and the arc from $\beta_k$ is to the right of $q$, as in this figure:
+\[
+    \includegraphics[scale=0.25]{temp-fig-8}
+\]
+Now let $C$ denote the circle $C_P(q)$. This has $p_i, p_j, p_k$ on its boundary, and it is tangent to $\ell$. The cyclic order on $C$, starting at the point of tangency with $\ell$ and going clockwise is $p_i, p_j, p_k$. Now, we imagine moving $\ell$ downward while keeping $C$ tangent to $\ell$ and $p_j$. Let $q'$ be the new center of $C$. Then either $p_i$ or $p_k$ will be contained in the interior of $C$, which means that there exists a small neighbourhood $U$ of $q'$ where $\dist(p_i, \ell)$ or $\dist(p_k, \ell)$ is less than $\dist(p_j, \ell)$, meaning that points from $\beta_i$ which are in $U$ cannot be on the beach line, contradicting that $q$ is on the beach line. \todo{Make more rigorous?}
 \end{proof}
+\todo{I do not like the above proof! Maybe some of the literature the CompGeo book references has better proofs.}
 
 %GeoGebra demo of two points and their beach line
 %\[

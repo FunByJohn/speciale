@@ -1,23 +1,77 @@
 \section{Fortune's algorithm}
-In this section we will present an algorithm which computes $\Vor(P)$ in $\mathcal{O}(n \log n)$ time. This is actually optimal, as we can use a Voronoi diagram for sorting:
+In this section we will present an algorithm which computes $\Vor(P)$ in $\mathcal{O}(n \log n)$ time. First, we need some assumptions:
+
+\begin{assume} \label{ass:generalposition}
+The points in $P$ are in general position, which we define to mean that no two points in $P$ have the same $x$-coordinate or the same $y$-coordinate.
+\end{assume}
+
+\begin{rmk}
+We may make the above assumption without loss of generality, because if $\Theta \subset \R$ is the set of all of the angles that $\overline{p_i p_j}$ make with the $x$-axis for all $p_i \ne p_j$ in $P$, then $\Theta$ is finite and $\R \setminus \Theta$ is infinite, so generating a random number $\theta \in \R \setminus \Theta$ and letting
+\[
+    \varphi (x, y) = \begin{pmatrix} \cos \theta & -\sin \theta \\ \sin \theta & \cos \theta \end{pmatrix} \begin{pmatrix} x \\ y \end{pmatrix}
+    = (\cos(\theta) x - \sin(\theta) y, \sin(\theta) x + \cos(\theta) y)
+\]
+be the rotation about the origin with the angle $\theta$, then the set
+\[
+    \varphi(P) = \makeset{\varphi(p)}{p \in P}
+\]
+is in general position with probability 1. After having computed the Voronoi diagram for $\varphi(P)$, we may then rotate the diagram by the angle $-\theta$ to obtain $\Vor(P)$.
+\end{rmk}
+
+\begin{assume} \label{ass:notsameline}
+The points in $P$ do not all lie on the same line.
+\end{assume}
+
+\begin{rmk}
+If $P$ is collinear then every point $p \in P$ lies on a line $\ell$. Theorem \ref{prop:structureofentirevoronoidiagram} gives us that $\VorG(P)$ consists of parallel lines and Theorem \ref{thm:characterizationofbisectors} gives us that these parallel lines are the bisectors of pairs of adjacent points on $\ell$. By sorting the points on $P$ along $\ell$ and then marking all the bisectors between adjacent points we then compute the Voronoi diagram of $\VorG(P)$ in $\mathcal{O}(n \log n)$ time. With this out of the way, it is now reasonable to make the above assumption.
+\end{rmk}
+
+Before we begin, we show that:
+\newpage
 \begin{thm} \label{thm:voronoicansort}
-We can't do better than $\mathcal{O}(n \log n)$.
+The optimal worst-case running time for computing $\Vor(P)$ is $\mathcal{O}(n \log n)$.
 \end{thm}
 \begin{proof}
-Let $A = \curly{a_1, a_2, \ldots, a_n} \subset \R$. Now assume we have used an algorithm to compute a Voronoi diagram of the points
+Let $A = \curly{a_1, a_2, \ldots, a_n} \subset \R$ and assume that $n \geq 3$. Define $\varphi \colon \R \to \R^2$ given by $\varphi(x) = (x, x^2)$. Now assume we have used an algorithm to compute a Voronoi diagram of the points
 \[
-    P = \curly{(a_1, 0), (a_2, 0), \ldots, (a_n, 0)}.
+    P = \varphi(A) = \curly{(a_1, a_1^2), (a_2, a_2^2), \ldots, (a_n, a_n^2)}.
 \]
 We obtain a diagram which looks similar to this:
 \[
-    \includegraphics[scale=0.2]{voronoi-sorting}
+    \includegraphics[scale=0.2]{voronoi-sorting-2}
 \]
-We assume without loss of generality that the algorithm outputs a DCEL $\Delta$ of $\Vor(P)$. Assume that the $\textsf{edge}$ pointer of every face of $\Delta$ points to the edge to the right of the face, and that the $\textsf{face}$ pointer of every edge of $\Delta$ points to the face to the right. Let $F_i$ be the face in $\Delta$ which contains the point $(0, a_i)$. Let $\ell \in \N$ such that $a_{\ell} < a_i$ for all $i \ne \ell$. Let $b_1 = a_{\ell}$ and if $b_i = a_{j}$ and $i < n$ then define $b_{i+1} = a_k$ where $k$ comes from $F_{j}\textsf{.edge.face} = F_k$. Then $(b_1, b_2, \ldots, b_n)$ is the elements of $A$ in sorted order. This means that we can use the Voronoi diagram to sort, which proves the theorem.
+We may assume without loss of generality that $a_i \geq 0$ for all $i$, since we may just add
+\[
+    \max\makeset{-a}{a \in A \cup \curly{0} \text{ and } a \leq 0}
+\]
+to every number in $A$. Now we claim that
+\begin{equation} \label{goodsortingproperty}
+    0 \leq a < b < c < d < e
+    \implies
+    \begin{cases}
+        \dist(\varphi(c), \varphi(b)) < \dist(\varphi(c), \varphi(a)), & \text{ } \\
+        \dist(\varphi(c), \varphi(d)) < \dist(\varphi(c), \varphi(e)). & \text{ }
+    \end{cases}
+\end{equation}
+We have
+\[
+    \dist(\varphi(x), \varphi(y))^2 = \norm{\varphi(x) - \varphi(y)}^2 = (x - y)^2 + (x^2 - y^2)^2
+\]
+so
+\[
+    \dist(\varphi(c), \varphi(b)) < \dist(\varphi(c), \varphi(a))
+\]
+if and only if
+\[
+    \underbrace{(c - a)^2 - (c - b)^2}_{\lambda} + \underbrace{(c^2 - a^2)^2 - (c^2 - b^2)^2}_{\mu} > 0.
+\]
+The fact that $x \mapsto x^2$ is strictly increasing on $[0, \infty)$ and $0 \leq a < b < c$ implies that $\lambda > 0$ and $\mu > 0$. Using a similar argument, we obtain that $\dist(\varphi(c), \varphi(d)) < \dist(\varphi(c), \varphi(e))$. Thus (\ref{goodsortingproperty}) holds.
+
+Now let $B = (b_1, b_2, \ldots, b_n)$ denote $A$ in sorted order, i.e. $i < j$ implies $b_i < b_j$. We'll now see how we can recover $B$ using $\Vor(P)$. We assume that the algorithm outputs a DCEL $\Delta$ of $\Vor(P)$. The property (\ref{goodsortingproperty}) implies that $\partial \mathcal{V}(\varphi(b_i))$ and $\partial \mathcal{V}(\varphi(b_j))$ share an edge when $i = j + 1$. This means that given $\mathcal{V}(\varphi(b_i))$ for $i < n$ we may find $b_{i+1}$ by traversing the edges of $\mathcal{V}(\varphi(b_i))$ in $\Delta$ until we find the face which belongs to $b_{i+1}$. We identify this face as the one which minimizes $a_j - b_i > 0$ where $\mathcal{V}(\varphi(a_j))$ is an adjacent face. In linear time we may find $\ell$ such that $a_{\ell} < a_i$ for all $i \ne \ell$. Let $b_1 := a_{\ell}$. Now assume that $b_i = a_j$ for $i < n$ and some $j$, and that we have the face $F = \mathcal{V}(\varphi(a_j)) \in \Delta$. We traverse the edges of $F$ until we find the face $F' = \mathcal{V}(\varphi(a_k)) \in \Delta$ which belongs to $b_{i+1}$, and we let $b_{i+1} := a_k$. In the worst case we iterate through every edge of every face of $\Delta$, but Theorem \ref{thm:numberofvertsandedges} gives us that there is $\mathcal{O}(n)$ edges in total, so we find all the $b_i$ in linear time. This means we can use an algorithm which computes $\Vor(P)$ to sort, which proves the claim.
 \end{proof}
+\todo{Choose a computation model in order for the above to make sense.}
 
-\todo{The statement of the above theorem is temporary. I originally phrased it like so: ``The optimal worst-case running time for computing $\Vor(P)$ is $\Omega(n \log n)$.'' What is the proper terminology here?} \\
-
-We now present Fortune's algorithm. It is a sweep line algorithm which maintains a horizontal sweep line $\ell \colon y = \ell_y$, and $\ell$ sweeps the plane from top to bottom in order to uncover the structure of the Voronoi diagram. 
+Fortune's algorithm is a sweep line algorithm which maintains a horizontal sweep line $\ell \colon y = \ell_y$, and $\ell$ sweeps the plane from top to bottom in order to uncover the structure of the Voronoi diagram. 
 
 For a point $p = (p_x, p_y) \in \R^2$ and a sweep line $\ell \colon y = \ell_y$ the distance between $p$ and $\ell$ is
 \[
@@ -124,15 +178,9 @@ When $\ell$ encounters a point $p_i \in P$, that is when $\ell_y = (p_i)_y$, we 
 \end{defn}
 
 \begin{lem} \label{highschoollemma}
-If $(p_i)_y = (p_j)_y$ then the parabolas $\beta_i$ and $\beta_j$ intersect in exactly one point. If $(p_i)_y \ne (q_i)_y$ then $\beta_i$ and $\beta_j$ intersect in 2 different points.
+If $(p_i)_y \ne (q_i)_y$ then $\beta_i$ and $\beta_j$ intersect in 2 different points.
 \end{lem}
 \begin{proof}
-Let $p = (p_x, p_y)$ denote $p_i$ and $q = (q_x, q_y)$ denote $p_j$. If $p_y = q_y$ then
-\begin{equation}
-    \beta_i(x) - \beta_j(x) = \para{\frac{p_x - q_x}{\ell_y - p_y}}x + \frac{q_x^2 + q_y^2 - p_x^2 - p_y^2}{2 (\ell_y - p_y)}
-\end{equation}
-is a line with non-zero slope since $p_y \ne \ell_y$ and $p_x \ne q_x$, because if $p_x = q_x$ then it would be the case that $p_i = p_j$. Such a line intersects the $x$-axis exactly once.
-
 If $p_y \ne q_y$ then $\beta_i(x) - \beta_j(x)$ is a second degree polynomial with discriminant
 \begin{equation}
     D = \frac{(p_x - q_x)^2 + (p_y - q_y)^2}{(p_y - \ell_y)(q_y - \ell_y)}.
@@ -144,9 +192,9 @@ Since $p_y, q_y > \ell_y$ the denominator is strictly positive, and since $p_i \
 The only way in which a new arc can appear on the beach line is through a site event.
 \end{lem}
 \begin{proof}
-Assume for the sake of a contradiction that a new arc appears on the beach line but $\ell_y \ne p_i$ for all $i$. Let $\beta_j$ denote the parabola which contains the new arc, associated to the point $p_j \in P$, which appears on the beach line. We have that $\beta_j$ is a full parabola since $\ell_y \ne p_j$. Now, we look at the two cases in which $\beta_j$ can appear as a new arc on the beach line.
+The only other alternative is for new arcs to arise due to changes in the shape and position of existing parabolas, that is due to some parabola overtaking the beach line and breaking through it. Assume for the sake of a contradiction that a new arc appears on the beach line but $\ell_y \ne p_i$ for all $i$. Let $\beta_j$ denote the parabola which contains the new arc, associated to the point $p_j \in P$, which appears on the beach line. We have that $\beta_j$ is a full parabola since $\ell_y \ne p_j$. Now, we look at the two cases in which $\beta_j$ can appear as a new arc on the beach line.
 
-The first possibility is that $\beta_j$ breaks through the middle of an another arc which is a part of the parabola $\beta_i$. For this to happen, there is a time at which $\beta_i$ and $\beta_j$ either coincide, or they are tangent which means they intersect in exactly one point which is on the beach line. They cannot coincide, since $p_i \ne p_j$, so they must intersect in exactly one point. If $(p_i)_y \ne (p_j)_y$ then Lemma \ref{highschoollemma} gives us our contradiction. Otherwise, we have $(p_i)_y = (p_j)_y$. In this case $\beta_i$ and $\beta_j$ have the same shape and the same $y$-coordinate of their inflection points, but their intersections with the $y$-axis differ. Let $q$ be the intersection point of $\beta_i$ and $\beta_j$. Since it is on the beach line, we have $\dist(q, \ell) = \dist(q, p_i) = \dist(q, p_j)$. \todo{Maybe find a contradiction which says that $q$ cannot be on the beach line?}
+The first possibility is that $\beta_j$ breaks through the middle of an another arc which is a part of the parabola $\beta_i$. For this to happen, there is a time at which $\beta_i$ and $\beta_j$ either coincide, or they are tangent which means they intersect in exactly one point which is on the beach line. They cannot coincide, since $p_i \ne p_j$, so they must intersect in exactly one point. By Assumption \ref{ass:generalposition} we have $(p_i)_y \ne (p_j)_y$ so Lemma \ref{highschoollemma} gives us our contradiction.
 
 The second possibility is that $\beta_j$ appears in between two arcs. Let these arcs be part of parabolas $\beta_i$ and $\beta_k$. Let $q$ be the intersection point between $\beta_i, \beta_j$ and $\beta_k$, and we assume that the arc on the beach line from $\beta_i$ is to the left of $q$, and the arc from $\beta_k$ is to the right of $q$, as in this figure:
 \[
@@ -154,7 +202,6 @@ The second possibility is that $\beta_j$ appears in between two arcs. Let these 
 \]
 Now let $C$ denote the circle $C_P(q)$. This has $p_i, p_j, p_k$ on its boundary, and it is tangent to $\ell$. The cyclic order on $C$, starting at the point of tangency with $\ell$ and going clockwise is $p_i, p_j, p_k$. Now, we imagine moving $\ell$ downward while keeping $C$ tangent to $\ell$ and $p_j$. Let $q'$ be the new center of $C$. Then either $p_i$ or $p_k$ will be contained in the interior of $C$, which means that there exists a small neighbourhood $U$ of $q'$ where $\dist(p_i, \ell)$ or $\dist(p_k, \ell)$ is less than $\dist(p_j, \ell)$, meaning that points from $\beta_i$ which are in $U$ cannot be on the beach line, contradicting that $q$ is on the beach line. \todo{Make more rigorous?}
 \end{proof}
-\todo{I do not like the above proof! Maybe some of the literature the CompGeo book references has better proofs.}
 
 %GeoGebra demo of two points and their beach line
 %\[

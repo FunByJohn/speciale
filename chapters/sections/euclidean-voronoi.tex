@@ -118,8 +118,19 @@ Multiplying (\ref{eq:eulersformulaapplied}) by $3$, isolating $3 (n_v + 1)$ and 
 \end{align*}
 This proves the theorem.
 \end{proof}
-We thus have a linear number of vertices and edges $\VorG(P)$, but we have a quadratic number of bisectors $\bi(p_i, p_j)$ of which every edge of $\VorG(P)$ is a subset of, and every vertex in $\VorG(P)$ is an intersection point of two such bisectors. Thus it would be interesting to characterize when a particular bisector is a part of $\VorG(P)$. First, we need a definition:
-\newpage
+\begin{rmk} \label{rmk:boxalsohaslinearnumedges}
+In practice, we would like to enclose $\Vor(P)$ in a box containing all its vertices in order to be able to represent it as a DCEL $\Delta$. How does intersecting the edges of $\Vor(P)$ with such a bounding box $B$ affect the number of edges?
+\[
+    \includegraphics[scale=0.25]{temp-fig-9}
+\]
+If we intersect $\VorG(P)$ with the bounding box $B$ then $B$ adds at most 2 edges to every cell: The bounded cells inside $B$ stay intact, and for unbounded cells we have two cases. Either a vertex of $B$ is contained in the cell, and then 2 edges will be added, otherwise a single edge is added. So the DCEL $\Delta$ representing $\Vor(P)$ then has at most
+\[
+    (3n - 6) + 2n = 5n - 6 = \mathcal{O}(n)
+\]
+edges.
+\end{rmk}
+We have seen that we have a linear number of vertices and edges $\VorG(P)$, but we have a quadratic number of bisectors $\bi(p_i, p_j)$ of which every edge of $\VorG(P)$ is a subset of, and every vertex in $\VorG(P)$ is an intersection point of two such bisectors. Thus it would be interesting to characterize when a particular bisector is a part of $\VorG(P)$. First, we need a definition:
+
 \begin{defn}[Largest empty circle]
 For a $q \in \R^2$ we define $C_P(q)$ to be \emph{the largest empty circle of $q$ with respect to $P$}, which is the largest empty circle with $q$ as its center that does not contain any point of $P$ in its interior. Formally,
 \[

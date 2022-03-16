@@ -27,7 +27,7 @@ If $P$ is collinear then every point $p \in P$ lies on a line $\ell$. Theorem \r
 \end{rmk}
 
 Before we begin, we show that:
-\newpage
+
 \begin{thm} \label{thm:voronoicansort}
 The optimal worst-case running time for computing $\Vor(P)$ is $\mathcal{O}(n \log n)$.
 \end{thm}
@@ -49,7 +49,8 @@ to every number in $A$. Now we claim that
     0 \leq a < b < c < d < e
     \implies
     \begin{cases}
-        \dist(\varphi(c), \varphi(b)) < \dist(\varphi(c), \varphi(a)), & \text{ } \\
+        \dist(\varphi(c), \varphi(b)) < \dist(\varphi(c), \varphi(a)) & \text{ } \\
+        \quad\quad\quad\quad\quad\quad \text{ and } \quad & \text{ } \\
         \dist(\varphi(c), \varphi(d)) < \dist(\varphi(c), \varphi(e)). & \text{ }
     \end{cases}
 \end{equation}
@@ -67,7 +68,7 @@ if and only if
 \]
 The fact that $x \mapsto x^2$ is strictly increasing on $[0, \infty)$ and $0 \leq a < b < c$ implies that $\lambda > 0$ and $\mu > 0$. Using a similar argument, we obtain that $\dist(\varphi(c), \varphi(d)) < \dist(\varphi(c), \varphi(e))$. Thus (\ref{goodsortingproperty}) holds.
 
-Now let $B = (b_1, b_2, \ldots, b_n)$ denote $A$ in sorted order, i.e. $i < j$ implies $b_i < b_j$. We'll now see how we can recover $B$ using $\Vor(P)$. We assume that the algorithm outputs a DCEL $\Delta$ of $\Vor(P)$. The property (\ref{goodsortingproperty}) implies that $\partial \mathcal{V}(\varphi(b_i))$ and $\partial \mathcal{V}(\varphi(b_j))$ share an edge when $i = j + 1$. This means that given $\mathcal{V}(\varphi(b_i))$ for $i < n$ we may find $b_{i+1}$ by traversing the edges of $\mathcal{V}(\varphi(b_i))$ in $\Delta$ until we find the face which belongs to $b_{i+1}$. We identify this face as the one which minimizes $a_j - b_i > 0$ where $\mathcal{V}(\varphi(a_j))$ is an adjacent face. In linear time we may find $\ell$ such that $a_{\ell} < a_i$ for all $i \ne \ell$. Let $b_1 := a_{\ell}$. Now assume that $b_i = a_j$ for $i < n$ and some $j$, and that we have the face $F = \mathcal{V}(\varphi(a_j)) \in \Delta$. We traverse the edges of $F$ until we find the face $F' = \mathcal{V}(\varphi(a_k)) \in \Delta$ which belongs to $b_{i+1}$, and we let $b_{i+1} := a_k$. In the worst case we iterate through every edge of every face of $\Delta$, but Theorem \ref{thm:numberofvertsandedges} gives us that there is $\mathcal{O}(n)$ edges in total, so we find all the $b_i$ in linear time. This means we can use an algorithm which computes $\Vor(P)$ to sort, which proves the claim.
+Now let $B = (b_1, b_2, \ldots, b_n)$ denote $A$ in sorted order, i.e. $i < j$ implies $b_i < b_j$. We'll now see how we can recover $B$ using $\Vor(P)$. We assume that the algorithm outputs a DCEL $\Delta$ of $\Vor(P)$. The property (\ref{goodsortingproperty}) implies that $\partial \mathcal{V}(\varphi(b_i))$ and $\partial \mathcal{V}(\varphi(b_j))$ share an edge when $i = j + 1$. This means that given $\mathcal{V}(\varphi(b_i))$ for $i < n$ we may find $b_{i+1}$ by traversing the edges of $\mathcal{V}(\varphi(b_i))$ in $\Delta$ until we find the face which belongs to $b_{i+1}$. We identify this face as the one which minimizes $a_j - b_i > 0$ where $\mathcal{V}(\varphi(a_j))$ is an adjacent face. In linear time we may find $\ell$ such that $a_{\ell} < a_i$ for all $i \ne \ell$. Let $b_1 := a_{\ell}$. Now assume that $b_i = a_j$ for $i < n$ and some $j$, and that we have the face $F = \mathcal{V}(\varphi(a_j)) \in \Delta$. We traverse the edges of $F$ until we find the face $F' = \mathcal{V}(\varphi(a_k)) \in \Delta$ which belongs to $b_{i+1}$, and we let $b_{i+1} := a_k$. In the worst case we iterate through every edge of every face of $\Delta$, but Remark \ref{rmk:boxalsohaslinearnumedges} gives us that there is $\mathcal{O}(n)$ edges in total, so we find all the $b_i$ in linear time. This means we can use an algorithm which computes $\Vor(P)$ to sort, which proves the claim.
 \end{proof}
 \todo{Choose a computation model in order for the above to make sense.}
 
@@ -177,30 +178,23 @@ First we will consider when new arcs appear on the beach line. As $\ell$ sweeps 
 When $\ell$ encounters a point $p_i \in P$, that is when $\ell_y = (p_i)_y$, we say that we encounter a \emph{site event}.
 \end{defn}
 
-\begin{lem} \label{highschoollemma}
-If $(p_i)_y \ne (q_i)_y$ then $\beta_i$ and $\beta_j$ intersect in 2 different points.
-\end{lem}
-\begin{proof}
-If $p_y \ne q_y$ then $\beta_i(x) - \beta_j(x)$ is a second degree polynomial with discriminant
-\begin{equation}
-    D = \frac{(p_x - q_x)^2 + (p_y - q_y)^2}{(p_y - \ell_y)(q_y - \ell_y)}.
-\end{equation}
-Since $p_y, q_y > \ell_y$ the denominator is strictly positive, and since $p_i \ne p_j$ the numerator is also strictly positive, so $D > 0$. This means that $\beta_i$ and $\beta_j$ intersect in two different points.
-\end{proof}
-
 \begin{lem}
 The only way in which a new arc can appear on the beach line is through a site event.
 \end{lem}
 \begin{proof}
 The only other alternative is for new arcs to arise due to changes in the shape and position of existing parabolas, that is due to some parabola overtaking the beach line and breaking through it. Assume for the sake of a contradiction that a new arc appears on the beach line but $\ell_y \ne p_i$ for all $i$. Let $\beta_j$ denote the parabola which contains the new arc, associated to the point $p_j \in P$, which appears on the beach line. We have that $\beta_j$ is a full parabola since $\ell_y \ne p_j$. Now, we look at the two cases in which $\beta_j$ can appear as a new arc on the beach line.
 
-The first possibility is that $\beta_j$ breaks through the middle of an another arc which is a part of the parabola $\beta_i$. For this to happen, there is a time at which $\beta_i$ and $\beta_j$ either coincide, or they are tangent which means they intersect in exactly one point which is on the beach line. They cannot coincide, since $p_i \ne p_j$, so they must intersect in exactly one point. By Assumption \ref{ass:generalposition} we have $(p_i)_y \ne (p_j)_y$ so Lemma \ref{highschoollemma} gives us our contradiction.
+The first possibility is that $\beta_j$ breaks through the middle of an another arc which is a part of the parabola $\beta_i$. For this to happen, there is a time at which $\beta_i$ and $\beta_j$ either coincide, or they are tangent which means they intersect in exactly one point which is on the beach line. They cannot coincide, since $p_i \ne p_j$, so they must intersect in exactly one point. By Assumption \ref{ass:generalposition} we have $(p_i)_y \ne (p_j)_y$ so $\beta_i(x) - \beta_j(x)$ is a second degree polynomial with discriminant
+\begin{equation}
+    D = \frac{(p_x - q_x)^2 + (p_y - q_y)^2}{(p_y - \ell_y)(q_y - \ell_y)}.
+\end{equation}
+Since $p_y, q_y > \ell_y$ the denominator is strictly positive, and since $p_i \ne p_j$ the numerator is also strictly positive, so $D > 0$. This means that $\beta_i$ and $\beta_j$ intersect in two different points, a contradiction.
 
 The second possibility is that $\beta_j$ appears in between two arcs. Let these arcs be part of parabolas $\beta_i$ and $\beta_k$. Let $q$ be the intersection point between $\beta_i, \beta_j$ and $\beta_k$, and we assume that the arc on the beach line from $\beta_i$ is to the left of $q$, and the arc from $\beta_k$ is to the right of $q$, as in this figure:
 \[
     \includegraphics[scale=0.25]{temp-fig-8}
 \]
-Now let $C$ denote the circle $C_P(q)$. This has $p_i, p_j, p_k$ on its boundary, and it is tangent to $\ell$. The cyclic order on $C$, starting at the point of tangency with $\ell$ and going clockwise is $p_i, p_j, p_k$. Now, we imagine moving $\ell$ downward while keeping $C$ tangent to $\ell$ and $p_j$. Let $q'$ be the new center of $C$. Then either $p_i$ or $p_k$ will be contained in the interior of $C$, which means that there exists a small neighbourhood $U$ of $q'$ where $\dist(p_i, \ell)$ or $\dist(p_k, \ell)$ is less than $\dist(p_j, \ell)$, meaning that points from $\beta_i$ which are in $U$ cannot be on the beach line, contradicting that $q$ is on the beach line. \todo{Make more rigorous?}
+Now let $C$ denote the circle $C_P(q)$ and note that it has $p_i, p_j, p_k$ on its boundary, and it is tangent to $\ell$. The cyclic order on $C$, starting at the point of tangency with $\ell$ and going clockwise is $p_i, p_j, p_k$. Now, we imagine an infinitesimal downward motion of $\ell$ while keeping $C$ tangent to $\ell$ and $p_j$, we call the new circle $C'$. Now either $p_i$ or $p_k$ will be contained in the interior of $C'$, say it's $p_k$ like on the figure. Let $c$ denote the center of $C'$. Then $\dist(c, p_j)$ is equal to $\dist(c, \ell)$, but since $p_k$ is contained in the interior of $C'$ then $\dist(c, p_k)$ is strictly smaller than $\dist(c, p_j)$, which means that $p_k$ is closer to $\ell$ than $p_j$, which means $\beta_j$ cannot be on the beach line, a contradiction.
 \end{proof}
 
 %GeoGebra demo of two points and their beach line

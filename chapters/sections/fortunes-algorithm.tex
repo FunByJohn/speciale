@@ -178,7 +178,7 @@ First we will consider when new arcs appear on the beach line. As $\ell$ sweeps 
 When $\ell$ encounters a point $p_i \in P$, that is when $\ell_y = (p_i)_y$, we say that we encounter a \emph{site event}.
 \end{defn}
 
-\begin{lem}
+\begin{lem} \label{lem:newarciffsiteevent}
 The only way in which a new arc can appear on the beach line is through a site event.
 \end{lem}
 \begin{proof}
@@ -196,6 +196,45 @@ The second possibility is that $\beta_j$ appears in between two arcs. Let these 
 \]
 Now let $C$ denote the circle $C_P(q)$ and note that it has $p_i, p_j, p_k$ on its boundary, and it is tangent to $\ell$. The cyclic order on $C$, starting at the point of tangency with $\ell$ and going clockwise is $p_i, p_j, p_k$. Now, we imagine an infinitesimal downward motion of $\ell$ while keeping $C$ tangent to $\ell$ and $p_j$, we call the new circle $C'$. Now either $p_i$ or $p_k$ will be contained in the interior of $C'$, say it's $p_k$ like on the figure. Let $c$ denote the center of $C'$. Then $\dist(c, p_j)$ is equal to $\dist(c, \ell)$, but since $p_k$ is contained in the interior of $C'$ then $\dist(c, p_k)$ is strictly smaller than $\dist(c, p_j)$, which means that $p_k$ is closer to $\ell$ than $p_j$, which means $\beta_j$ cannot be on the beach line, a contradiction.
 \end{proof}
+
+\begin{cor}
+At any time the beach line consists of at most $2n-1$ arcs.
+\end{cor}
+\begin{proof}
+We prove this by induction. The first site event adds a single arc, so for $n = 1$ there is at most $2n - 1 = 1$ arcs on the beach line. Now assume during the execution of the algorithm that we've seen $k < n$ of the $n$ site events, and that the beach line consists of at most $2k - 1$ arcs. When we encounter a new site, we have seen that there are two cases:
+\[
+    \includegraphics[scale=0.25]{temp-fig-11}
+\]
+In case (a) the have that an arc appears inbetween 2 existing arcs, increasing the total number by one. In case (b) an existing arc is split into two, and a new arc appears in between, which increases the total number by two. This means that after having seen $k + 1$ site events, there can be at most
+\[
+    (2k - 1) + 2 = 2(k + 1) - 1
+\]
+parabolic arcs, which proves the claim.
+\end{proof}
+Now we've characterized exactly when new arcs appear on the beach line. We now turn to the question of when arcs disappear from the beach line. Assume we have at least 3 arcs on the beach line, name them $\alpha, \alpha', \alpha''$ and assume that $\alpha$ is adjacent to $\alpha'$, and $\alpha'$ is adjacent to $\alpha''$. We assume that $\alpha'$ is the arc which is about to disappear. We first note that $\alpha$ and $\alpha''$ cannot be a part of the same parabola. If this case the case, we'd be in the following situation:
+\[
+    \includegraphics[scale=0.25]{temp-fig-12}
+\]
+Let $\beta$ denote the parabola which $\alpha$ and $\alpha'$ are a part of, and let $\beta'$ be the parabola which $\alpha'$ is a part of. When $\alpha'$ is about to disappear, then there will be a time at which $\beta$ and $\beta'$ are tangent, and then we can reuse the contradiction argument from the first part of the proof of Lemma \ref{lem:newarciffsiteevent}. Thus $\alpha, \alpha'$ and $\alpha''$ are defined by 3 distinct sites $p_i, p_j, p_k \in P$. At the moment that $\alpha'$ disappears, then the three parabolas $\beta_i \supset \alpha$, $\beta_j \supset \alpha'$ and $\beta_k \supset \alpha''$ intersect in a single point $q$. We note that
+\[
+    \dist(q, \ell) = \dist(q, p_i) = \dist(q, p_j) = \dist(q, p_k).
+\]
+So there is a circle $C$ with center $q$ passing through $p_i, p_j, p_k$ which is tangent to $\ell$ at its lowest point. The situation is illustrated as follows:
+\[
+    \includegraphics[scale=0.25]{temp-fig-13}
+\]
+We claim that $C = C_P(q)$. Assume for the sake of a contradiction that there is a site $p$ inside the interior of $C$. Then
+\begin{equation} \label{eq:notonthebeachlinechar}
+    \dist(p, q) < \dist(q, \ell).
+\end{equation}
+Now note the following characterization of being on the beach line: A point $r$ is on the beach line if $\dist(r, \ell) = \dist(r, p_i)$ for all $i \in \mathcal{I}$ and $\dist(r, \ell) < \dist(r, p_j)$ for all $j \in \mathcal{J}$, where $\mathcal{I}$ describes those indices $i$ where $r \in \beta_i$ and $\mathcal{J}$ describes those indices where $r \not\in \beta_j$. By assumption $q$ is on the beach line, since it is a point on all of $\alpha, \alpha', \alpha''$ but (\ref{eq:notonthebeachlinechar}) contradicts the characterization we just gave of the beach line. So it must be the case that $C = C_P(q)$. Now note that
+\[
+    \curly{p_i, p_j, p_k} \subset \partial C_P(q),
+\]
+so Theorem \ref{thm:characterizationofbisectors} (i) gives us that $q$ is a vertex of $\VorG(P)$. Compare this to the fact that breakpoints trace out $\VorG(P)$ as we proved earlier. This means that when two breakpoints meet and an arc disappears from the beach line, then two edges of $\Vor(P)$ meet at a vertex. We call the event when $\ell$ reaches the lowest point of a circle through three sites defining consecutive arcs on the beach line a \emph{circle event}. We have thus just proven:
+\begin{lem}
+The only way in which an existing arc can disappear from the beach line is through a circle event.
+\end{lem}
 
 %GeoGebra demo of two points and their beach line
 %\[

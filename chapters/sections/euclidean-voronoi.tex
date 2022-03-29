@@ -123,9 +123,9 @@ In practice, we would like to enclose $\Vor(P)$ in a box containing all its vert
 \[
     \includegraphics[scale=0.25]{temp-fig-9}
 \]
-If we intersect $\VorG(P)$ with the bounding box $B$ then $B$ adds at most 2 edges to every cell: The bounded cells inside $B$ stay intact, and for unbounded cells we have two cases. Either a vertex of $B$ is contained in the cell, and then 2 edges will be added, otherwise a single edge is added. So the DCEL $\Delta$ representing $\Vor(P)$ then has at most
+If we intersect $\VorG(P)$ with the bounding box $B$ then $B$ adds at most 2 edges to every cell: The bounded cells inside $B$ stay intact, and for unbounded cells we have two cases. Either a vertex of $B$ is contained in the cell, and then 2 edges will be added, otherwise a single edge is added. Hence in the worst case we add an edge for each point in $P$, and then an edge for each of the 4 corners of $B$, so the DCEL $\Delta$ representing $\Vor(P)$ then has at most
 \[
-    (3n - 6) + 2n = 5n - 6 = \mathcal{O}(n)
+    (3n - 6) + (n + 4) = 4n - 2 = \mathcal{O}(n)
 \]
 edges.
 \end{rmk}

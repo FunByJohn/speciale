@@ -177,7 +177,6 @@ First we will consider when new arcs appear on the beach line. As $\ell$ sweeps 
 \begin{defn}[Site event]
 When $\ell$ encounters a point $p_i \in P$, that is when $\ell_y = (p_i)_y$, we say that we encounter a \emph{site event}.
 \end{defn}
-
 \begin{lem} \label{lem:newarciffsiteevent}
 The only way in which a new arc can appear on the beach line is through a site event.
 \end{lem}
@@ -215,7 +214,7 @@ Now we've characterized exactly when new arcs appear on the beach line. We now t
 \[
     \includegraphics[scale=0.25]{temp-fig-12}
 \]
-Let $\beta$ denote the parabola which $\alpha$ and $\alpha'$ are a part of, and let $\beta'$ be the parabola which $\alpha'$ is a part of. When $\alpha'$ is about to disappear, then there will be a time at which $\beta$ and $\beta'$ are tangent, and then we can reuse the contradiction argument from the first part of the proof of Lemma \ref{lem:newarciffsiteevent}. Thus $\alpha, \alpha'$ and $\alpha''$ are defined by 3 distinct sites $p_i, p_j, p_k \in P$. At the moment that $\alpha'$ disappears, then the three parabolas $\beta_i \supset \alpha$, $\beta_j \supset \alpha'$ and $\beta_k \supset \alpha''$ intersect in a single point $q$. We note that
+Let $\beta$ denote the parabola which $\alpha$ and $\alpha''$ are a part of, and let $\beta'$ be the parabola which $\alpha'$ is a part of. When $\alpha'$ is about to disappear, then there will be a time at which $\beta$ and $\beta'$ are tangent, and then we can reuse the contradiction argument from the first part of the proof of Lemma \ref{lem:newarciffsiteevent}. Thus $\alpha, \alpha'$ and $\alpha''$ are defined by 3 distinct sites $p_i, p_j, p_k \in P$. At the moment that $\alpha'$ disappears, then the three parabolas $\beta_i \supset \alpha$, $\beta_j \supset \alpha'$ and $\beta_k \supset \alpha''$ intersect in a single point $q$. We note that
 \[
     \dist(q, \ell) = \dist(q, p_i) = \dist(q, p_j) = \dist(q, p_k).
 \]
@@ -235,6 +234,35 @@ so Theorem \ref{thm:characterizationofbisectors} (i) gives us that $q$ is a vert
 \begin{lem}
 The only way in which an existing arc can disappear from the beach line is through a circle event.
 \end{lem}
+
+\newpage
+\begin{prop} \label{prop:highschool1}
+Let $f(x) = a x^2 + b x + c$ be a polynomial with discriminant $D > 0$ with roots $r_1 < r_2$. Then $r = \tfrac{1}{2}(r_1 + r_2)$, with $r_1 < r < r_2$, satisfies $\displaystyle\frac{df}{dx}(r) = 0$ and the expressions $\displaystyle\frac{df}{dx}(r_1)$ and $\displaystyle\frac{df}{dx}(r_2)$ have opposite signs.
+\end{prop}
+\begin{proof}
+We may write
+\[
+    f = a (x - r_1) (x - r_2) = a x^2 - a(r_1 + r_2) x + a r_1 r_2.
+\]
+Then $b = - a (r_1 + r_2)$, which gives us
+\[
+    \frac{df}{dx} (r) = 2 a r + b = 2 a \para{\frac{r_1 + r_2}{2}} - a (r_1 + r_2) = 0.
+\]
+Now note that $\displaystyle\frac{d^2 f}{d x^2}(x) = 2a \ne 0$, which gives us that for $r_1 < r$ and $r_2 > r$ that
+\[
+    \text{sgn} \para{\frac{df}{dx}(r_1)} = -\text{sgn} \para{\frac{df}{dx}(r_2)}.
+\]
+\end{proof}
+\todo{Put a cute geometrical proof of Proposition \ref{prop:highschool1} in a margin figure: Draw a parabola which intersects the $x$-axis twice at $r_1 < r_2$, and note that since the polynomial is symmetrical about its vertex, the expression $r = (r_1 + r_2)/2$ is immediate.}
+
+Proposition \ref{prop:highschool1} will be used when we want to find out which arc on the beach line lies above a new point discovered through a site event. When intersecting two of the paraboals of the beach line, we will find two intersection points, because of our assumptions. Proposition \ref{prop:highschool1} then gives us that at these intersection points $r_1, r_2$ we have that
+\[
+    \begin{cases}
+        \displaystyle\frac{d}{dx}(\beta_i - \beta_j)(r_k) \ne 0 \text{ for } k = 1, 2 & \text{ } \\
+        \text{sgn} \para{\displaystyle\frac{d(\beta_i - \beta_j)}{dx}(r_1)} = -\text{sgn} \para{\displaystyle\frac{d(\beta_i - \beta_j)}{dx}(r_2)} & \text{ }
+    \end{cases}
+\]
+We then want to locate a specific breakpoint between two arcs, and the above will help us to do this.
 
 %GeoGebra demo of two points and their beach line
 %\[

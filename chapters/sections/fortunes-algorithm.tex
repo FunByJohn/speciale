@@ -237,20 +237,20 @@ The only way in which an existing arc can disappear from the beach line is throu
 
 \newpage
 \begin{prop} \label{prop:highschool1}
-Let $f(x) = a x^2 + b x + c$ be a polynomial with discriminant $D > 0$ with roots $r_1 < r_2$. Then $r = \tfrac{1}{2}(r_1 + r_2)$, with $r_1 < r < r_2$, satisfies $\displaystyle\frac{df}{dx}(r) = 0$ and the expressions $\displaystyle\frac{df}{dx}(r_1)$ and $\displaystyle\frac{df}{dx}(r_2)$ have opposite signs.
+Let $f(x) = a x^2 + b x + c$ be a polynomial with discriminant $D > 0$ with roots $r_1 < r_2$. Then $r = \tfrac{1}{2}(r_1 + r_2)$ is the only solution to $\displaystyle\frac{df}{dx}(r) = 0$ and the expressions $\displaystyle\frac{df}{dx}(r_1)$ and $\displaystyle\frac{df}{dx}(r_2)$ are non-zero and have opposite signs.
 \end{prop}
 \begin{proof}
-We may write
+It is well-known that we may factor $f$ as follows:
 \[
     f = a (x - r_1) (x - r_2) = a x^2 - a(r_1 + r_2) x + a r_1 r_2.
 \]
-Then $b = - a (r_1 + r_2)$, which gives us
+Since two polynomials are equal if and only if their coefficients are equal we get $b = - a (r_1 + r_2)$, which gives us
 \[
     \frac{df}{dx} (r) = 2 a r + b = 2 a \para{\frac{r_1 + r_2}{2}} - a (r_1 + r_2) = 0.
 \]
-Now note that $\displaystyle\frac{d^2 f}{d x^2}(x) = 2a \ne 0$, which gives us that for $r_1 < r$ and $r_2 > r$ that
+This is the only solution since $\displaystyle\frac{df}{dx}$ is a first degree polynomial. Now note that $\displaystyle\frac{d^2 f}{d x^2}(x) = 2a \ne 0$ and $r_1 < r < r_2$ which gives us that
 \[
-    \text{sgn} \para{\frac{df}{dx}(r_1)} = -\text{sgn} \para{\frac{df}{dx}(r_2)}.
+    \text{sgn} \para{\frac{df}{dx}(r_1)} = -\text{sgn} \para{\frac{df}{dx}(r_2)} \ne 0.
 \]
 \end{proof}
 \todo{Put a cute geometrical proof of Proposition \ref{prop:highschool1} in a margin figure: Draw a parabola which intersects the $x$-axis twice at $r_1 < r_2$, and note that since the polynomial is symmetrical about its vertex, the expression $r = (r_1 + r_2)/2$ is immediate.}
@@ -258,11 +258,41 @@ Now note that $\displaystyle\frac{d^2 f}{d x^2}(x) = 2a \ne 0$, which gives us t
 Proposition \ref{prop:highschool1} will be used when we want to find out which arc on the beach line lies above a new point discovered through a site event. When intersecting two of the paraboals of the beach line, we will find two intersection points, because of our assumptions. Proposition \ref{prop:highschool1} then gives us that at these intersection points $r_1, r_2$ we have that
 \[
     \begin{cases}
-        \displaystyle\frac{d}{dx}(\beta_i - \beta_j)(r_k) \ne 0 \text{ for } k = 1, 2 & \text{ } \\
-        \text{sgn} \para{\displaystyle\frac{d(\beta_i - \beta_j)}{dx}(r_1)} = -\text{sgn} \para{\displaystyle\frac{d(\beta_i - \beta_j)}{dx}(r_2)} & \text{ }
+        \displaystyle\frac{d(\beta_i - \beta_j)}{dx}(r_k) \ne 0 \text{ for } k = 1, 2 & \text{ }\vspace{0.25cm} \\ \text{sgn} \para{\displaystyle\frac{d(\beta_i - \beta_j)}{dx}(r_1)} = -\text{sgn} \para{\displaystyle\frac{d(\beta_i - \beta_j)}{dx}(r_2)} & \text{ }
     \end{cases}
 \]
 We then want to locate a specific breakpoint between two arcs, and the above will help us to do this.
+
+To intersect two parabolas $\beta_i$ and $\beta_j$ we write
+\[
+    (\beta_i - \beta_j)(x) = a x^2 + b x + c,
+\]
+where (for $p = p_i$ and $q = p_j$)
+\begin{align*}
+    a &= \frac{1}{2} \para{\frac{1}{p_y - \ell_y} - \frac{1}{q_y - \ell_y}}, \\
+    b &= \frac{q_x}{q_y - \ell_y} - \frac{p_x}{p_y - \ell_y}, \\
+    c &= \frac{\ell_y^2 (p_y - q_y) + p_x^2 q_y + p_y^2 q_y - p_y (q_x^2 + q_y^2) + \ell_y (q_x^2 + q_y^2 - p_x^2 - p_y^2)}{2 (p_y - \ell_y) (q_y - \ell_y)}.
+\end{align*}
+The square root of the discriminant is then
+\[
+    d = \sqrt{b^2 - 4 ac} = \sqrt{\frac{(p_x - q_x)^2 + (p_y - q_y)^2}{(p_y - \ell_y)(q_y - \ell_y)}}.
+\]
+The $x$-valuees of the intersection points are then given by the well-known formulas
+\[
+    r_1 = \frac{-b - d}{2 a}, \quad
+    r_2 = \frac{-b + d}{2 a},
+\]
+which gives us the intersection points $q_1 = (r_1, \beta_i(r_1))$ and $q_2 = (r_2, \beta_i(r_2))$. Now, we want to find the breakpoint which at which an arc of $\beta_i$ exits the beach line, and an arc of $\beta_j$ enters the beach line, Proposition \ref{prop:highschool1} gives us a way of picking which one of $q_1$ and $q_2$ is the breakpoint that we need. For $\beta_i$ to exit and $\beta_j$ to enter, we need to pick $k$ such that
+\[
+    \frac{d \beta_i}{dx}(r_k) > \frac{d \beta_j}{dx}(r_k).
+\]
+Proposition \ref{prop:highschool1} garantuees that either
+\begin{align*}
+    \frac{d \beta_i}{dx}(r_1) > \frac{d \beta_j}{dx}(r_1) &\text{ and } \frac{d \beta_i}{dx}(r_2) < \frac{d \beta_j}{dx}(r_2) \\
+    &\text{or} \\
+    \frac{d \beta_i}{dx}(r_1) < \frac{d \beta_j}{dx}(r_1) &\text{ and } \frac{d \beta_i}{dx}(r_2) > \frac{d \beta_j}{dx}(r_2),
+\end{align*}
+so it is possible to make the right choice.
 
 %GeoGebra demo of two points and their beach line
 %\[

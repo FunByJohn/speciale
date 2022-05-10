@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+    <head>
+        <meta name="viewport" content="user-scalable=no,initial-scale=1,maximum-scale=1,minimum-scale=1,width=device-width">
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
+        <title>Thesis Demo</title>
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+                overflow: hidden;
+            }
+
+            input, select, #desc {
+                margin-right: 10px;
+                font-family: Verdana;
+                font-size: 14px;
+                color: #444;
+            }
+
+            #view {
+                margin: 0;
+                padding: 0;
+                z-index: 1;
+            }
+
+            .overlay {
+                position: absolute;
+                left: 20px;
+                bottom: 20px;
+            }
+
+            textarea {
+                width: 500px;
+                height: 200px;
+                margin-bottom: 10px;
+                display: none;
+            }
+        </style>
+        <script type="text/javascript" src="config.js" defer></script>
+        <script type="text/javascript" src="VoronoiDiagram.js" defer></script>
+        <script type="text/javascript" src="DelaunayTriangulation.js" defer></script>
+        <script type="text/javascript" src="main.js" defer></script>
+    </head>
+    <body>
+        <canvas id="view"></canvas>
+        <div class="overlay">
+            <textarea id="tikzCode"></textarea>
+            <input type="button" value="TikZ" id="tikzButton">
+            <select id="programSelector">
+                <option value="instant">
+                    Demo 1: Voronoi diagram - instant
+                </option>
+                <option value="events">
+                    Demo 2: Voronoi diagram - events
+                </option>
+                <option value="delaunay">
+                    Demo 3: Delaunay triangulation
+                </option>
+            </select>
+            <span id="desc">
+                Click to add a point
+            </span>
+        </div>
+    </body>
+</html>

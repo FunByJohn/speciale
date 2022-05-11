@@ -3,5 +3,6 @@ const Config = {
     pointFocusRadius  : 5.0,
     pointBlurRadius   : 2.0,
     beachLineStepSize : 1,
-    deleteRadius      : 20.0
+    deleteRadius      : 20.0,
+    sloMoFactor       : 0.05
 }

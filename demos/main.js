@@ -1,5 +1,3 @@
-// TODO: Make current drawing easily exportable to TikZ
-
 const ProgramType = {
     VoronoiInstant : 1,
     VoronoiEvents  : 2,
@@ -19,6 +17,8 @@ let points = [];
 let mouseY = 0;
 let sweepLineY = 0;
 let lockedSweepLine = false;
+let shiftDown = false;
+let shiftDownY = 0;
 let showingTikZ = false;
 let currentDrawing = [];
 
@@ -62,7 +62,8 @@ function init(event) {
     tikzButton.addEventListener('click', clickTikZButton);
 
     window.addEventListener('resize', resizeWindow);
-    window.addEventListener('keydown', handleKey);
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
     
     canvasElement.addEventListener('mousedown', handleClick);
     canvasElement.addEventListener('mousemove', mouseMove);
@@ -113,7 +114,7 @@ function handleClick(event) {
     draw();
 }
 
-function handleKey(event) {
+function handleKeyDown(event) {
     if (event.keyCode == 32) {
         lockedSweepLine = !lockedSweepLine;
 
@@ -122,13 +123,32 @@ function handleKey(event) {
             draw();
         }
     }
+
+    if (event.keyCode == 16) {
+        if (!shiftDown) {
+            shiftDownY = sweepLineY;
+        }
+
+        shiftDown = true;
+    }
+}
+
+function handleKeyUp(event) {
+    if (event.keyCode == 16) {
+        shiftDown = false;
+    }
 }
 
 function mouseMove(event) {
     mouseY = window.innerHeight - event.clientY;
 
-    if (!lockedSweepLine)
-        sweepLineY = mouseY;
+    if (!lockedSweepLine) {
+        if (!shiftDown) {
+            sweepLineY = mouseY;
+        } else {
+            sweepLineY = shiftDownY + Config.sloMoFactor * (mouseY - shiftDownY)
+        }
+    }
 
     if (currentProgram == ProgramType.VoronoiEvents)
         draw();
@@ -276,7 +296,7 @@ function draw() {
                 if (value == Number.POSITIVE_INFINITY)
                     value = height;
 
-                return value;
+                return Math.min(value, height);
             }
 
             var pointSequence = [];

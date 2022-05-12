@@ -1,5 +1,16 @@
 'use strict';
 
+function circleThroughThreePoints(x1, y1, x2, y2, x3, y3) {
+    let det = 4 * (-x2 * y1 + x3 * y1 + x1 * y2 - x3 * y2 - x1 * y3 + x2 * y3);
+    let squareSum1 = (x1 ** 2 - x2 ** 2 + y1 ** 2 - y2 ** 2);
+    let squareSum2 = (x1 ** 2 - x3 ** 2 + y1 ** 2 - y3 ** 2);
+    let centerX = (2 * squareSum1 * (y1 - y3) - 2 * squareSum2 * (y1 - y2)) / det;
+    let centerY = (2 * squareSum2 * (x1 - x2) - 2 * squareSum1 * (x1 - x3)) / det;
+    let radius = Math.sqrt((centerX - x1) ** 2 + (centerY - y1) ** 2);
+
+    return [centerX, centerY, radius];
+}
+
 /*
  *  Miscellaneous types
  */
@@ -44,12 +55,14 @@ class SiteEvent {
 }
 
 class CircleEvent {
-    constructor() {
+    constructor(point, arc) {
         this.type = EventType.Circle;
+        this.lowestPoint = point;
+        this.arc = arc;
     }
 
     queuePriority() {
-        return 0;
+        return this.lowestPoint.y;
     }
 
     toString() {
@@ -100,12 +113,87 @@ class EventQueue {
 }
 
 /*
- *  Tree 
+ *  Beach line binary search tree
  */
 
-class BeachLineTree {
-    constructor() {
+class BeachLineNodeType {
+    static Arc = new BeachLineNodeType('Arc');
+    static Breakpoint = new BeachLineNodeType('Breakpoint');
 
+    constructor(name) {
+        this.name = name;
+    }
+
+    toString() {
+        return `BeachLineNodeType.${this.name}`;
+    }
+}
+
+class BeachLine {
+    constructor() {
+        this.root = null;
+    }
+
+    insert(element) {
+        // Assumption: `element` is either of type BeachLineArc or BeachLineBreakpoint
+
+        if (this.root == null) {
+            if (element.type == BeachLineNodeType.Arc) {
+                this.root = element;
+            } else {
+                console.log("Warning! Called BeachLine.insert with a breakpoint when tree is empty!");
+            }
+        } else {
+
+        }
+    }
+}
+
+class BeachLineArc {
+    constructor(point) {
+        this.type = BeachLineNodeType.Arc;
+        this.point = point;
+        this.circleEvent = null;
+    }
+
+    key(sweepLineY) {
+        return point.x;
+    }
+}
+
+class BeachLineBreakpoint {
+    constructor(left, right) {
+        this.type = BeachLineNodeType.Breakpoint;
+        this.pair = [left, right];
+        this.halfEdge = null; // TODO
+    }
+
+    key(sweepLineY) {
+        // Compute intersection between (pair.0, pair.1) in that order
+        let px = this.pair[0].x;
+        let py = this.pair[0].y;
+        let qx = this.pair[1].x;
+        let qy = this.pair[1].y;
+        let ly = sweepLineY;
+        let hp = py - ly;
+        let hq = qy - ly;
+        let a = 0.5 * (1 / hp - 1 / hq);
+        let b = qx / hq - px / hp;
+        let d = Math.sqrt(((px - qx) ** 2 + (py - qy) ** 2) / (hp * hq));
+        let r1 = (-b - d) / (2 * a);
+        let r2 = (-b + d) / (2 * a);
+        let r;
+        let y;
+
+        if ((r1 - px) * (qy - ly) > (r1 - qx) * (py - ly)) {
+            r = r1;
+            y = (r ** 2 - 2 * px * r + px ** 2 + py ** 2 - ly ** 2) / (2 * (py - ly));
+        } else {
+            r = r2;
+            y = (r ** 2 - 2 * qx * r + qx ** 2 + qy ** 2 - ly ** 2) / (2 * (qy - ly));
+        }
+
+        return [r, y];
     }
 }
 
@@ -122,16 +210,16 @@ class VoronoiDiagram {
         }
 
         this.queue = new EventQueue();
-        this.beachLine = new BeachLineTree();
+        this.beachLine = new BeachLine();
         /* this.dcel = new DCEL(); */
 
-        this.setupSiteEvents();
-    }
-
-    setupSiteEvents() {
+        // Setup site events
         for (var point of this.points) {
             this.queue.add(new SiteEvent(point));
         }
+
+        // Compute diagram
+        this.compute();
     }
 
     compute() {
@@ -160,8 +248,7 @@ class VoronoiDiagram {
 function computeVoronoiDiagramStatic(points, width, height) {
     let lines = [];
 
-    /*let diagram = new VoronoiDiagram(points);
-    diagram.compute();*/  
+    /*let diagram = new VoronoiDiagram(points);*/  
 
     return lines;
 }

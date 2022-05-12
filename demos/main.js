@@ -349,6 +349,27 @@ function draw() {
         );
     }
 
+    /* Remove this - just testing stuff ***********/
+    /*for (var i = 2; i < points.length; i++) {
+        var [x1, y1] = points[i - 2];
+        var [x2, y2] = points[i - 1];
+        var [x3, y3] = points[i];
+        var [centerX, centerY, radius] = circleThroughThreePoints(x1, y1, x2, y2, x3, y3);
+
+        currentDrawing.push(circleShape(centerX, centerY, radius, false));
+    }*/
+
+    if (points.length > 1 && currentProgram == ProgramType.VoronoiEvents) {
+        var [x1, y1] = points[points.length - 2];
+        var [x2, y2] = points[points.length - 1];
+        var bp = new BeachLineBreakpoint(new Point(x1, y1), new Point(x2, y2));
+
+        var [x, y] = bp.key(sweepLineY);
+
+        currentDrawing.push(circleShape(x, y, 4, true));
+    }
+    /************/
+
     // Perform drawing operations
     canvasContext.clearRect(0, 0, width, height);
     canvasContext.lineStyle = '#000';

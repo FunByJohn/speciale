@@ -57,7 +57,7 @@ class SiteEvent {
 class CircleEvent {
     constructor(point, arc) {
         this.type = EventType.Circle;
-        this.lowestPoint = point;
+        this.point = point;
         this.arc = arc;
     }
 
@@ -134,17 +134,78 @@ class BeachLine {
         this.root = null;
     }
 
-    insert(element) {
-        // Assumption: `element` is either of type BeachLineArc or BeachLineBreakpoint
+    insert(point) {
+        let _this = this;
+        let updatedTree = false;
+        let prevNode = null;
+        let node = this.root;
+        let isLeft;
 
-        if (this.root == null) {
-            if (element.type == BeachLineNodeType.Arc) {
-                this.root = element;
+        function setNode(newNode) {
+            if (prevNode == null) {
+                _this.root = newNode;
             } else {
-                console.log("Warning! Called BeachLine.insert with a breakpoint when tree is empty!");
+                if (isLeft) {
+                    prevNode.left = newNode;
+                } else {
+                    prevNode.right = newNode;
+                }
             }
-        } else {
 
+            updatedTree = true;
+        }
+
+        while (!updatedTree) {
+            if (node == null) {
+                /*
+                  0 -> a
+                */
+                var arc = new BeachLineArc(point);
+                setNode(arc);
+            } else if (node.type == BeachLineNodeType.Arc) {
+                /*
+                         x
+                        / \
+                  a -> a1  y
+                          / \
+                         b  a2
+                */
+                var oldPoint = node.point;
+                var x = new BeachLineBreakpoint(oldPoint, point);
+                var y = new BeachLineBreakpoint(point, oldPoint);
+
+                x.left = new BeachLineArc(oldPoint);
+                x.right = y;
+
+                y.left = new BeachLineArc(point);
+                y.right = new BeachLineArc(oldPoint);
+
+                setNode(x);
+            } else if (node.type == BeachLineNodeType.Breakpoint) {
+                prevNode = node;
+                if (point.x < node.key(point.y)) {
+                    node = node.left;
+                    isLeft = true;
+                } else {
+                    node = node.right;
+                    isLeft = false;
+                }
+            }
+        }
+    }
+
+    debugFindPoints(node, sweepLineY, points) {
+        if (node === undefined)
+            node = this.root;
+
+        if (node != null) {
+            if (node.type == BeachLineNodeType.Arc) {
+                // do nothing
+            } else if (node.type == BeachLineNodeType.Breakpoint) {
+                this.debugFindPoints(node.left, sweepLineY, points);
+                points.push(node.location(sweepLineY));
+                this.debugFindPoints(node.right, sweepLineY, points);
+            }
         }
     }
 }
@@ -156,20 +217,22 @@ class BeachLineArc {
         this.circleEvent = null;
     }
 
-    key(sweepLineY) {
-        return point.x;
+    toString() {
+        return 'Arc ' + this.point;
     }
 }
 
 class BeachLineBreakpoint {
-    constructor(left, right) {
+    constructor(leftPoint, rightPoint) {
         this.type = BeachLineNodeType.Breakpoint;
-        this.pair = [left, right];
+        this.pair = [leftPoint, rightPoint];
         this.halfEdge = null; // TODO
+        this.left = null;
+        this.right = null;
+        this.treapPriority = Math.random();
     }
 
-    key(sweepLineY) {
-        // Compute intersection between (pair.0, pair.1) in that order
+    location(sweepLineY) {
         let px = this.pair[0].x;
         let py = this.pair[0].y;
         let qx = this.pair[1].x;
@@ -193,7 +256,15 @@ class BeachLineBreakpoint {
             y = (r ** 2 - 2 * qx * r + qx ** 2 + qy ** 2 - ly ** 2) / (2 * (qy - ly));
         }
 
-        return [r, y];
+        return new Point(r, y);
+    }
+
+    key(sweepLineY) {
+        return this.location(sweepLineY).x;
+    }
+
+    toString() {
+        return 'Breakpoint for (' + this.pair[0] + ', ' + this.pair[1] + ')';
     }
 }
 
@@ -202,7 +273,7 @@ class BeachLineBreakpoint {
  */
 
 class VoronoiDiagram {
-    constructor(points) {
+    constructor(points, sweepLineY) {
         this.points = [];
 
         for (let [x, y] of points) {
@@ -219,14 +290,22 @@ class VoronoiDiagram {
         }
 
         // Compute diagram
-        this.compute();
+        this.compute(sweepLineY);
     }
 
-    compute() {
-        console.log("Computing Voronoi diagram...");
+    compute(sweepLineY) {
+        if (sweepLineY === undefined) {
+            sweepLineY = Number.NEGATIVE_INFINITY;
+        }
+
+        // console.log("Computing Voronoi diagram...");
 
         while (!this.queue.isEmpty()) {
             var event = this.queue.remove();
+
+            if (event.point.y < sweepLineY) {
+                break;
+            }
 
             if (event.type == EventType.Site) {
                 this.handleSiteEvent(event);
@@ -237,28 +316,38 @@ class VoronoiDiagram {
     }
 
     handleSiteEvent(event) {
-        console.log("Site event! " + event.point);
+        // console.log("Site event! " + event.point);
+
+        this.beachLine.insert(event.point);
     }
 
     handleCircleEvent(event) {
-        console.log("Circle event!");
+        // console.log("Circle event!");
+    }
+
+    debugGetTreeState(sweepLineY) {
+        let points = [];
+
+        this.beachLine.debugFindPoints(undefined, sweepLineY, points);
+
+        return points;
     }
 }
 
 function computeVoronoiDiagramStatic(points, width, height) {
-    let lines = [];
+    let diagramPoints = [];
+    let diagramLines = [];
+    let diagram = new VoronoiDiagram(points);
 
-    /*let diagram = new VoronoiDiagram(points);*/  
-
-    return lines;
+    return [diagramPoints, diagramLines];
 }
 
 function computeVoronoiDiagramEvents(points, sweepLineY, width, height) {
-    var newPoints = [];
+    let diagramPoints = [];
+    let diagramLines = [];
+    let diagram = new VoronoiDiagram(points, sweepLineY);
 
-    for (let [x, y] of points) {
-        newPoints.push([x, Math.max(y, sweepLineY)]);
-    }
+    diagramPoints = diagram.debugGetTreeState(sweepLineY);
 
-    return computeVoronoiDiagramStatic(newPoints, width, height);
+    return [diagramPoints, diagramLines];
 }

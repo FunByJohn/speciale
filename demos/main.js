@@ -7,7 +7,8 @@ const ProgramType = {
 const ShapeType = {
     Circle       : 1,
     LineSegment  : 2,
-    LineSequence : 3
+    LineSequence : 3,
+    Text         : 4
 };
 
 let currentProgram = ProgramType.VoronoiInstant;
@@ -47,6 +48,15 @@ function lineSequenceShape(points) {
         type   : ShapeType.LineSequence,
         points : points
     };
+}
+
+function textShape(position, str) {
+    return {
+        type : ShapeType.Text,
+        x    : position.x,
+        y    : position.y,
+        str  : str
+    }
 }
 
 function init(event) {
@@ -252,9 +262,15 @@ function draw() {
     switch(currentProgram) {
         case ProgramType.VoronoiInstant:
         {
-            let lines = computeVoronoiDiagramStatic(points, width, height);
+            let [diagramPoints, diagramLines] = computeVoronoiDiagramStatic(points, width, height);
 
-            for (let [x1, y1, x2, y2] of lines) {
+            for (let point of diagramPoints) {
+                currentDrawing.push(
+                    circleShape(point.x, point.y, 3, true)
+                );
+            }
+
+            for (let [x1, y1, x2, y2] of diagramLines) {
                 currentDrawing.push(
                     lineSegmentShape(x1, y1, x2, y2)
                 );
@@ -265,9 +281,22 @@ function draw() {
 
         case ProgramType.VoronoiEvents:
         {
-            let lines = computeVoronoiDiagramEvents(points, sweepLineY, width, height);
+            let [diagramPoints, diagramLines] = computeVoronoiDiagramEvents(points, sweepLineY, width, height);
+            let pointCount = 0;
 
-            for (let [x1, y1, x2, y2] of lines) {
+            for (let point of diagramPoints) {
+                currentDrawing.push(
+                    circleShape(point.x, point.y, 3, true)
+                );
+
+                currentDrawing.push(
+                    textShape(new Point(point.x + 10, point.y - 10), pointCount.toString())
+                );
+
+                pointCount++;
+            }
+
+            for (let [x1, y1, x2, y2] of diagramLines) {
                 currentDrawing.push(
                     lineSegmentShape(x1, y1, x2, y2)
                 );
@@ -275,7 +304,7 @@ function draw() {
 
             // Draw sweep line
             currentDrawing.push(
-                lineSegmentShape(0, sweepLineY, width,  sweepLineY)
+                lineSegmentShape(0, sweepLineY, width, sweepLineY)
             );
 
             // Draw beach line
@@ -322,9 +351,9 @@ function draw() {
 
         case ProgramType.Delaunay:
         {
-            let lines = computeDelaunayTriangulation(points, width, height);
+            let diagramLines = computeDelaunayTriangulation(points, width, height);
 
-            for (let [x1, y1, x2, y2] of lines) {
+            for (let [x1, y1, x2, y2] of diagramLines) {
                 currentDrawing.push(
                     lineSegmentShape(x1, y1, x2, y2)
                 );
@@ -357,7 +386,7 @@ function draw() {
         var [centerX, centerY, radius] = circleThroughThreePoints(x1, y1, x2, y2, x3, y3);
 
         currentDrawing.push(circleShape(centerX, centerY, radius, false));
-    }*/
+    }
 
     if (points.length > 1 && currentProgram == ProgramType.VoronoiEvents) {
         var [x1, y1] = points[points.length - 2];
@@ -367,7 +396,7 @@ function draw() {
         var [x, y] = bp.key(sweepLineY);
 
         currentDrawing.push(circleShape(x, y, 4, true));
-    }
+    }*/
     /************/
 
     // Perform drawing operations
@@ -415,6 +444,18 @@ function draw() {
                 
                 break;
             };
+
+            case ShapeType.Text:
+                var transform = canvasContext.getTransform();
+                
+                canvasContext.font = '15px serif';
+                canvasContext.translate(0, height);
+                canvasContext.scale(1, -1);
+                canvasContext.fillText(op.str, op.x, height - op.y);
+                canvasContext.setTransform(transform);
+                
+
+                break;
         }
     }
 

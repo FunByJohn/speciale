@@ -379,15 +379,18 @@ function draw() {
     }
 
     /* Remove this - just testing stuff ***********/
-    /*for (var i = 2; i < points.length; i++) {
+    for (var i = 2; i < points.length; i++) {
         var [x1, y1] = points[i - 2];
         var [x2, y2] = points[i - 1];
         var [x3, y3] = points[i];
-        var [centerX, centerY, radius] = circleThroughThreePoints(x1, y1, x2, y2, x3, y3);
+        var p = new Point(x1, y1);
+        var q = new Point(x2, y2);
+        var r = new Point(x3, y3);
+        var [center, radius] = circleThroughThreePoints(p, q, r);
 
-        currentDrawing.push(circleShape(centerX, centerY, radius, false));
+        currentDrawing.push(circleShape(center.x, center.y, radius, false));
     }
-
+    /*
     if (points.length > 1 && currentProgram == ProgramType.VoronoiEvents) {
         var [x1, y1] = points[points.length - 2];
         var [x2, y2] = points[points.length - 1];
@@ -397,6 +400,16 @@ function draw() {
 
         currentDrawing.push(circleShape(x, y, 4, true));
     }*/
+
+    if (points.length >= 3) {
+        var p = new Point(points[0][0], points[0][1]);
+        var q = new Point(points[1][0], points[1][1]);
+        var r = new Point(points[2][0], points[2][1]);
+
+        var point = intersectBisectors(p, q, r);
+
+        currentDrawing.push(circleShape(point.x, point.y, 4, false));
+    }
     /************/
 
     // Perform drawing operations
@@ -454,7 +467,6 @@ function draw() {
                 canvasContext.fillText(op.str, op.x, height - op.y);
                 canvasContext.setTransform(transform);
                 
-
                 break;
         }
     }

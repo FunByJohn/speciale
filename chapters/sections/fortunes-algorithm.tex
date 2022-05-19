@@ -302,52 +302,89 @@ if and only if
 \]
 
 \newpage
-\subsubsection*{Finding the circle through 3 points}
-As a part of the algorithm, we need to find the circle $C$ through 3 points. Let $(x_1, y_1), (x_2, y_2), (x_3, y_3) \in \R^2$ denote the points. To find the circle, we need to find its center $(a,b) \in \R^2$ and its radius $r > 0$. These will satisfy
-\begin{align}
-    (x_1 - a)^2 + (y_1 - b)^2 - r^2 &= 0, \label{align:circleeq1} \\
-    (x_2 - a)^2 + (y_2 - b)^2 - r^2 &= 0, \label{align:circleeq2} \\
-    (x_3 - a)^2 + (y_3 - b)^2 - r^2 &= 0. \label{align:circleeq3}
-\end{align}
-By subtracting (\ref{align:circleeq1}) from (\ref{align:circleeq2}) and subtracting (\ref{align:circleeq1}) from (\ref{align:circleeq3}) and rearranging we obtain
-\begin{align}
-    2 a (x_1 - x_2) + 2 b (y_1 - y_2) &= x_1^2 - x_2^2 + y_1^2 - y_2^2, \\
-    2 a (x_1 - x_3) + 2 b (y_1 - y_3) &= x_1^2 - x_3^2 + y_1^2 - y_3^2.
-\end{align}
-This can be rewritten in matrix form as
+\subsubsection*{Intersecting bisectors and finding the circle through 3 points}
+As a part of the algorithm, we need to find the circle $C$ through 3 points $p_1, p_2, p_3$. It turns out if we intersect $\bi(p_1, p_2)$ and $\bi(p_2, p_3)$ we find the center of $C$, and then to find the radius we just need to find the distance from the center to one of the points. This is because if $x \in \bi(p_1, p_2) \cap \bi(p_2, p_3)$ then
 \[
-    A
+    \dist(x, p_1) = \dist(x, p_2) = \dist(x, p_3),
+\]
+so $x$ is exactly the center of a circle through $p_1, p_2, p_3$.
+
+To intersect the bisectors, we form the midpoints
+\[
+    m_1 = \frac{1}{2}(p + q) \quad \text{and} \quad m_2 = \frac{1}{2}(q + r)
+\]
+and then we let $d_1$ and $d_2$ denote $q - p$ and $r - q$ rotated 90 degrees counterclockwise. Then $s \mapsto m_1 + s d_1$ and $t \mapsto m_2 + t d_2$ parametrize $\bi(p_1, p_2)$ and $\bi(p_2, p_3)$, respectively. To intersect $\bi(p_1, p_2)$ and $\bi(p_2, p_3)$ we then need to find $s, t \in \R$ such that
+\[
+    m_1 + s d_1 = m_2 + t d_2.
+\]
+This can be rewritten into the matrix equation
+\[
     \begin{pmatrix}
-        a \\ b
+        \mid & \mid \\
+        d_1 & d_2 \\
+        \mid & \mid
+    \end{pmatrix} \begin{pmatrix}
+        s \\
+        -t
+    \end{pmatrix}
+    =
+    m_2 - m_1,
+\]
+and if $d_1$ and $d_2$ are linearly independent then it has the unique solution
+\[
+    \begin{pmatrix}
+        s \\
+        -t
     \end{pmatrix}
     =
     \begin{pmatrix}
-        x_1^2 - x_2^2 + y_1^2 - y_2^2 \\
-        x_1^2 - x_3^2 + y_1^2 - y_3^2
-    \end{pmatrix}
-    \quad
-    \text{ where }
-    \quad
-    A = 2 \begin{pmatrix}
-        x_1 - x_2 & y_1 - y_2 \\
-        x_1 - x_3 & y_1 - y_3
-    \end{pmatrix}.
+        \mid & \mid \\
+        d_1 & d_2 \\
+        \mid & \mid
+    \end{pmatrix}^{-1} (m_2 - m_1).
 \]
-It is well-known from linear algebra that $\det(A) = \det(A^T)$, and that the above system has a unique solution if and only if $\det(A) \ne 0$. We have that $\det(A^T) = 0$ if and only if the points are collinear. Now, assuming the points are not collinear, the unique solution for $(a, b)$ is then given by
-\begin{align*}
-    a &= \frac{2 (x_1^2 - x_2^2 + y_1^2 - y_2^2) (y_1 - y_3) - 2 (x_1^2 - x_3^2 + y_1^2 - y_3^2) (y_1 - y_2)}{\det(A)}, \\
-    b &= \frac{2 (x_1^2 - x_3^2 + y_1^2 - y_3^2) (x_1 - x_2) - 2 (x_1^2 - x_2^2 + y_1^2 - y_2^2) (x_1 - x_3)}{\det(A)},
-\end{align*}
-where
-\[
-    \det(A) = 4 (-x_2 y_1 + x_3 y_1 + x_1 y_2 - x_3 y_2 - x_1 y_3 + x_2 y_3)
-\]
-Once the center $(a, b)$ of the circle $C$ has been found, we can find its radius $r$ by computing the distance from one of the three points to the center, for example
-\[
-    r = \norm{(x_1, y_1) - (a, b)}.
-\]
+This is implemented in the code as the function \texttt{intersectBisectors} and used in the fucntion \texttt{circleThroughThreePoints}.
 
-%GeoGebra demo of two points and their beach line
+%Let $(x_1, y_1), (x_2, y_2), (x_3, y_3) \in \R^2$ denote the points. To find the circle, we need to find its center $(a,b) \in \R^2$ and its radius $r > 0$. These will satisfy
+%\begin{align}
+%    (x_1 - a)^2 + (y_1 - b)^2 - r^2 &= 0, \label{align:circleeq1} \\
+%    (x_2 - a)^2 + (y_2 - b)^2 - r^2 &= 0, \label{align:circleeq2} \\
+%    (x_3 - a)^2 + (y_3 - b)^2 - r^2 &= 0. \label{align:circleeq3}
+%\end{align}
+%By subtracting (\ref{align:circleeq1}) from (\ref{align:circleeq2}) and subtracting (\ref{align:circleeq1}) from (\ref{align:circleeq3}) and rearranging we obtain
+%\begin{align}
+%    2 a (x_1 - x_2) + 2 b (y_1 - y_2) &= x_1^2 - x_2^2 + y_1^2 - y_2^2, \\
+%    2 a (x_1 - x_3) + 2 b (y_1 - y_3) &= x_1^2 - x_3^2 + y_1^2 - y_3^2.
+%\end{align}
+%This can be rewritten in matrix form as
 %\[
-%    \boxed{\text{\url{https://www.geogebra.org/calculator/zreutrt6}}}
+%    A
+%    \begin{pmatrix}
+%        a \\ b
+%    \end{pmatrix}
+%    =
+%    \begin{pmatrix}
+%        x_1^2 - x_2^2 + y_1^2 - y_2^2 \\
+%        x_1^2 - x_3^2 + y_1^2 - y_3^2
+%    \end{pmatrix}
+%    \quad
+%    \text{ where }
+%    \quad
+%    A = 2 \begin{pmatrix}
+%        x_1 - x_2 & y_1 - y_2 \\
+%        x_1 - x_3 & y_1 - y_3
+%    \end{pmatrix}.
 %\]
+%It is well-known from linear algebra that $\det(A) = \det(A^T)$, and that the above system has a unique solution if and only if $\det(A) \ne 0$. We have that $\det(A^T) = 0$ if and only if the points are collinear. Now, assuming the %points are not collinear, the unique solution for $(a, b)$ is then given by
+%\begin{align*}
+%    a &= \frac{2 (x_1^2 - x_2^2 + y_1^2 - y_2^2) (y_1 - y_3) - 2 (x_1^2 - x_3^2 + y_1^2 - y_3^2) (y_1 - y_2)}{\det(A)}, \\
+%    b &= \frac{2 (x_1^2 - x_3^2 + y_1^2 - y_3^2) (x_1 - x_2) - 2 (x_1^2 - x_2^2 + y_1^2 - y_2^2) (x_1 - x_3)}{\det(A)},
+%\end{align*}
+%where
+%\[
+%    \det(A) = 4 (-x_2 y_1 + x_3 y_1 + x_1 y_2 - x_3 y_2 - x_1 y_3 + x_2 y_3)
+%\]
+%Once the center $(a, b)$ of the circle $C$ has been found, we can find its radius $r$ by computing the distance from one of the three points to the center, for example
+%\[
+%    r = \norm{(x_1, y_1) - (a, b)}.
+%\]%

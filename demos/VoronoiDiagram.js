@@ -1,14 +1,21 @@
 'use strict';
 
-function circleThroughThreePoints(x1, y1, x2, y2, x3, y3) {
-    let det = 4 * (-x2 * y1 + x3 * y1 + x1 * y2 - x3 * y2 - x1 * y3 + x2 * y3);
-    let squareSum1 = (x1 ** 2 - x2 ** 2 + y1 ** 2 - y2 ** 2);
-    let squareSum2 = (x1 ** 2 - x3 ** 2 + y1 ** 2 - y3 ** 2);
-    let centerX = (2 * squareSum1 * (y1 - y3) - 2 * squareSum2 * (y1 - y2)) / det;
-    let centerY = (2 * squareSum2 * (x1 - x2) - 2 * squareSum1 * (x1 - x3)) / det;
-    let radius = Math.sqrt((centerX - x1) ** 2 + (centerY - y1) ** 2);
+function intersectBisectors(p, q, r) {
+    let m1 = Point.midpoint(p, q);
+    let m2 = Point.midpoint(q, r);
+    let d1 = Point.sub(q, p).hat();
+    let d2 = Point.sub(r, q).hat();
+    let solution = Matrix.withColumns(d1, d2).inverse().apply(Point.sub(m2, m1));
+    let s = solution.x;
 
-    return [centerX, centerY, radius];
+    return Point.add(m1, d1.scale(s));
+}
+
+function circleThroughThreePoints(p, q, r) {
+    let center = intersectBisectors(p, q, r);
+    let radius = Point.sub(center, p).norm();
+
+    return [center, radius];
 }
 
 /*
@@ -23,6 +30,70 @@ class Point {
 
     toString() {
         return `Point(${this.x}, ${this.y})`;
+    }
+
+    scale(factor) {
+        return new Point(factor * this.x, factor * this.y);
+    }
+
+    hat() {
+        return new Point(-this.y, this.x);
+    }
+
+    norm() {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+
+    static add(p1, p2) {
+        return new Point(p1.x + p2.x, p1.y + p2.y);
+    }
+
+    static sub(p1, p2) {
+        return new Point(p1.x - p2.x, p1.y - p2.y);
+    }
+
+    static midpoint(p1, p2) {
+        return Point.add(p1, p2).scale(0.5);
+    }
+}
+
+class Matrix {
+    constructor(a, b, c, d) {
+        this.a = a; this.b = b;
+        this.c = c; this.d = d;
+    }
+
+    static withColumns(v1, v2) {
+        return new Matrix(
+            v1.x, v2.x,
+            v1.y, v2.y
+        );
+    }
+
+    determinant() {
+        return this.a * this.d - this.b * this.c;
+    }
+
+    inverse() {
+        let det = this.determinant();
+
+        if (det == 0) {
+            throw new Error("Matrix was not invertible!");
+        }
+
+        let invDet = 1 / det;
+
+        return new Matrix(
+             invDet * this.d, -invDet * this.b,
+            -invDet * this.c,  invDet * this.a
+        );
+    }
+
+    apply(v) {
+        return new Point(
+            this.a * v.x + this.b * v.y,
+            this.c * v.x + this.d * v.y
+        );
     }
 }
 
@@ -140,6 +211,7 @@ class BeachLine {
         let prevNode = null;
         let node = this.root;
         let isLeft;
+        let newArc;
 
         function setNode(newNode) {
             if (prevNode == null) {
@@ -160,8 +232,9 @@ class BeachLine {
                 /*
                   0 -> a
                 */
-                var arc = new BeachLineArc(point);
+                let arc = new BeachLineArc(point);
                 setNode(arc);
+                newArc = arc;
             } else if (node.type == BeachLineNodeType.Arc) {
                 /*
                          x
@@ -170,15 +243,28 @@ class BeachLine {
                           / \
                          b  a2
                 */
-                var oldPoint = node.point;
-                var x = new BeachLineBreakpoint(oldPoint, point);
-                var y = new BeachLineBreakpoint(point, oldPoint);
+                let oldPoint = node.point;
+                let a        = node;
+                let x        = new BeachLineBreakpoint(oldPoint, point);
+                let y        = new BeachLineBreakpoint(point, oldPoint);
+                let a1       = new BeachLineArc(oldPoint);
+                let b        = new BeachLineArc(point);
+                let a2       = new BeachLineArc(oldPoint);
 
-                x.left = new BeachLineArc(oldPoint);
+                x.left  = a1;
                 x.right = y;
+                y.left  = b;
+                y.right = a2;
 
-                y.left = new BeachLineArc(point);
-                y.right = new BeachLineArc(oldPoint);
+                newArc = b;
+
+                // Setup pointers
+                a1.leftArc  = a.leftArc;
+                a1.rightArc = b;
+                b.leftArc   = a1;
+                b.rightArc  = a2;
+                a2.leftArc  = b;
+                a2.rightArc = a.rightArc;
 
                 setNode(x);
             } else if (node.type == BeachLineNodeType.Breakpoint) {
@@ -192,6 +278,8 @@ class BeachLine {
                 }
             }
         }
+
+        return newArc;
     }
 
     debugFindPoints(node, sweepLineY, points) {
@@ -215,6 +303,8 @@ class BeachLineArc {
         this.type = BeachLineNodeType.Arc;
         this.point = point;
         this.circleEvent = null;
+        this.leftArc = null;
+        this.rightArc = null;
     }
 
     toString() {
@@ -285,7 +375,7 @@ class VoronoiDiagram {
         /* this.dcel = new DCEL(); */
 
         // Setup site events
-        for (var point of this.points) {
+        for (let point of this.points) {
             this.queue.add(new SiteEvent(point));
         }
 
@@ -301,7 +391,7 @@ class VoronoiDiagram {
         // console.log("Computing Voronoi diagram...");
 
         while (!this.queue.isEmpty()) {
-            var event = this.queue.remove();
+            let event = this.queue.remove();
 
             if (event.point.y < sweepLineY) {
                 break;
@@ -315,10 +405,39 @@ class VoronoiDiagram {
         }
     }
 
+    maybeAddCircleEvent(sweepLineY, arc1, arc2, arc3) {
+        if (arc1 == null || arc2 == null || arc3 == null)
+            return;
+
+        let p1 = arc1.point;
+        let p2 = arc2.point;
+        let p3 = arc3.point;
+        let intersection = intersectBisectors(p1, p2, p3);
+
+        if (intersection.y <= sweepLineY) {
+            
+        }
+    }
+
     handleSiteEvent(event) {
         // console.log("Site event! " + event.point);
 
-        this.beachLine.insert(event.point);
+        let arc = this.beachLine.insert(event.point);
+        let sweepLineY = event.point.y;
+
+        this.maybeAddCircleEvent(
+            sweepLineY,
+            arc.leftArc != null ? arc.leftArc.leftArc : null,
+            arc.leftArc,
+            arc
+        );
+
+        this.maybeAddCircleEvent(
+            sweepLineY,
+            arc,
+            arc.rightArc,
+            arc.rightArc != null ? arc.rightArc.rightArc : null
+        );
     }
 
     handleCircleEvent(event) {

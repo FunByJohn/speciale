@@ -44,6 +44,10 @@ class Point {
         return Math.sqrt(this.x * this.x + this.y * this.y);
     }
 
+    copy() {
+        return new Point(this.x, this.y);
+    }
+
     static add(p1, p2) {
         return new Point(p1.x + p2.x, p1.y + p2.y);
     }
@@ -133,7 +137,7 @@ class CircleEvent {
     }
 
     queuePriority() {
-        return this.lowestPoint.y;
+        return this.point.y;
     }
 
     toString() {
@@ -328,6 +332,13 @@ class BeachLineBreakpoint {
         let qx = this.pair[1].x;
         let qy = this.pair[1].y;
         let ly = sweepLineY;
+
+        if (py == ly) {
+            return new Point(px, (px ** 2 - 2 * qx * px + qx ** 2 + qy ** 2 - ly ** 2) / (2 * (qy - ly)));
+        } else if (qy == ly) {
+            return new Point(qx, (qx ** 2 - 2 * px * qx + px ** 2 + py ** 2 - ly ** 2) / (2 * (py - ly)));
+        }
+
         let hp = py - ly;
         let hq = qy - ly;
         let a = 0.5 * (1 / hp - 1 / hq);
@@ -379,6 +390,8 @@ class VoronoiDiagram {
             this.queue.add(new SiteEvent(point));
         }
 
+        this.debugCircleEvents = [];
+
         // Compute diagram
         this.compute(sweepLineY);
     }
@@ -405,17 +418,30 @@ class VoronoiDiagram {
         }
     }
 
-    maybeAddCircleEvent(sweepLineY, arc1, arc2, arc3) {
+    maybeAddCircleEvent(circleEventArc, sweepLineY, arc1, arc2, arc3) {
         if (arc1 == null || arc2 == null || arc3 == null)
             return;
 
         let p1 = arc1.point;
         let p2 = arc2.point;
         let p3 = arc3.point;
-        let intersection = intersectBisectors(p1, p2, p3);
+        let leftBreakpoint = new BeachLineBreakpoint(p1, p2);
+        let rightBreakpoint = new BeachLineBreakpoint(p2, p3);
+        let x1 = leftBreakpoint.key(sweepLineY);
+        let x2 = rightBreakpoint.key(sweepLineY);
+        let x1new = leftBreakpoint.key(sweepLineY - 0.01);
+        let x2new = rightBreakpoint.key(sweepLineY - 0.01);
+        let oldDiff = Math.abs(x2 - x1);
+        let newDiff = Math.abs(x2new - x1new);
 
-        if (intersection.y <= sweepLineY) {
-            
+        //console.log("oldDiff: " + oldDiff + ", newDiff: " + newDiff);
+
+        if (newDiff < oldDiff) {
+            // breakpoints are converging
+            let [center, radius] = circleThroughThreePoints(p1, p2, p3);
+            let lowestPoint = Point.sub(center, new Point(0, radius));
+            this.queue.add(new CircleEvent(lowestPoint, circleEventArc));
+            this.debugCircleEvents.push([center.copy(), radius]);
         }
     }
 
@@ -426,17 +452,19 @@ class VoronoiDiagram {
         let sweepLineY = event.point.y;
 
         this.maybeAddCircleEvent(
+            arc,
             sweepLineY,
-            arc.leftArc != null ? arc.leftArc.leftArc : null,
+            (arc.leftArc != null) ? arc.leftArc.leftArc : null,
             arc.leftArc,
             arc
         );
 
         this.maybeAddCircleEvent(
+            arc,
             sweepLineY,
             arc,
             arc.rightArc,
-            arc.rightArc != null ? arc.rightArc.rightArc : null
+            (arc.rightArc != null) ? arc.rightArc.rightArc : null
         );
     }
 
@@ -454,19 +482,19 @@ class VoronoiDiagram {
 }
 
 function computeVoronoiDiagramStatic(points, width, height) {
-    let diagramPoints = [];
-    let diagramLines = [];
     let diagram = new VoronoiDiagram(points);
 
-    return [diagramPoints, diagramLines];
+    return [[], [], []];
 }
 
 function computeVoronoiDiagramEvents(points, sweepLineY, width, height) {
-    let diagramPoints = [];
+    let diagramBreakpoints = [];
     let diagramLines = [];
+    let diagramCircles = [];
     let diagram = new VoronoiDiagram(points, sweepLineY);
 
-    diagramPoints = diagram.debugGetTreeState(sweepLineY);
+    diagramBreakpoints = diagram.debugGetTreeState(sweepLineY);
+    diagramCircles = diagram.debugCircleEvents;
 
-    return [diagramPoints, diagramLines];
+    return [diagramBreakpoints, diagramLines, diagramCircles];
 }

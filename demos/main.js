@@ -262,9 +262,9 @@ function draw() {
     switch(currentProgram) {
         case ProgramType.VoronoiInstant:
         {
-            let [diagramPoints, diagramLines] = computeVoronoiDiagramStatic(points, width, height);
+            let [diagramPoints, diagramLines, diagramCircles] = computeVoronoiDiagramStatic(points, width, height);
 
-            for (let point of diagramPoints) {
+            /*for (let point of diagramPoints) {
                 currentDrawing.push(
                     circleShape(point.x, point.y, 3, true)
                 );
@@ -274,17 +274,17 @@ function draw() {
                 currentDrawing.push(
                     lineSegmentShape(x1, y1, x2, y2)
                 );
-            }
+            }*/
 
             break;
         };
 
         case ProgramType.VoronoiEvents:
         {
-            let [diagramPoints, diagramLines] = computeVoronoiDiagramEvents(points, sweepLineY, width, height);
+            let [diagramBreakpoints, diagramLines, diagramCircles] = computeVoronoiDiagramEvents(points, sweepLineY, width, height);
             let pointCount = 0;
 
-            for (let point of diagramPoints) {
+            for (let point of diagramBreakpoints) {
                 currentDrawing.push(
                     circleShape(point.x, point.y, 3, true)
                 );
@@ -300,6 +300,14 @@ function draw() {
                 currentDrawing.push(
                     lineSegmentShape(x1, y1, x2, y2)
                 );
+            }
+
+            for (let [center, radius] of diagramCircles) {
+                if (sweepLineY >= center.y - radius) {
+                    currentDrawing.push(
+                        circleShape(center.x, center.y, radius, false)
+                    );
+                }
             }
 
             // Draw sweep line
@@ -379,7 +387,7 @@ function draw() {
     }
 
     /* Remove this - just testing stuff ***********/
-    for (var i = 2; i < points.length; i++) {
+    /*for (var i = 2; i < points.length; i++) {
         var [x1, y1] = points[i - 2];
         var [x2, y2] = points[i - 1];
         var [x3, y3] = points[i];
@@ -389,7 +397,7 @@ function draw() {
         var [center, radius] = circleThroughThreePoints(p, q, r);
 
         currentDrawing.push(circleShape(center.x, center.y, radius, false));
-    }
+    }*/
     /*
     if (points.length > 1 && currentProgram == ProgramType.VoronoiEvents) {
         var [x1, y1] = points[points.length - 2];
@@ -401,7 +409,7 @@ function draw() {
         currentDrawing.push(circleShape(x, y, 4, true));
     }*/
 
-    if (points.length >= 3) {
+    /*if (points.length >= 3) {
         var p = new Point(points[0][0], points[0][1]);
         var q = new Point(points[1][0], points[1][1]);
         var r = new Point(points[2][0], points[2][1]);
@@ -409,7 +417,7 @@ function draw() {
         var point = intersectBisectors(p, q, r);
 
         currentDrawing.push(circleShape(point.x, point.y, 4, false));
-    }
+    }*/
     /************/
 
     // Perform drawing operations

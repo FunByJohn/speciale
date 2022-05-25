@@ -283,17 +283,24 @@ function draw() {
         {
             let [diagramBreakpoints, diagramLines, diagramCircles] = computeVoronoiDiagramEvents(points, sweepLineY, width, height);
             let pointCount = 0;
+            let prevPoint = null;
+            let prevShape = null;
 
             for (let point of diagramBreakpoints) {
                 currentDrawing.push(
                     circleShape(point.x, point.y, 3, true)
                 );
 
-                currentDrawing.push(
-                    textShape(new Point(point.x + 10, point.y - 10), pointCount.toString())
-                );
+                if (prevPoint == null || Point.sub(point, prevPoint).norm() > 5.0) {
+                    var shape = textShape(new Point(point.x + 10, point.y - 10), pointCount.toString());
+                    prevShape = shape;
+                    currentDrawing.push(shape);
+                } else {
+                    prevShape.str += ', ' + pointCount.toString();
+                }
 
                 pointCount++;
+                prevPoint = point;
             }
 
             for (let [x1, y1, x2, y2] of diagramLines) {

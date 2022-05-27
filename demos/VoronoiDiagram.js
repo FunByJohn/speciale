@@ -1,5 +1,33 @@
 'use strict';
 
+class DeterministicUIDGenerator {
+    static state = [];
+    static index = 0;
+
+    static reset() {
+        DeterministicUIDGenerator.index = 0;
+    }
+
+    static generate() {
+        let uid;
+
+        if (DeterministicUIDGenerator.state.length <= DeterministicUIDGenerator.index) {
+            /*const min = 46656;
+            const max = 1679615;
+    
+            uid = (Math.floor(min + (max - min) * Math.random())).toString(36);*/
+            uid = (10 + DeterministicUIDGenerator.index).toString(36);
+            DeterministicUIDGenerator.state.push(uid);
+        } else {
+            uid = DeterministicUIDGenerator.state[DeterministicUIDGenerator.index];
+        }
+
+        DeterministicUIDGenerator.index++;
+
+        return uid;
+    }
+}
+
 function doRaysIntersect(ray1Start, ray1Dir, ray2Start, ray2Dir) {
     let matrix = Matrix.withColumns(ray1Dir, ray2Dir);
 
@@ -153,6 +181,7 @@ class CircleEvent {
         this.type = EventType.Circle;
         this.point = point;
         this.arc = arc;
+        this.debugDesc = null;
     }
 
     queuePriority() {
@@ -203,11 +232,25 @@ class EventQueue {
 
     cancel(event) {
         let index = this.array.indexOf(event);
+        console.log("Cancel index: " + index);
         this.array.splice(index, 1);
     }
 
     isEmpty() {
         return this.array.length == 0;
+    }
+
+    debugGetCircleEvents() {
+        var list = [];
+        
+        for (var i = 0; i < this.array.length; i++) {
+            var event = this.array[i];
+            if (event.type == EventType.Circle) {
+                list.push(event.debugDesc);
+            }
+        }
+
+        return list;
     }
 }
 
@@ -346,7 +389,7 @@ class BeachLine {
 
             if (node.type == BeachLineNodeType.Arc) {
                 let points = [];
-                this.debugFindPoints(undefined, sweepLineY, points);
+                this.debugFindPoints(undefined, sweepLineY, points, []);
                 throw new Error("Found arc when looking for breakpoint! " + points);
             }
             
@@ -379,16 +422,17 @@ class BeachLine {
         let [rightBreakpoint, rightParent] = this.findBreakpoint(arc.point, rightArc.point, sweepLineY);
         let newBreakpoint = new BeachLineBreakpoint(leftArc.point, rightArc.point);
 
+        console.log("Left: " + leftBreakpoint.uid);
+        console.log("Right: " + rightBreakpoint.uid);
+        console.log("Left parent: " + leftParent.uid);
+        console.log("Right parent: " + rightParent.uid);
+
         if (rightBreakpoint.left === arc) {
             // `leftBreakpoint` is an ancestor of `rightBreakpoint` in the tree
             newBreakpoint.left = leftBreakpoint.left;
             newBreakpoint.right = leftBreakpoint.right;
 
-            if (rightParent.left === rightBreakpoint) {
-                rightParent.left = rightBreakpoint.right;
-            } else if (rightParent.right === rightBreakpoint) {
-                rightParent.right = rightBreakpoint.right;
-            }
+            console.log([rightParent != null, rightParent.left === rightBreakpoint, rightParent.right === rightBreakpoint, rightBreakpoint.right]);
 
             if (leftParent == null) {
                 this.root = newBreakpoint;
@@ -401,16 +445,20 @@ class BeachLine {
                     leftParent.right = newBreakpoint;
                 }
             }
+
+            if (rightParent === leftBreakpoint) {
+                newBreakpoint.right = rightBreakpoint.right;
+            } else {
+                if (rightParent.left === rightBreakpoint) {
+                    rightParent.left = rightBreakpoint.right;
+                } else if (rightParent.right === rightBreakpoint) {
+                    rightParent.right = rightBreakpoint.right;
+                }
+            }
         } else if (leftBreakpoint.right === arc) {
             // `rightBreakpoint` is an ancestor of `leftBreakpoint` in the tree
             newBreakpoint.left = rightBreakpoint.left;
             newBreakpoint.right = rightBreakpoint.right;
-
-            if (leftParent.left === leftBreakpoint) {
-                leftParent.left = leftBreakpoint.left;
-            } else if (leftParent.right === leftBreakpoint) {
-                leftParent.right = leftBreakpoint.left;
-            }
 
             if (rightParent == null) {
                 this.root = newBreakpoint;
@@ -423,6 +471,16 @@ class BeachLine {
                     rightParent.right = newBreakpoint;
                 }
             }
+
+            if (leftParent === rightBreakpoint) {
+                newBreakpoint.left = leftBreakpoint.left;
+            } else {
+                if (leftParent.left === leftBreakpoint) {
+                    leftParent.left = leftBreakpoint.left;
+                } else if (leftParent.right === leftBreakpoint) {
+                    leftParent.right = leftBreakpoint.left;
+                }
+            }
         } else {
             console.log("oh no");
         }
@@ -431,7 +489,7 @@ class BeachLine {
         rightArc.leftArc = leftArc;
     }
 
-    debugFindPoints(node, sweepLineY, points) {
+    debugFindPoints(node, sweepLineY, points, labels) {
         if (node === undefined)
             node = this.root;
 
@@ -439,9 +497,10 @@ class BeachLine {
             if (node.type == BeachLineNodeType.Arc) {
                 // do nothing
             } else if (node.type == BeachLineNodeType.Breakpoint) {
-                this.debugFindPoints(node.left, sweepLineY, points);
+                this.debugFindPoints(node.left, sweepLineY, points, labels);
                 points.push(node.location(sweepLineY));
-                this.debugFindPoints(node.right, sweepLineY, points);
+                labels.push(node.uid);
+                this.debugFindPoints(node.right, sweepLineY, points, labels);
             }
         }
     }
@@ -469,6 +528,7 @@ class BeachLineBreakpoint {
         this.left = null;
         this.right = null;
         this.treapPriority = Math.random();
+        this.uid = DeterministicUIDGenerator.generate();
     }
 
     location(sweepLineY) {
@@ -552,6 +612,7 @@ class VoronoiDiagram {
             let event = this.queue.remove();
 
             if (event.point.y < sweepLineY) {
+                this.queue.add(event); // needs to be done in order to draw the last circle event during debugging
                 break;
             }
 
@@ -583,10 +644,11 @@ class VoronoiDiagram {
             let lowestPoint = Point.sub(center, new Point(0, radius));
             let event = new CircleEvent(lowestPoint, arc2);
 
+            event.debugDesc = [center.copy(), radius];
+
             arc2.circleEvent = event;
 
             this.queue.add(event);
-            this.debugCircleEvents.push([center.copy(), radius]);
         }
     }
 
@@ -619,27 +681,68 @@ class VoronoiDiagram {
 
     debugGetTreeState(sweepLineY) {
         let points = [];
+        let labels = [];
 
-        this.beachLine.debugFindPoints(undefined, sweepLineY, points);
+        this.beachLine.debugFindPoints(undefined, sweepLineY, points, labels);
 
-        return points;
+        return [points, labels];
+    }
+
+    debugDrawTree(x, y, w, h) {
+        let treePoints = [];
+        let treeLines = [];
+        let treeLabels = [];
+
+        function transformPoint(p) {
+            return new Point(p.x, window.innerHeight - p.y);
+        }
+
+        function rec(node, x, y, w) {
+            let p = transformPoint(new Point(x + w/2, y));
+            treePoints.push(p);
+
+            if (node.type == BeachLineNodeType.Breakpoint) {
+                treeLabels.push([Point.add(p, new Point(-5, 15)), node.uid]);
+            }
+
+            if (node.left != null) {
+                let l = rec(node.left, x, y + h, w/2);
+                treeLines.push([p, l]);
+            }
+
+            if (node.right != null) {
+                let r = rec(node.right, x + w/2, y + h, w/2);
+                treeLines.push([p, r]);
+            }
+
+            return p;
+        }
+
+        if (this.beachLine.root != null)
+            rec(this.beachLine.root, x, y, w, h);
+
+        return [treePoints, treeLines, treeLabels];
     }
 }
 
 function computeVoronoiDiagramStatic(points, width, height) {
     let diagram = new VoronoiDiagram(points);
 
-    return [[], [], []];
+    return [[], [], [], []];
 }
 
 function computeVoronoiDiagramEvents(points, sweepLineY, width, height) {
+    DeterministicUIDGenerator.reset();
+
     let diagramBreakpoints = [];
     let diagramLines = [];
     let diagramCircles = [];
+    let diagramTree = [];
     let diagram = new VoronoiDiagram(points, sweepLineY);
 
     diagramBreakpoints = diagram.debugGetTreeState(sweepLineY);
-    diagramCircles = diagram.debugCircleEvents;
+    diagramCircles = diagram.queue.debugGetCircleEvents();
+    diagramTree = diagram.debugDrawTree((2/3) * width - 50, 40, (1/3) * width, 50);
 
-    return [diagramBreakpoints, diagramLines, diagramCircles];
+    return [diagramBreakpoints, diagramLines, diagramCircles, diagramTree];
 }

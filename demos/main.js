@@ -262,7 +262,7 @@ function draw() {
     switch(currentProgram) {
         case ProgramType.VoronoiInstant:
         {
-            let [diagramPoints, diagramLines, diagramCircles] = computeVoronoiDiagramStatic(points, width, height);
+            let [diagramPoints, diagramLines, diagramCircles, diagramTree] = computeVoronoiDiagramStatic(points, width, height);
 
             /*for (let point of diagramPoints) {
                 currentDrawing.push(
@@ -281,22 +281,25 @@ function draw() {
 
         case ProgramType.VoronoiEvents:
         {
-            let [diagramBreakpoints, diagramLines, diagramCircles] = computeVoronoiDiagramEvents(points, sweepLineY, width, height);
+            let [diagramBreakpoints, diagramLines, diagramCircles, diagramTree] = computeVoronoiDiagramEvents(points, sweepLineY, width, height);
             let pointCount = 0;
             let prevPoint = null;
             let prevShape = null;
+            let [diagramBreakpointsPoints, diagramBreakpointsLabels] = diagramBreakpoints;
 
-            for (let point of diagramBreakpoints) {
+            for (let point of diagramBreakpointsPoints) {
+                let label = diagramBreakpointsLabels[pointCount];
+
                 currentDrawing.push(
                     circleShape(point.x, point.y, 3, true)
                 );
 
                 if (prevPoint == null || Point.sub(point, prevPoint).norm() > 5.0) {
-                    var shape = textShape(new Point(point.x + 10, point.y - 10), pointCount.toString());
+                    var shape = textShape(new Point(point.x + 10, point.y - 10), pointCount.toString() + ': ' + label);
                     prevShape = shape;
                     currentDrawing.push(shape);
                 } else {
-                    prevShape.str += ', ' + pointCount.toString();
+                    prevShape.str += ', ' + pointCount.toString() + ': ' + label;
                 }
 
                 pointCount++;
@@ -359,6 +362,27 @@ function draw() {
                         lineSegmentShape(px, py, px, beachLinePolypart(px))
                     );
                 }
+            }
+
+            // Draw binary search tree
+            let [treePoints, treeLines, treeLabels] = diagramTree;
+
+            for (var point of treePoints) {
+                currentDrawing.push(
+                    circleShape(point.x, point.y, 4, true)
+                );
+            }
+
+            for (var [lineFrom, lineTo] of treeLines) {
+                currentDrawing.push(
+                    lineSegmentShape(lineFrom.x, lineFrom.y, lineTo.x, lineTo.y)
+                );
+            }
+
+            for (var [point, label] of treeLabels) {
+                currentDrawing.push(
+                    textShape(point, label)
+                );
             }
 
             break;

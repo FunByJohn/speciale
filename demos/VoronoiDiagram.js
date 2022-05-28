@@ -9,6 +9,8 @@ class DeterministicUIDGenerator {
     }
 
     static generate() {
+        const alphabet = 'abcdefghijklmnopqrstuvwxyz';
+        
         let uid;
 
         if (DeterministicUIDGenerator.state.length <= DeterministicUIDGenerator.index) {
@@ -16,7 +18,18 @@ class DeterministicUIDGenerator {
             const max = 1679615;
     
             uid = (Math.floor(min + (max - min) * Math.random())).toString(36);*/
-            uid = (10 + DeterministicUIDGenerator.index).toString(36);
+
+            let index = DeterministicUIDGenerator.index;
+            let digits = [];
+
+            do {
+                let ch = index % alphabet.length;
+                digits.push(alphabet.charAt(ch));
+                index = Math.floor(index / alphabet.length);
+            } while (index > 0);
+
+            uid = digits.reverse().join('');
+            
             DeterministicUIDGenerator.state.push(uid);
         } else {
             uid = DeterministicUIDGenerator.state[DeterministicUIDGenerator.index];
@@ -177,10 +190,11 @@ class SiteEvent {
 }
 
 class CircleEvent {
-    constructor(point, arc) {
+    constructor(point, arc, arcs) {
         this.type = EventType.Circle;
         this.point = point;
         this.arc = arc;
+        this.arcs = arcs;
         this.debugDesc = null;
     }
 
@@ -190,6 +204,16 @@ class CircleEvent {
 
     toString() {
         return `CircleEvent`;
+    }
+
+    involvesArc(arc) {
+        for (var i = 0; i < this.arcs.length; i++) {
+            if (this.arcs[i] === arc) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 }
 
@@ -232,7 +256,7 @@ class EventQueue {
 
     cancel(event) {
         let index = this.array.indexOf(event);
-        console.log("Cancel index: " + index);
+        //console.log("Cancel index: " + index);
         this.array.splice(index, 1);
     }
 
@@ -323,6 +347,9 @@ class BeachLine {
                 let b        = new BeachLineArc(point);
                 let a2       = new BeachLineArc(oldPoint);
 
+                x.uid = DeterministicUIDGenerator.generate();
+                y.uid = DeterministicUIDGenerator.generate();
+
                 x.left  = a1;
                 x.right = y;
                 y.left  = b;
@@ -341,6 +368,7 @@ class BeachLine {
                 // Delete circle event
                 if (a.circleEvent != null) {
                     this.queue.cancel(a.circleEvent);
+                    a.circleEvent = null;
                 }
 
                 setNode(x);
@@ -366,6 +394,8 @@ class BeachLine {
         let value = breakpointCopy.key(sweepLineY);
         let node = this.root;
         let parent = null;
+        let backtrackNode = null;
+        let backtrackParent = null;
 
         /*console.log("----------------");
         console.log("Left point:");
@@ -383,26 +413,41 @@ class BeachLine {
                 console.log(parent.left === node || parent.right === node);
             }*/
 
-            if (node == null) {
-                throw new Error("Could not find breakpoint which theoretically should exist!");
-            }
+            if (node == null || node.type == BeachLineNodeType.Arc) {
+                if (backtrackNode != null) {
+                    node = backtrackNode;
+                    parent = backtrackParent;
+                } else {
+                    if (node == null) {
+                        throw new Error("Could not find breakpoint which theoretically should exist!");
+                    }
 
-            if (node.type == BeachLineNodeType.Arc) {
-                let points = [];
-                this.debugFindPoints(undefined, sweepLineY, points, []);
-                throw new Error("Found arc when looking for breakpoint! " + points);
+                    if (node.type == BeachLineNodeType.Arc) {
+                        let points = [];
+                        this.debugFindPoints(undefined, sweepLineY, points, []);
+                        throw new Error("Found arc when looking for breakpoint! " + points);
+                    }
+                }
             }
             
             if (Point.equals(node.pair[0], leftPoint) && Point.equals(node.pair[1], rightPoint)) {
                 break;
             } else {
-                /*if (Math.abs(node.key(sweepLineY) - value) < Config.epsilon) {
-                    // node is the other breakpoint
-                } else {
+                let oppositeChoice = false;
 
-                }*/
+                if (Math.abs(node.key(sweepLineY) - value) < Config.epsilon) {
+                    if (backtrackNode == null) {
+                        backtrackNode = node;
+                        backtrackParent = parent;
+                    } else {
+                        oppositeChoice = true;
+                    }
+                }
 
-                if (value < node.key(sweepLineY) && node != null && node.left.type != BeachLineNodeType.Arc) {
+                let check = (value < node.key(sweepLineY)); /* && node != null && node.left.type != BeachLineNodeType.Arc */
+                if (oppositeChoice) check = !check;
+
+                if (check) {
                     parent = node;
                     node = node.left;
                 } else {
@@ -422,22 +467,24 @@ class BeachLine {
         let [rightBreakpoint, rightParent] = this.findBreakpoint(arc.point, rightArc.point, sweepLineY);
         let newBreakpoint = new BeachLineBreakpoint(leftArc.point, rightArc.point);
 
-        console.log("Left: " + leftBreakpoint.uid);
+        newBreakpoint.uid = DeterministicUIDGenerator.generate();
+
+        /*console.log("Left: " + leftBreakpoint.uid);
         console.log("Right: " + rightBreakpoint.uid);
         console.log("Left parent: " + leftParent.uid);
-        console.log("Right parent: " + rightParent.uid);
+        console.log("Right parent: " + rightParent.uid);*/
 
         if (rightBreakpoint.left === arc) {
             // `leftBreakpoint` is an ancestor of `rightBreakpoint` in the tree
             newBreakpoint.left = leftBreakpoint.left;
             newBreakpoint.right = leftBreakpoint.right;
 
-            console.log([rightParent != null, rightParent.left === rightBreakpoint, rightParent.right === rightBreakpoint, rightBreakpoint.right]);
+            //console.log([rightParent != null, rightParent.left === rightBreakpoint, rightParent.right === rightBreakpoint, rightBreakpoint.right]);
 
             if (leftParent == null) {
                 this.root = newBreakpoint;
             } else {
-                console.log("left o ye")
+                //console.log("left o ye")
 
                 if (leftParent.left === leftBreakpoint) {
                     leftParent.left = newBreakpoint;
@@ -463,7 +510,7 @@ class BeachLine {
             if (rightParent == null) {
                 this.root = newBreakpoint;
             } else {
-                console.log("right o ye");
+                //console.log("right o ye");
 
                 if (rightParent.left === rightBreakpoint) {
                     rightParent.left = newBreakpoint;
@@ -528,7 +575,7 @@ class BeachLineBreakpoint {
         this.left = null;
         this.right = null;
         this.treapPriority = Math.random();
-        this.uid = DeterministicUIDGenerator.generate();
+        this.uid = '';
     }
 
     location(sweepLineY) {
@@ -642,7 +689,7 @@ class VoronoiDiagram {
             // breakpoints are converging
             let [center, radius] = circleThroughThreePoints(p1, p2, p3);
             let lowestPoint = Point.sub(center, new Point(0, radius));
-            let event = new CircleEvent(lowestPoint, arc2);
+            let event = new CircleEvent(lowestPoint, arc2, [arc1, arc2, arc3]);
 
             event.debugDesc = [center.copy(), radius];
 
@@ -676,7 +723,46 @@ class VoronoiDiagram {
     handleCircleEvent(event) {
         // console.log("Circle event!");
 
-        this.beachLine.remove(event.arc, event.point.y);
+        //console.log(event.involvesArc(event.arc));
+
+        let arc = event.arc;
+        let sweepLineY = event.point.y;
+        let leftArc = arc.leftArc;
+        let rightArc = arc.rightArc;
+        let leftLeftArc = (leftArc != null) ? leftArc.leftArc : null;
+        let rightRightArc = (rightArc != null) ? rightArc.rightArc : null;
+
+        //console.log([leftArc.circleEvent, rightArc.circleEvent]);
+
+        if (leftArc.circleEvent != null /*&& leftArc.circleEvent.involvesArc(arc)*/) {
+            console.log("Cancelled left");
+            this.queue.cancel(leftArc.circleEvent);
+            leftArc.circleEvent = null;
+        }
+
+        if (rightArc.circleEvent != null /*&& rightArc.circleEvent.involvesArc(arc)*/) {
+            console.log("Cancelled right");
+            this.queue.cancel(rightArc.circleEvent);
+            rightArc.circleEvent = null;
+        }
+
+        this.beachLine.remove(arc, sweepLineY);
+
+        console.log([leftLeftArc, leftArc, rightArc, rightRightArc]);
+
+        this.maybeAddCircleEvent(
+            sweepLineY,
+            leftLeftArc,
+            leftArc,
+            rightArc
+        );
+
+        this.maybeAddCircleEvent(
+            sweepLineY,
+            leftArc,
+            rightArc,
+            rightRightArc
+        );
     }
 
     debugGetTreeState(sweepLineY) {

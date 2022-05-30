@@ -365,6 +365,12 @@ class BeachLine {
                 a2.leftArc  = b;
                 a2.rightArc = a.rightArc;
 
+                if (a.leftArc != null)
+                    a.leftArc.rightArc = a1;
+
+                if (a.rightArc != null)
+                    a.rightArc.leftArc = a2;
+
                 // Delete circle event
                 if (a.circleEvent != null) {
                     this.queue.cancel(a.circleEvent);
@@ -560,6 +566,7 @@ class BeachLineArc {
         this.circleEvent = null;
         this.leftArc = null;
         this.rightArc = null;
+        this.uid = DeterministicUIDGenerator.generate().toUpperCase();
     }
 
     toString() {
@@ -735,20 +742,20 @@ class VoronoiDiagram {
         //console.log([leftArc.circleEvent, rightArc.circleEvent]);
 
         if (leftArc.circleEvent != null /*&& leftArc.circleEvent.involvesArc(arc)*/) {
-            console.log("Cancelled left");
+            //console.log("Cancelled left");
             this.queue.cancel(leftArc.circleEvent);
             leftArc.circleEvent = null;
         }
 
         if (rightArc.circleEvent != null /*&& rightArc.circleEvent.involvesArc(arc)*/) {
-            console.log("Cancelled right");
+            //console.log("Cancelled right");
             this.queue.cancel(rightArc.circleEvent);
             rightArc.circleEvent = null;
         }
 
         this.beachLine.remove(arc, sweepLineY);
 
-        console.log([leftLeftArc, leftArc, rightArc, rightRightArc]);
+        //console.log([leftLeftArc, leftArc, rightArc, rightRightArc]);
 
         this.maybeAddCircleEvent(
             sweepLineY,
@@ -788,7 +795,16 @@ class VoronoiDiagram {
             treePoints.push(p);
 
             if (node.type == BeachLineNodeType.Breakpoint) {
-                treeLabels.push([Point.add(p, new Point(-5, 15)), node.uid]);
+                treeLabels.push([Point.add(p, new Point(-5, 10)), node.uid]);
+            }
+
+            if (node.type == BeachLineNodeType.Arc) {
+                treeLabels.push([Point.add(p, new Point(-5, 10)), node.uid]);
+
+                let leftArc = (node.leftArc != null ? node.leftArc.uid : '--');
+                let rightArc = (node.rightArc != null ? node.rightArc.uid : '--');
+                
+                treeLabels.push([Point.add(p, new Point(-17, -20)), '(' + leftArc + ', ' + rightArc + ')']);
             }
 
             if (node.left != null) {

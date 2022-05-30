@@ -50,12 +50,13 @@ function lineSequenceShape(points) {
     };
 }
 
-function textShape(position, str) {
+function textShape(position, str, size) {
     return {
         type : ShapeType.Text,
         x    : position.x,
         y    : position.y,
-        str  : str
+        str  : str,
+        size : size
     }
 }
 
@@ -295,7 +296,7 @@ function draw() {
                 );
 
                 if (prevPoint == null || Point.sub(point, prevPoint).norm() > 5.0) {
-                    var shape = textShape(new Point(point.x + 10, point.y - 10), pointCount.toString() + ': ' + label);
+                    var shape = textShape(new Point(point.x + 10, point.y - 10), pointCount.toString() + ': ' + label, 15);
                     prevShape = shape;
                     currentDrawing.push(shape);
                 } else {
@@ -381,7 +382,7 @@ function draw() {
 
             for (var [point, label] of treeLabels) {
                 currentDrawing.push(
-                    textShape(point, label)
+                    textShape(point, label, 12)
                 );
             }
 
@@ -500,7 +501,7 @@ function draw() {
             case ShapeType.Text:
                 var transform = canvasContext.getTransform();
                 
-                canvasContext.font = '15px serif';
+                canvasContext.font = op.size + 'px serif';
                 canvasContext.translate(0, height);
                 canvasContext.scale(1, -1);
                 canvasContext.fillText(op.str, op.x, height - op.y);

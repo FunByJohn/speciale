@@ -190,11 +190,11 @@ class SiteEvent {
 }
 
 class CircleEvent {
-    constructor(point, arc, arcs) {
+    constructor(point, vertexPoint, arc) {
         this.type = EventType.Circle;
         this.point = point;
+        this.vertexPoint = vertexPoint;
         this.arc = arc;
-        this.arcs = arcs;
         this.debugDesc = null;
     }
 
@@ -203,17 +203,7 @@ class CircleEvent {
     }
 
     toString() {
-        return `CircleEvent`;
-    }
-
-    involvesArc(arc) {
-        for (var i = 0; i < this.arcs.length; i++) {
-            if (this.arcs[i] === arc) {
-                return true;
-            }
-        }
-        
-        return false;
+        return `CircleEvent for ${this.arc.uid}`;
     }
 }
 
@@ -296,9 +286,10 @@ class BeachLineNodeType {
 }
 
 class BeachLine {
-    constructor(queue) {
+    constructor(queue, dcel) {
         this.root = null;
         this.queue = queue;
+        this.dcel = dcel;
     }
 
     insert(point) {
@@ -357,7 +348,7 @@ class BeachLine {
 
                 newArc = b;
 
-                // Setup pointers
+                // Setup arc pointers
                 a1.leftArc  = a.leftArc;
                 a1.rightArc = b;
                 b.leftArc   = a1;
@@ -376,6 +367,9 @@ class BeachLine {
                     this.queue.cancel(a.circleEvent);
                     a.circleEvent = null;
                 }
+
+                // Update DCEL
+                this.dcel.createHalfEdge(x, y);
 
                 setNode(x);
             } else if (node.type == BeachLineNodeType.Breakpoint) {
@@ -472,6 +466,11 @@ class BeachLine {
         let [leftBreakpoint, leftParent] = this.findBreakpoint(leftArc.point, arc.point, sweepLineY);
         let [rightBreakpoint, rightParent] = this.findBreakpoint(arc.point, rightArc.point, sweepLineY);
         let newBreakpoint = new BeachLineBreakpoint(leftArc.point, rightArc.point);
+
+        /*leftBreakpoint.dcelVertex.detachBreakpoint(sweepLineY);
+        rightBreakpoint.dcelVertex.detachBreakpoint(sweepLineY);*/
+
+        this.dcel.joinVerticesAndStartNewEdge(sweepLineY, leftBreakpoint.dcelVertex, rightBreakpoint.dcelVertex, newBreakpoint);
 
         newBreakpoint.uid = DeterministicUIDGenerator.generate();
 
@@ -583,6 +582,7 @@ class BeachLineBreakpoint {
         this.right = null;
         this.treapPriority = Math.random();
         this.uid = '';
+        this.dcelVertex = null;
     }
 
     location(sweepLineY) {
@@ -641,8 +641,8 @@ class VoronoiDiagram {
         }
 
         this.queue = new EventQueue();
-        this.beachLine = new BeachLine(this.queue);
-        /* this.dcel = new DCEL(); */
+        this.dcel = new DCEL();
+        this.beachLine = new BeachLine(this.queue, this.dcel);
 
         // Setup site events
         for (let point of this.points) {
@@ -696,7 +696,7 @@ class VoronoiDiagram {
             // breakpoints are converging
             let [center, radius] = circleThroughThreePoints(p1, p2, p3);
             let lowestPoint = Point.sub(center, new Point(0, radius));
-            let event = new CircleEvent(lowestPoint, arc2, [arc1, arc2, arc3]);
+            let event = new CircleEvent(lowestPoint, center, arc2);
 
             event.debugDesc = [center.copy(), radius];
 
@@ -741,13 +741,13 @@ class VoronoiDiagram {
 
         //console.log([leftArc.circleEvent, rightArc.circleEvent]);
 
-        if (leftArc.circleEvent != null /*&& leftArc.circleEvent.involvesArc(arc)*/) {
+        if (leftArc.circleEvent != null) {
             //console.log("Cancelled left");
             this.queue.cancel(leftArc.circleEvent);
             leftArc.circleEvent = null;
         }
 
-        if (rightArc.circleEvent != null /*&& rightArc.circleEvent.involvesArc(arc)*/) {
+        if (rightArc.circleEvent != null) {
             //console.log("Cancelled right");
             this.queue.cancel(rightArc.circleEvent);
             rightArc.circleEvent = null;
@@ -839,12 +839,20 @@ function computeVoronoiDiagramEvents(points, sweepLineY, width, height) {
     let diagramBreakpoints = [];
     let diagramLines = [];
     let diagramCircles = [];
-    let diagramTree = [];
+    let diagramTree = [[], [], []];
     let diagram = new VoronoiDiagram(points, sweepLineY);
 
     diagramBreakpoints = diagram.debugGetTreeState(sweepLineY);
-    diagramCircles = diagram.queue.debugGetCircleEvents();
-    diagramTree = diagram.debugDrawTree((2/3) * width - 50, 40, (1/3) * width, 50);
+
+    if (Config.debugShowCircleEvents)
+        diagramCircles = diagram.queue.debugGetCircleEvents();
+
+    if (Config.debugShowTree)
+        diagramTree = diagram.debugDrawTree((2/3) * width - 50, 40, (1/3) * width, 50);
+
+    let [dcelVerts, dcelLines] = diagram.dcel.getDisplayLists(sweepLineY);
+
+    diagramLines = dcelLines;
 
     return [diagramBreakpoints, diagramLines, diagramCircles, diagramTree];
 }

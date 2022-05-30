@@ -295,21 +295,23 @@ function draw() {
                     circleShape(point.x, point.y, 3, true)
                 );
 
-                if (prevPoint == null || Point.sub(point, prevPoint).norm() > 5.0) {
-                    var shape = textShape(new Point(point.x + 10, point.y - 10), pointCount.toString() + ': ' + label, 15);
-                    prevShape = shape;
-                    currentDrawing.push(shape);
-                } else {
-                    prevShape.str += ', ' + pointCount.toString() + ': ' + label;
+                if (Config.debugShowBreakpointNames) {
+                    if (prevPoint == null || Point.sub(point, prevPoint).norm() > 5.0) {
+                        var shape = textShape(new Point(point.x + 10, point.y - 10), pointCount.toString() + ': ' + label, 15);
+                        prevShape = shape;
+                        currentDrawing.push(shape);
+                    } else {
+                        prevShape.str += ', ' + pointCount.toString() + ': ' + label;
+                    }
                 }
 
                 pointCount++;
                 prevPoint = point;
             }
 
-            for (let [x1, y1, x2, y2] of diagramLines) {
+            for (let [from, to] of diagramLines) {
                 currentDrawing.push(
-                    lineSegmentShape(x1, y1, x2, y2)
+                    lineSegmentShape(from.x, from.y, to.x, to.y)
                 );
             }
 

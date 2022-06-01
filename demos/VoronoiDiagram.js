@@ -14,11 +14,6 @@ class DeterministicUIDGenerator {
         let uid;
 
         if (DeterministicUIDGenerator.state.length <= DeterministicUIDGenerator.index) {
-            /*const min = 46656;
-            const max = 1679615;
-    
-            uid = (Math.floor(min + (max - min) * Math.random())).toString(36);*/
-
             let index = DeterministicUIDGenerator.index;
             let digits = [];
 
@@ -369,7 +364,7 @@ class BeachLine {
                 }
 
                 // Update DCEL
-                this.dcel.createHalfEdge(x, y);
+                this.dcel.siteEvent(x, y);
 
                 setNode(x);
             } else if (node.type == BeachLineNodeType.Breakpoint) {
@@ -470,7 +465,7 @@ class BeachLine {
         /*leftBreakpoint.dcelVertex.detachBreakpoint(sweepLineY);
         rightBreakpoint.dcelVertex.detachBreakpoint(sweepLineY);*/
 
-        this.dcel.joinVerticesAndStartNewEdge(sweepLineY, leftBreakpoint.dcelVertex, rightBreakpoint.dcelVertex, newBreakpoint);
+        this.dcel.circleEvent(sweepLineY, leftBreakpoint.dcelVertex, rightBreakpoint.dcelVertex, newBreakpoint);
 
         newBreakpoint.uid = DeterministicUIDGenerator.generate();
 

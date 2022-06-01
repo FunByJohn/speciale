@@ -156,6 +156,20 @@ class Matrix {
     }
 }
 
+class Site {
+    static indexCounter = 0;
+
+    static resetCounter() {
+        Site.indexCounter = 0;
+    }
+
+    constructor(position) {
+        this.position = position;
+        this.index = Site.indexCounter;
+        Site.indexCounter++;
+    }
+}
+
 class EventType {
     static Site = new EventType('Site');
     static Circle = new EventType('Circle');
@@ -173,6 +187,7 @@ class SiteEvent {
     constructor(point) {
         this.type = EventType.Site;
         this.point = point;
+        this.site = new Site(point);
     }
 
     queuePriority() {
@@ -287,8 +302,9 @@ class BeachLine {
         this.dcel = dcel;
     }
 
-    insert(point) {
+    insert(event) {
         let _this = this;
+        let point = event.point;
         let updatedTree = false;
         let prevNode = null;
         let node = this.root;
@@ -364,7 +380,7 @@ class BeachLine {
                 }
 
                 // Update DCEL
-                this.dcel.siteEvent(x, y);
+                this.dcel.siteEvent(event.site, x, y);
 
                 setNode(x);
             } else if (node.type == BeachLineNodeType.Breakpoint) {
@@ -704,7 +720,9 @@ class VoronoiDiagram {
     handleSiteEvent(event) {
         // console.log("Site event! " + event.point);
 
-        let arc = this.beachLine.insert(event.point);
+        this.dcel.setFirstSite(event.site);
+
+        let arc = this.beachLine.insert(event);
         let sweepLineY = event.point.y;
 
         this.maybeAddCircleEvent(
@@ -830,6 +848,7 @@ function computeVoronoiDiagramStatic(points, width, height) {
 
 function computeVoronoiDiagramEvents(points, sweepLineY, width, height) {
     DeterministicUIDGenerator.reset();
+    Site.resetCounter();
 
     let diagramBreakpoints = [];
     let diagramLines = [];

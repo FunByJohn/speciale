@@ -128,6 +128,7 @@ If we intersect $\VorG(P)$ with the bounding box $B$ then $B$ adds at most 2 edg
     (3n - 6) + (n + 4) = 4n - 2 = \mathcal{O}(n)
 \]
 edges.
+\todo{This is wrong. If we have a diagram with only 2 sites and 2 edges, we can construct it in such a way that it has 7 edges, contradicting the upper bound $4n - 2$. It's instead the case that every cell may get at most 4 new edges, one for each side of the bounding box.}
 \end{rmk}
 We have seen that we have a linear number of vertices and edges $\VorG(P)$, but we have a quadratic number of bisectors $\bi(p_i, p_j)$ of which every edge of $\VorG(P)$ is a subset of, and every vertex in $\VorG(P)$ is an intersection point of two such bisectors. Thus it would be interesting to characterize when a particular bisector is a part of $\VorG(P)$. First, we need a definition:
 

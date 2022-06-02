@@ -37,18 +37,50 @@ class DeterministicUIDGenerator {
 }
 
 function doRaysIntersect(ray1Start, ray1Dir, ray2Start, ray2Dir) {
-    let matrix = Matrix.withColumns(ray1Dir, ray2Dir);
+    let result = intersectLines(ray1Start, ray1Dir, ray2Start, ray2Dir);
+
+    if (result == null)
+        return false;
+
+    let [s, t, _] = result;
+    return (s >= 0 && t >= 0);
+}
+
+function intersectLines(line1Point, line1Dir, line2Point, line2Dir) {
+    let matrix = Matrix.withColumns(line1Dir, line2Dir);
 
     if (matrix.determinant() == 0) {
-        return false;
+        return null;
     }
 
-    let solution = matrix.inverse().apply(Point.sub(ray2Start, ray1Start));
+    let solution = matrix.inverse().apply(Point.sub(line2Point, line1Point));
+    let s = solution.x;
+    let t = -solution.y;
+    let intersection = Point.add(line1Point, line1Dir.scale(s));
+
+    return [s, t, intersection];
+}
+
+/*function intersectRayAndSegment(rayStart, rayDir, segmentStart, segmentEnd) {
+    let segmentDir = Point.sub(segmentEnd, segmentStart);
+    let matrix = Matrix.withColumns(rayDir, segmentDir);
+
+    if (matrix.determinant() == 0) {
+        return null;
+    }
+
+    let solution = matrix.inverse().apply(Point.sub(segmentStart, rayStart));
     let s = solution.x;
     let t = -solution.y;
 
-    return (s >= 0 && t >= 0);
-}
+    if (s >= 0.0 && 0.0 <= t && t <= 1.0) {
+        return Point.add(segmentStart, segmentDir.scale(t));
+    }
+
+    return null;
+}*/
+
+
 
 function intersectBisectors(p, q, r) {
     let m1 = Point.midpoint(p, q);
@@ -343,8 +375,8 @@ class BeachLine {
                 */
                 let oldPoint = node.point;
                 let a        = node;
-                let x        = new BeachLineBreakpoint(oldPoint, point);
-                let y        = new BeachLineBreakpoint(point, oldPoint);
+                let x        = new BeachLineBreakpoint(oldPoint, point, event.point.y);
+                let y        = new BeachLineBreakpoint(point, oldPoint, event.point.y);
                 let a1       = new BeachLineArc(oldPoint);
                 let b        = new BeachLineArc(point);
                 let a2       = new BeachLineArc(oldPoint);
@@ -476,7 +508,7 @@ class BeachLine {
         let rightArc = arc.rightArc;
         let [leftBreakpoint, leftParent] = this.findBreakpoint(leftArc.point, arc.point, sweepLineY);
         let [rightBreakpoint, rightParent] = this.findBreakpoint(arc.point, rightArc.point, sweepLineY);
-        let newBreakpoint = new BeachLineBreakpoint(leftArc.point, rightArc.point);
+        let newBreakpoint = new BeachLineBreakpoint(leftArc.point, rightArc.point, sweepLineY);
 
         /*leftBreakpoint.dcelVertex.detachBreakpoint(sweepLineY);
         rightBreakpoint.dcelVertex.detachBreakpoint(sweepLineY);*/
@@ -585,7 +617,7 @@ class BeachLineArc {
 }
 
 class BeachLineBreakpoint {
-    constructor(leftPoint, rightPoint) {
+    constructor(leftPoint, rightPoint, startSweepLineY) {
         this.type = BeachLineNodeType.Breakpoint;
         this.pair = [leftPoint, rightPoint];
         this.halfEdge = null; // TODO
@@ -594,6 +626,13 @@ class BeachLineBreakpoint {
         this.treapPriority = Math.random();
         this.uid = '';
         this.dcelVertex = null;
+        this.start = null;
+        this.direction = null;
+
+        if (startSweepLineY !== undefined) {
+            this.start = this.location(startSweepLineY);
+            this.direction = Point.sub(this.location(startSweepLineY - 1), this.start);
+        }
     }
 
     location(sweepLineY) {
@@ -645,6 +684,9 @@ class BeachLineBreakpoint {
 
 class VoronoiDiagram {
     constructor(points, sweepLineY) {
+        DeterministicUIDGenerator.reset();
+        Site.resetCounter();
+
         this.points = [];
 
         for (let [x, y] of points) {
@@ -652,7 +694,7 @@ class VoronoiDiagram {
         }
 
         this.queue = new EventQueue();
-        this.dcel = new DCEL();
+        this.dcel = new DCEL(points.length);
         this.beachLine = new BeachLine(this.queue, this.dcel);
 
         // Setup site events
@@ -667,14 +709,18 @@ class VoronoiDiagram {
     }
 
     compute(sweepLineY) {
+        let lastSweepLineY = 0;
+        let intersectWithBoundingBox = false;
+
         if (sweepLineY === undefined) {
             sweepLineY = Number.NEGATIVE_INFINITY;
+            intersectWithBoundingBox = true;
         }
-
-        // console.log("Computing Voronoi diagram...");
 
         while (!this.queue.isEmpty()) {
             let event = this.queue.remove();
+
+            lastSweepLineY = event.point.y;
 
             if (event.point.y < sweepLineY) {
                 this.queue.add(event); // needs to be done in order to draw the last circle event during debugging
@@ -686,6 +732,11 @@ class VoronoiDiagram {
             } else if (event.type == EventType.Circle) {
                 this.handleCircleEvent(event);
             }
+        }
+
+        if (intersectWithBoundingBox) {
+            console.log(":D");
+            this.dcel.constrainToBoundingBox({x: 100, y: 100, width: window.innerWidth - 200, height: window.innerHeight - 200}, lastSweepLineY + 50);
         }
     }
 
@@ -842,14 +893,12 @@ class VoronoiDiagram {
 
 function computeVoronoiDiagramStatic(points, width, height) {
     let diagram = new VoronoiDiagram(points);
+    let [dcelVerts, dcelLines] = diagram.dcel.getDisplayLists();
 
-    return [[], [], [], []];
+    return [[], dcelLines, [], []];
 }
 
 function computeVoronoiDiagramEvents(points, sweepLineY, width, height) {
-    DeterministicUIDGenerator.reset();
-    Site.resetCounter();
-
     let diagramBreakpoints = [];
     let diagramLines = [];
     let diagramCircles = [];

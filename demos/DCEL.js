@@ -1,3 +1,8 @@
+function pair(fromEdge, toEdge) {
+    fromEdge.next = toEdge;
+    toEdge.prev = fromEdge;
+}
+
 class DCEL {
     constructor(numFaces) {
         this.vertices = [];
@@ -5,6 +10,8 @@ class DCEL {
         this.faces = [];
         this.hasSetFirstSite = false;
         this.firstSite = null;
+        this.boundingBox = null;
+        this.debugIntersectionPoints = [];
 
         for (var i = 0; i < numFaces; i++) {
             this.faces.push(null);
@@ -53,23 +60,11 @@ class DCEL {
             this.firstSite = null;
         }
 
-        /*if (this.previousSite == null) {
-            if (this.faces[this.previousSite.index] == null) {
-                let oppositeFace = new DCEL_Face();
-
-                oppositeFace.edge = oppositeHalfEdge;
-                oppositeFace.site = this.previousSite;
-                oppositeHalfEdge.face = oppositeFace;
-            }
-        }*/
-
         this.vertices.push(fromVertex);
         this.vertices.push(toVertex);
         this.halfEdges.push(halfEdge);
         this.halfEdges.push(oppositeHalfEdge);
         this.faces[site.index] = face;
-
-        // TODO: maybe we can set .face based on info in left- and rightBreakpoint!
     }
 
     circleEvent(sweepLineY, vertex1, vertex2, newBreakpoint) {
@@ -79,8 +74,8 @@ class DCEL {
         let edge1 = vertex1.edge;
         let edge2 = vertex2.edge;
 
+        edge2.origin.kill();
         edge2.origin = edge1.origin;
-        // TODO: Delete edge2.origin vertex so we don't have two vertices at the same spot
 
         let halfEdge = new DCEL_HalfEdge();
         let oppositeHalfEdge = new DCEL_HalfEdge();
@@ -103,11 +98,6 @@ class DCEL {
         oppositeHalfEdge.origin = toVertex;
         oppositeHalfEdge.twin = halfEdge;
         oppositeHalfEdge.face = edge1.face;
-
-        function pair(fromEdge, toEdge) {
-            fromEdge.next = toEdge;
-            toEdge.prev = fromEdge;
-        }
 
         pair(edge1.twin, edge2);
         pair(oppositeHalfEdge, edge1);
@@ -149,10 +139,10 @@ class DCEL {
 
             lines.push([from, to]);
 
-            if (halfEdge.face != null)
-                lines.push([Point.add(mid, offset), halfEdge.face.site.position]);
+            /*if (halfEdge.face != null)
+                lines.push([Point.add(mid, offset), halfEdge.face.site.position]);*/
 
-            /*let nextEdge = halfEdge.next;
+            let nextEdge = halfEdge.next;
             if (nextEdge != null) {
                 let nextFrom = nextEdge.origin.getPosition(sweepLineY);
                 let nextTo = nextEdge.twin.origin.getPosition(sweepLineY);
@@ -162,10 +152,10 @@ class DCEL {
                 nextOffset = nextOffset.scale(1 / nextOffset.norm()).scale(5.0);
 
                 lines.push([Point.add(mid, offset), Point.add(nextOffset, nextMid)]);
-            }*/
+            }
         }
 
-        let [minX, maxX, minY, maxY] = this.computeBoundingBox({x: 200, y: 200, width: window.innerWidth - 400, height: window.innerHeight - 400}, 25);
+        /*let [minX, maxX, minY, maxY] = this.computeBoundingBox({x: 200, y: 200, width: window.innerWidth - 400, height: window.innerHeight - 400}, 25);
         let b1 = new Point(minX, minY);
         let b2 = new Point(maxX, minY);
         let b3 = new Point(maxX, maxY);
@@ -174,7 +164,34 @@ class DCEL {
         lines.push([b1, b2]);
         lines.push([b2, b3]);
         lines.push([b3, b4]);
-        lines.push([b4, b1]);
+        lines.push([b4, b1]);*/
+
+        if (this.boundingBox != null) {
+            let [minX, maxX, minY, maxY] = this.boundingBox;
+            let b1 = new Point(minX, minY);
+            let b2 = new Point(maxX, minY);
+            let b3 = new Point(maxX, maxY);
+            let b4 = new Point(minX, maxY);
+
+            lines.push([b1, b2]);
+            lines.push([b2, b3]);
+            lines.push([b3, b4]);
+            lines.push([b4, b1]);
+        }
+
+        for (let point of this.debugIntersectionPoints) {
+            let r = 8;
+            let n = 12;
+
+            for (let i = 0; i < n; i++) {
+                let a = 2 * Math.PI / n * i;
+                let b = 2 * Math.PI / n * (i + 1);
+                let from = new Point(point.x + r * Math.cos(a), point.y + r * Math.sin(a));
+                let to = new Point(point.x + r * Math.cos(b), point.y + r * Math.sin(b));
+
+                lines.push([from, to]);
+            }
+        }
 
         return [vertices, lines];
     }
@@ -208,7 +225,7 @@ class DCEL {
         }
 
         for (let vertex of this.vertices) {
-            if (vertex.breakpoint == null) {
+            if (!vertex.dead && vertex.breakpoint == null) {
                 xs.push(vertex.position.x);
                 ys.push(vertex.position.y);
             }
@@ -231,6 +248,184 @@ class DCEL {
 
         return [minX, maxX, minY, maxY];
     }
+
+    constrainToBoundingBox(viewport, lastSweepLineY) {
+        this.cleanUpDeadVertices();
+
+        let _this = this;
+        let [minX, maxX, minY, maxY] = this.computeBoundingBox(viewport, 25);
+        let b1 = new Point(minX, minY);
+        let b2 = new Point(maxX, minY);
+        let b3 = new Point(maxX, maxY);
+        let b4 = new Point(minX, maxY);
+        let intersectionLists = [[], [], [], []];
+        let sides = [
+            [b1, b2],
+            [b2, b3],
+            [b3, b4],
+            [b4, b1]
+        ];
+        let breakpointVertices = new Map();
+
+        this.boundingBox = [minX, maxX, minY, maxY];
+
+        for (let vertex of this.vertices) {
+            if (vertex.breakpoint != null) {
+                let breakpoint = vertex.breakpoint;
+                
+                for (let i = 0; i < sides.length; i++) {
+                    let [fromPos, toPos] = sides[i];
+                    let result = intersectLines(fromPos, Point.sub(toPos, fromPos), breakpoint.start, breakpoint.direction);
+
+                    if (result != null) {
+                        let [s, t, intersection] = result;
+
+                        if (0.0 <= s && s <= 1.0) {
+                            if (!breakpointVertices.has(vertex) || breakpointVertices.get(vertex).time < t) {
+                                breakpointVertices.set(vertex, {
+                                    side: i,
+                                    priority: s,
+                                    time: t,
+                                    intersection: intersection
+                                });
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        for (let [vertex, info] of breakpointVertices) {
+            this.debugIntersectionPoints.push(info.intersection);
+            intersectionLists[info.side].push({vertex: vertex, info: info});
+        }
+
+        for (let i = 0; i < intersectionLists.length; i++) {
+            intersectionLists[i].sort(function(lhs, rhs) {
+                return lhs.info.priority - rhs.info.priority;
+            });
+        }
+
+        function handleSide(intersectionList, fromPos, toPos, prevEdge, nextEdge) {
+            let fromVert, toVert;
+
+            if (prevEdge == null) {
+                fromVert = new DCEL_Vertex();
+                fromVert.position = fromPos.copy();
+
+                _this.vertices.push(fromVert);
+            } else {
+                fromVert = prevEdge.twin.origin;
+            }
+
+            if (nextEdge == null) {
+                toVert = new DCEL_Vertex();
+                toVert.position = toPos.copy();
+
+                _this.vertices.push(toVert);
+            } else {
+                toVert = nextEdge.origin;
+            }
+
+            if (intersectionList.length == 0) {
+                let edge = new DCEL_HalfEdge();
+                let oppEdge = new DCEL_HalfEdge();
+                
+                edge.origin = fromVert;
+                edge.twin = oppEdge;
+                oppEdge.origin = toVert;
+                oppEdge.twin = edge;
+
+                if (prevEdge != null) {
+                    pair(prevEdge, edge);
+                    pair(oppEdge, prevEdge.twin);
+                }
+
+                if (nextEdge != null) {
+                    pair(edge, nextEdge);
+                    pair(nextEdge.twin, oppEdge);
+                }
+
+                _this.halfEdges.push(edge);
+                _this.halfEdges.push(oppEdge);
+
+                return edge;
+            } else {
+                let lastVert = fromVert;
+
+                for (let element of intersectionList) {
+                    let vertex = element.vertex;
+                    let info = element.info;
+                    let intersectionPoint = info.intersection;
+                    let edge = new DCEL_HalfEdge();
+                    let oppEdge = new DCEL_HalfEdge();
+
+                    vertex.position = intersectionPoint;
+                    vertex.breakpoint = null;
+
+                    edge.origin = lastVert;
+                    edge.twin = oppEdge;
+                    edge.face = vertex.edge.face;
+                    oppEdge.origin = vertex;
+                    oppEdge.twin = edge;
+
+                    pair(edge, vertex.edge);
+                    //pair(vertex.edge.twin, oppEdge);
+
+                    _this.halfEdges.push(edge);
+                    _this.halfEdges.push(oppEdge);
+
+                    lastVert = vertex;
+                }
+
+                let edge = new DCEL_HalfEdge();
+                let oppEdge = new DCEL_HalfEdge();
+
+                edge.origin = lastVert;
+                edge.twin = oppEdge;
+                edge.face = lastVert.edge.twin.face;
+                oppEdge.origin = toVert;
+                oppEdge.twin = edge;
+
+                _this.halfEdges.push(edge);
+                _this.halfEdges.push(oppEdge);
+
+                return edge;
+            }
+        }
+
+        /*
+                   3
+            b4 --------- b3
+             |          |
+           4 |          | 2
+             |          |
+            b1 --------- b2
+                   1    
+        */
+
+        console.log("Ready!");
+
+        let firstEdge = null;
+        let prevEdge = null;
+
+        firstEdge = handleSide(intersectionLists[0], b1, b2, null,      null);      // 1
+        prevEdge  = handleSide(intersectionLists[1], b2, b3, firstEdge, null);      // 2
+        prevEdge  = handleSide(intersectionLists[2], b3, b4, prevEdge,  null);      // 3
+                    handleSide(intersectionLists[3], b4, b1, prevEdge,  firstEdge); // 4
+    }
+
+    cleanUpDeadVertices() {
+        let newVertices = [];
+
+        for (let vertex of this.vertices) {
+            if (!vertex.dead) {
+                newVertices.push(vertex);
+            }
+        }
+
+        this.vertices = newVertices;
+    }
 }
 
 class DCEL_Vertex {
@@ -238,6 +433,7 @@ class DCEL_Vertex {
         this.position = null;
         this.edge = null;
         this.breakpoint = null;
+        this.dead = false;
     }
 
     attachBreakpoint(breakpoint) {
@@ -256,6 +452,13 @@ class DCEL_Vertex {
         }
 
         return this.position;
+    }
+
+    kill() {
+        this.dead = true;
+        this.breakpoint = null;
+        this.edge = null;
+        this.position = null;
     }
 }
 

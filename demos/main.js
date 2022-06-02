@@ -269,13 +269,13 @@ function draw() {
                 currentDrawing.push(
                     circleShape(point.x, point.y, 3, true)
                 );
-            }
-
-            for (let [x1, y1, x2, y2] of diagramLines) {
-                currentDrawing.push(
-                    lineSegmentShape(x1, y1, x2, y2)
-                );
             }*/
+
+            for (let [from, to] of diagramLines) {
+                currentDrawing.push(
+                    lineSegmentShape(from.x, from.y, to.x, to.y)
+                );
+            }
 
             break;
         };

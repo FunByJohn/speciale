@@ -117,41 +117,58 @@ class DCEL {
         for (let halfEdge of this.halfEdges) {
             let from = halfEdge.origin.getPosition(sweepLineY);
             let to = halfEdge.twin.origin.getPosition(sweepLineY);
-            let dir = Point.sub(to, from);
-            let len = dir.norm();
-            let unitDir = dir.scale(1 / len);
-            let offset = unitDir.hat().scale(5.0);
-            let arrowStart = 10.0;
-            let mid = Point.add(from, to).scale(0.5);
 
-            from = Point.add(from, offset);
-            to = Point.add(to, offset);
+            if (Config.debugDCELShowOrientedEdges) {
+                let dir = Point.sub(to, from);
+                let len = dir.norm();
+                let unitDir = dir.scale(1 / len);
+                let offset = unitDir.hat().scale(5.0);
+                let arrowStart = 10.0;
+                let mid = Point.add(from, to).scale(0.5);
 
-            lines.push([
-                Point.add(offset.scale(-0.5), Point.add(from, unitDir.scale(0.5 * len - arrowStart))),
-                Point.add(from, unitDir.scale(0.5 * len))
-            ]);
-            
-            lines.push([
-                Point.add(offset.scale(0.5), Point.add(from, unitDir.scale(0.5 * len - arrowStart))),
-                Point.add(from, unitDir.scale(0.5 * len))
-            ]);
+                from = Point.add(from, offset);
+                to = Point.add(to, offset);
 
-            lines.push([from, to]);
+                lines.push([
+                    Point.add(offset.scale(-0.5), Point.add(from, unitDir.scale(0.5 * len - arrowStart))),
+                    Point.add(from, unitDir.scale(0.5 * len))
+                ]);
+                
+                lines.push([
+                    Point.add(offset.scale(0.5), Point.add(from, unitDir.scale(0.5 * len - arrowStart))),
+                    Point.add(from, unitDir.scale(0.5 * len))
+                ]);
 
-            /*if (halfEdge.face != null)
-                lines.push([Point.add(mid, offset), halfEdge.face.site.position]);*/
+                lines.push([from, to]);
+            } else {
+                lines.push([from, to]);
+            }
 
-            let nextEdge = halfEdge.next;
-            if (nextEdge != null) {
-                let nextFrom = nextEdge.origin.getPosition(sweepLineY);
-                let nextTo = nextEdge.twin.origin.getPosition(sweepLineY);
-                let nextOffset = Point.sub(nextTo, nextFrom).hat();
-                let nextMid = Point.add(nextFrom, nextTo).scale(0.5);
+            if (Config.debugDCELShowFacePointers && halfEdge.face != null)
+                lines.push([Point.add(mid, offset), halfEdge.face.site.position]);
 
-                nextOffset = nextOffset.scale(1 / nextOffset.norm()).scale(5.0);
+            if (Config.debugDCELShowNextPointers) {
+                let nextEdge = halfEdge.next;
+                if (nextEdge != null) {
+                    let nextFrom = nextEdge.origin.getPosition(sweepLineY);
+                    let nextTo = nextEdge.twin.origin.getPosition(sweepLineY);
+                    let nextOffset = Point.sub(nextTo, nextFrom).hat();
+                    let nextMid = Point.add(nextFrom, nextTo).scale(0.5);
 
-                lines.push([Point.add(mid, offset), Point.add(nextOffset, nextMid)]);
+                    nextOffset = nextOffset.scale(1 / nextOffset.norm()).scale(5.0);
+
+                    let conFrom = Point.add(mid, offset);
+                    let conTo = Point.add(nextOffset, nextMid);
+                    let conOffset = Point.sub(conTo, conFrom).hat();
+
+                    conOffset = conOffset.scale(1 / conOffset.norm());
+
+                    let conControlPoint = Point.add(conOffset.scale(20.0), Point.add(conFrom, conTo).scale(0.5));
+
+                    //lines.push([conFrom, conTo]);
+                    lines.push([conFrom, conControlPoint]);
+                    lines.push([conControlPoint, conTo]);
+                }
             }
         }
 
@@ -179,7 +196,7 @@ class DCEL {
             lines.push([b4, b1]);
         }
 
-        for (let point of this.debugIntersectionPoints) {
+        /*for (let point of this.debugIntersectionPoints) {
             let r = 8;
             let n = 12;
 
@@ -191,7 +208,7 @@ class DCEL {
 
                 lines.push([from, to]);
             }
-        }
+        }*/
 
         return [vertices, lines];
     }
@@ -339,19 +356,27 @@ class DCEL {
                 if (prevEdge != null) {
                     pair(prevEdge, edge);
                     pair(oppEdge, prevEdge.twin);
+
+                    /*if (prevEdge.face != null)
+                        edge.face = prevEdge.face;*/
                 }
 
                 if (nextEdge != null) {
                     pair(edge, nextEdge);
                     pair(nextEdge.twin, oppEdge);
+
+                    /*if (nextEdge.face != null)
+                        edge.face = nextEdge.face;*/
                 }
 
                 _this.halfEdges.push(edge);
                 _this.halfEdges.push(oppEdge);
 
-                return edge;
+                return [edge, edge];
             } else {
                 let lastVert = fromVert;
+                let lastBoundaryEdge = prevEdge;
+                let firstEdge = null;
 
                 for (let element of intersectionList) {
                     let vertex = element.vertex;
@@ -370,12 +395,34 @@ class DCEL {
                     oppEdge.twin = edge;
 
                     pair(edge, vertex.edge);
+
+                    if (lastVert.edge != null) {
+                        pair(lastVert.edge.twin, edge);
+
+                        if (lastVert.edge.twin.face == null) {
+                            lastVert.edge.twin.face = vertex.edge.face;
+                        }
+                    }
+
+                    if (lastBoundaryEdge != null)
+                        pair(oppEdge, lastBoundaryEdge.twin);
+                    
                     //pair(vertex.edge.twin, oppEdge);
 
                     _this.halfEdges.push(edge);
                     _this.halfEdges.push(oppEdge);
 
                     lastVert = vertex;
+                    lastBoundaryEdge = edge;
+
+                    if (firstEdge == null) {
+                        if (prevEdge != null) {
+                            pair(prevEdge, edge);
+                            pair(oppEdge, prevEdge.twin);
+                        }
+
+                        firstEdge = edge;
+                    }
                 }
 
                 let edge = new DCEL_HalfEdge();
@@ -387,10 +434,20 @@ class DCEL {
                 oppEdge.origin = toVert;
                 oppEdge.twin = edge;
 
+                pair(lastVert.edge.twin, edge);
+
+                if (lastBoundaryEdge != null)
+                    pair(edge.twin, lastBoundaryEdge.twin);
+
                 _this.halfEdges.push(edge);
                 _this.halfEdges.push(oppEdge);
 
-                return edge;
+                if (nextEdge != null) {
+                    pair(edge, nextEdge);
+                    pair(nextEdge.twin, edge.twin);
+                }
+
+                return [firstEdge, edge];
             }
         }
 
@@ -408,11 +465,34 @@ class DCEL {
 
         let firstEdge = null;
         let prevEdge = null;
+        let _;
 
-        firstEdge = handleSide(intersectionLists[0], b1, b2, null,      null);      // 1
-        prevEdge  = handleSide(intersectionLists[1], b2, b3, firstEdge, null);      // 2
-        prevEdge  = handleSide(intersectionLists[2], b3, b4, prevEdge,  null);      // 3
-                    handleSide(intersectionLists[3], b4, b1, prevEdge,  firstEdge); // 4
+        [firstEdge, prevEdge] = handleSide(intersectionLists[0], b1, b2, null,     null);      // 1
+        [_,         prevEdge] = handleSide(intersectionLists[1], b2, b3, prevEdge, null);      // 2
+        [_,         prevEdge] = handleSide(intersectionLists[2], b3, b4, prevEdge, null);      // 3
+                                handleSide(intersectionLists[3], b4, b1, prevEdge, firstEdge); // 4
+
+        // Set face pointer where it is missing
+        let firstOppEdge = firstEdge.twin;
+        let edge = firstOppEdge;
+
+        do {
+            let twin = edge.twin;
+            let nextTwin = edge.prev.twin;
+            let prevTwin = edge.next.twin;
+
+            if (twin.face == null) {
+                if (nextTwin.face != null) {
+                    twin.face = nextTwin.face;
+                } else if (prevTwin.face != null) {
+                    twin.face = prevTwin.face;
+                }
+            }
+
+            edge = edge.next;
+        } while (edge !== firstOppEdge);
+
+        console.log(firstEdge);
     }
 
     cleanUpDeadVertices() {

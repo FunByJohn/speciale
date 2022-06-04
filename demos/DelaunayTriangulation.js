@@ -1,14 +1,6 @@
 function computeDelaunayTriangulation(points, width, height) {
-    let lines = [];
+    let diagram = new VoronoiDiagram(points);
+    let dcel = diagram.dcel;
 
-    for (let i = 0; i < points.length; i++) {
-        for (let j = i + 1; j < points.length; j++) {
-            let [x1, y1] = points[i];
-            let [x2, y2] = points[j];
-
-            lines.push([x1, y1, x2, y2]);
-        }
-    }
-
-    return lines;
+    return [[], [], [], []];
 }

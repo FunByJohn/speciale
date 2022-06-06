@@ -1,64 +1,64 @@
+
+        !!!! HUSK AT REFERERE I HVERT KAPITEL TIL HVAD DET ER BASERET PÅ, OG HVAD MAN SELV HAR UDLEDT, FOR AT DET IKKE ER PLAGIAT !!!!
+
 Thesis structure
 
     Introduction (intro.tex)
 
-        > Nice to have: Informal introduction: What is a Voronoi diagram and what are their applications? (Maybe Okabe has something interesting to say)
+        [ ] Nice to have: Informal introduction: What is a Voronoi diagram and what are their applications? (Maybe Okabe has something interesting to say)
 
-    Introduction to Euclidean Voronoi Diagrams (euclidean.tex)
+    Properties of Euclidean Voronoi Diagrams (euclidean.tex)
 
-        > Definition
-        > Preliminary definitions: Bisector, halfplane, Voronoi cells
-        > How to store a Voronoi diagram? DCELs
-
-    Properties of Euclidean Voronoi Diagrams (properties.tex)
-
-        > Thm: If points are collinear, diagram is a set of full lines. Otherwise, diagram is connected and edges are either segments or rays.
-        > Thm: Number of vertices and edges is O(n).
-        > Rmk: How does storing the diagram in a DCEL and intersecting it with a bounding box affect the number of edges and vertices?
+        [ ] Definition
+        [ ] How to store a Voronoi diagram? DCELs
+        [ ] Preliminary definitions: Bisector, halfplane, Voronoi cells
+        [ ] Thm: If points are collinear, diagram is a set of full lines. Otherwise, diagram is connected and edges are either segments or rays.
+        [ ] Thm: Number of vertices and edges is O(n).
+        [ ] Rmk: How does storing the diagram in a DCEL and intersecting it with a bounding box affect the number of edges and vertices?
+        [ ] Def: Largest empty circle.
+        [ ] Thm: Characterize vertices and edges by intersection of largest empty circles.
 
     Mathematical setup for Fortune's algorithm (mathsetup.tex)
 
-        > Thm: O(n log n) is best running time.
-        > Def: Largest empty circle.
-        > Thm: Characterize vertices and edges by intersection of largest empty circles.
-        > Def: Sweep line and corresponding beach line.
-        > Def: Breakpoint.
-        > Prop: Every breakpoint is in Vor(P), and for every point q in Vor(P) there is a sweep line position such that q is a breakpoint.
-        > Def: Site event.
-        > Lemma: Topological structure of beachline - the only way an arc appears on it is through a site event
-        > Cor: At any time the beach line has at most 2n - 1 arcs.
-        > Lemma: The only way at which an existing arc can disappear from the beach line is through a circle event.
-        > Prove Lemma 7.8: Every Voronoi vertex is detected by means of a circle event. (p. 157)
+        [ ] Thm: O(n log n) is best running time.
+        [ ] Def: Sweep line and corresponding beach line.
+        [ ] Def: Breakpoint.
+        [ ] Prop: Every breakpoint is in Vor(P), and for every point q in Vor(P) there is a sweep line position such that q is a breakpoint.
+        [ ] Def: Site event.
+        [ ] Lemma: Topological structure of beachline - the only way an arc appears on it is through a site event
+        [ ] Cor: At any time the beach line has at most 2n - 1 arcs.
+        [ ] Lemma: The only way at which an existing arc can disappear from the beach line is through a circle event.
+        [ ] Prove Lemma 7.8: Every Voronoi vertex is detected by means of a circle event. (p. 157)
 
     Data structures for Fortune's algorithm (ds.tex)
 
-        > General introduction of the three DS
-        > Priority queue: Use a binary heap
-        > Binary search tree
-            > Insertion at site event
-            > Deletion at circle event
-        > Using a treap for balancing
-        > DCEL: Inserting and deleting
+        [ ] General introduction of the three DS
+        [ ] Priority queue: Use a binary heap
+        [ ] Binary search tree
+            [ ] Insertion at site event
+            [ ] Deletion at circle event
+        [ ] Using a treap for balancing
+        [ ] DCEL: Inserting and deleting
 
     Description of Fortune's algorithm (fortune.tex)
 
-        > Alg: VoronoiDiagram(P) (same as on p. 157-158)
-        > HandleSiteEvent
-        > HandleCircleEvent
-        > Details
-            > Detail 1: How to find the position of a breakpoint based on the ordered tuple (p_i, p_j)
-            > Detail 2: How to find the arc vertically above a point
-            > Detail 3: How to check if two breakpoints are converging
-            > Detail 4: Finding a circle through 3 points
-            > Detail 5: Deleting false alarms during a circle event
-            > Detail 6: Intersecting a bounding box with the in-progress DCEL to get the final DCEL
-        > Lemma: Proof of correctness
-        > Degeneracies
-            > More than 1 point as the site event
-            > Two or more site events with same y
-            > More than 3 points on a circle
+        [ ] Alg: VoronoiDiagram(P) (same as on p. 157-158)
+        [ ] HandleSiteEvent
+        [ ] HandleCircleEvent
+        [ ] Details
+            [ ] Detail 1: How to find the position of a breakpoint based on the ordered tuple (p_i, p_j)
+            [ ] Detail 2: How to find the arc vertically above a point
+            [ ] Detail 3: How to check if two breakpoints are converging
+            [ ] Detail 4: Finding a circle through 3 points
+            [ ] Detail 5: Deleting false alarms during a circle event
+            [ ] Detail 6: Intersecting a bounding box with the in-progress DCEL to get the final DCEL
+        [ ] Lemma: Proof of correctness
+        [ ] Degeneracies
+            [ ] More than 1 point as the site event
+            [ ] Two or more site events with same y
+            [ ] More than 3 points on a circle
 
     Application: Computing the Delaunay triangulation (delaunay.tex)
 
-        > Introduction as dual of Voronoi Diagram
-        > Algorithm which uses Fortune's algorithm and then dualising the DCEL
+        [ ] Introduction as dual of Voronoi Diagram
+        [ ] Algorithm which uses Fortune's algorithm and then dualising the DCEL

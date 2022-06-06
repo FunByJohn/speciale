@@ -1,3 +1,45 @@
 \chapter{Data structures for Fortune's algorithm}
 
-lsdkf
+During the algorithm we will need three data structures:
+\begin{itemize}
+    \item A \textbf{priority queue} $\mathcal{Q}$ for keeping track of the site and circle events.
+    \item A \textbf{doubly-connected edge list (DCEL)} $\mathcal{D}$ for keeping track of the current state of the Voronoi diagram. See Definition \ref{defn:dcel}. This will be updated after each site and circle event.
+    \item A self-balancing \textbf{binary search tree (BST)} $\mathcal{T}$ for keeping track of the breakpoints and arcs on the beach line.
+\end{itemize}
+We explain them in detail in the next sections.
+
+\section{Priority queue}
+The priority queue stores the site and circle events, and enables the algorithm to handle them in order. Each element in the priority queue has a priority. For a site event the $y$-value of the point describes the priority, and for a circle event the priority is given by the $y$-value of the lowest point of the center of the circle which describes the event. Site events also store a pointer to the site, and circle events also store the center of its definining circle and a pointer to the arc in $\mathcal{T}$ which is disappearing.
+
+For the implementation of the priority queue we will use a binary heap. These are described in CLRS \todo{Ref}, and the implementation has been taken from \todo{Ref}.
+
+\section{Binary search tree}
+
+\todo{Describe how we insert into the tree at a site event}
+
+\todo{Describe how we delete from the tree at a circle event}
+
+\section{Doubly-connected edge list}
+
+\todo{Describe how we modify the DCEL at a site event}
+
+\todo{Describe how we modify the DCEL at a circle event}
+
+\todo{Describe how we intersect the DCEL with a bounding box when we have been through the event queue}
+
+\section{Using a treap as the binary search tree}
+In this section we will introduce the treap data structure, which is a randomized self-balancing binary search tree. The presentation follows the paper \todo{Ref}, but only describes the things that we will need.
+
+\todo{Define a treap}
+
+\todo{Explain how to insert into a treap}
+
+\todo{Explain how to delete from a treap}
+
+\todo{Define the random variables in question}
+
+\todo{Show that they have the expected values}
+
+\todo{Show that the expected height is bounded by log n}
+
+\todo{Show that 2 rotations are the expected amount}

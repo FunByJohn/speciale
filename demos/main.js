@@ -395,9 +395,9 @@ function draw() {
         {
             let diagramLines = computeDelaunayTriangulation(points, width, height);
 
-            for (let [x1, y1, x2, y2] of diagramLines) {
+            for (let [from, to] of diagramLines) {
                 currentDrawing.push(
-                    lineSegmentShape(x1, y1, x2, y2)
+                    lineSegmentShape(from.x, from.y, to.x, to.y)
                 );
             }
 

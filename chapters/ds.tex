@@ -34,13 +34,13 @@ In this section we will introduce the treap data structure, which is a randomize
 \begin{defn}[Treap]
 Let $T$ be a tree where each node $x \in T$ has properties
 \begin{itemize}
-    \item $x\textsf{.left} \subset T$, the left subtree of $x$,
-    \item $x\textsf{.right} \subset T$, the right subtree of $x$,
+    \item $x\textsf{.left}$ is the left subtree of $x$,
+    \item $x\textsf{.right}$ is the right subtree of $x$,
     \item $x\textsf{.key} \in \R$,
     \item $x\textsf{.priority} \in [0,1]$.
 \end{itemize}
 We say that $T$ is a \textit{treap} if
-\begin{enumerate}
+\begin{enumerate}[(i)]
     \item $T$ is a binary tree with respect to $\textsf{.key}$. That is, for every $x \in T$ we have
     \begin{align*}
         \forall y \in x\textsf{.left} &\colon y\textsf{.key} \leq x\textsf{.key}, \\
@@ -54,9 +54,9 @@ We say that $T$ is a \textit{treap} if
 \end{defn}
 
 \begin{defn}[Left and right rotations]
-Given a tree $T$ and two nodes $x, y \in T$ with subtrees $A, B, C \subset T$ the operations \textit{rotate left} and \textit{rotate right} are given as follows:
+Given a tree $T$ and two nodes $x, y \in T$ with subtrees $A, B, C$ the operations \textit{rotate left} and \textit{rotate right} are given as follows:
 \[
-    \includegraphics[scale=0.6]{images/rotate}
+    \includegraphics[width=\textwidth]{images/rotate}
 \]
 \end{defn}
 
@@ -79,21 +79,18 @@ The main result we will work towards in this section is the following:
 A randomized search tree storing $n$ items has the expected performance characteristics listed in the table below:
 \begin{table}[h!]
 \centering
-\begin{tabular}{|ll|}
-\hline
+\begin{tabular}{ll}
 \textbf{Performance measure}   & \textbf{Bound on expectation} \\ \hline
-Search time                    & $\mathcal{O}(\log n)$         \\
-Insertion time                 & $\mathcal{O}(\log n)$         \\
-Deletion time                  & $\mathcal{O}(\log n)$         \\
-Number of rotations per update & 2                             \\ \hline
+Search                         & $\mathcal{O}(\log n)$         \\
+Insertion                      & $\mathcal{O}(\log n)$         \\
+Deletion                       & $\mathcal{O}(\log n)$         \\
+Number of rotations per update & $\leq 2$                      \\ \hline
 \end{tabular}
 \end{table}
 \end{thm}
 To prove this we will introduce some random variables and then we will work towards proving upper bounds for their expectations. The first random variables we introduce are:
 \begin{itemize}
     \item $D(x)$: the number of nodes on the path from $x$ to the root.
-    \item $S(x)$: the number of nodes contained in the subtree with $x$ as root.
-    \item $P(x,y)$: the number of nodes on the unique path between nodes $x$ and $y$.
     \item $SL(x)$ and $SR(x)$: the length of the right spine of the left subtree of $x$ and the length of the right spine of the right subtree of $x$. By left spine of a tree we mean the number of nodes passed if we keep following the left pointer, and similarly for the right spine.
 \end{itemize}
 Throughout this section we will deal with a treap $T$ with nodes $x_1, x_2, \ldots, x_n$ where node $x_i$ has associated key $k_i$ and priority $p_i$, and $k_1 < k_2 < \cdots < k_n$. We now introduce the following indicator random variables:
@@ -109,11 +106,9 @@ Throughout this section we will deal with a treap $T$ with nodes $x_1, x_2, \ldo
 \end{align*}
 Note that we consider each node an ancestor of itself. We then have:
 \begin{thm}
-    Let $1 \leq \ell, m \leq n$ and let $\ell < m$. Then
-    \begin{enumerate}
+    Let $1 \leq \ell \leq n$. Then
+    \begin{enumerate}[(i)]
         \item $D(x_{\ell}) = \sum_{i=1}^{n} A_{i,\ell}$.
-        \item $S(x_{\ell}) = \sum_{j=1}^{n} A_{\ell,j}$.
-        \item $P(x_{\ell}, x_{m}) = 1 + \sum_{i=1}^{m - 1} (A_{i,\ell} - C_{i;\ell,m}) + \sum_{i=\ell+1}^{n} (A_{i,m} - C_{i;\ell,m})$.
         \item $SL(x_{\ell}) = \sum_{i=1}^{\ell-1} (A_{i,\ell-1} - C_{i;\ell-1,\ell})$.
         \item $SR(x_{\ell}) = \sum_{i=\ell+1}^{n} (A_{i,\ell+1} - C_{i;\ell,\ell+1})$.
     \end{enumerate}
@@ -124,11 +119,9 @@ Note that we consider each node an ancestor of itself. We then have:
 
 If we let $a_{i,j} = \mathbb{E}[A_{i,j}]$ and $c_{i;\ell,m} = \mathbb{E}[C_{i;\ell,m}]$ then by linearity of expectation we get:
 \begin{cor}
-Let $1 \leq \ell, m \leq n$ and let $\ell < m$. Then
-    \begin{enumerate}
+Let $1 \leq \ell \leq n$ and let $\ell < m$. Then
+    \begin{enumerate}[(i)]
         \item $\mathbb{E}[D(x_{\ell})] = \sum_{i=1}^{n} a_{i,\ell}$.
-        \item $\mathbb{E}[S(x_{\ell})] = \sum_{j=1}^{n} a_{\ell,j}$.
-        \item $\mathbb{E}[P(x_{\ell}, x_{m})] = 1 + \sum_{i=1}^{m - 1} (A_{i,\ell} - c_{i;\ell,m}) + \sum_{i=\ell+1}^{n} (a_{i,m} - c_{i;\ell,m})$.
         \item $\mathbb{E}[SL(x_{\ell})] = \sum_{i=1}^{\ell-1} (a_{i,\ell-1} - c_{i;\ell-1,\ell})$.
         \item $\mathbb{E}[SR(x_{\ell})] = \sum_{i=\ell+1}^{n} (a_{i,\ell+1} - c_{i;\ell,\ell+1})$.
     \end{enumerate}
@@ -154,7 +147,35 @@ Assuming all priorities are distinct, then $x_i$ is an ancestor of $x_j$ in $T$ 
 \todo{.}
 \end{proof}
 
-
-\todo{Show that the expected height is bounded by log n}
+\newpage
+\begin{thm}
+Let $1 \leq \ell \leq m$. In a randomized search tree with $n$ nodes the following expectations hold:
+\begin{enumerate}[(i)]
+    \item $\mathbb{E}[D(x_{\ell})] = H_{\ell} + H_{n+1-\ell} - 1 < 1 + 2 \cdot \ln n = \mathcal{O}(\log n)$.
+    \item $\mathbb{E}[SL(x_{\ell})] = 1 - \displaystyle \frac{1}{\ell}$.
+    \item $\mathbb{E}[SR(x_{\ell})] = 1 - \displaystyle \frac{1}{n + 1 - \ell}$.
+\end{enumerate}
+\end{thm}
+\begin{proof}
+For (i) we get
+\begin{align*}
+    \mathbb{E}[D(x_{\ell})] &= \sum_{i=1}^n a_{i,\ell} \\
+    &= \sum_{i=1}^n \frac{1}{\abs{i - \ell} + 1} \\
+    &= \sum_{i=1}^{\ell} \frac{1}{\ell - i + 1} + \sum_{i=\ell}^{n} \frac{1}{i - \ell + 1} - 1 \\
+    &= \sum_{i=1}^{\ell} \frac{1}{i} + \sum_{i=1}^{n+1-\ell} \frac{1}{i} - 1 \quad \text{(Reverse left sum and swap index in right)} \\
+    &= H_{\ell} + H_{n+1-\ell} - 1 \\
+    &< (1 + \ln \ell) + (1 + \ln (n + 1 - \ell)) - 1 \\
+    &\leq 1 + 2 \cdot \ln n.
+\end{align*}
+For (ii) we have
+\begin{align*}
+    \mathbb{E}[SL(x_{\ell})] &= \sum_{i=1}^{\ell - 1} \left(a_{i,\ell-1} - c_{i;\ell-1,\ell}\right) \\
+    &= \sum_{i=1}^{\ell - 1} \left(\frac{1}{\abs{i - (\ell - 1)} + 1} - \frac{1}{\max\curly{i,\ell-1,\ell}-\min\curly{i,\ell-1,\ell}+1}\right) \\
+    &= \sum_{i=1}^{\ell - 1} \left(\frac{1}{\ell - i} - \frac{1}{\ell - i + 1}\right) \\
+    &= \frac{1}{\ell - (\ell - 1)} - \frac{1}{\ell} \quad \text{(The above is a telescoping sum)} \\
+    &= 1 - \frac{1}{\ell}.
+\end{align*}
+For (iii) we note that the proof is basically the same as for (ii).
+\end{proof}
 
 \todo{Show that 2 rotations are the expected amount}

@@ -91,7 +91,7 @@ Number of rotations per update & $\leq 2$                      \\ \hline
 To prove this we will introduce some random variables and then we will work towards proving upper bounds for their expectations. The first random variables we introduce are:
 \begin{itemize}
     \item $D(x)$: the number of nodes on the path from $x$ to the root.
-    \item $SL(x)$ and $SR(x)$: the length of the right spine of the left subtree of $x$ and the length of the right spine of the right subtree of $x$. By left spine of a tree we mean the number of nodes passed if we keep following the left pointer, and similarly for the right spine.
+    \item $SL(x)$ and $SR(x)$: the length of the right spine of the left subtree of $x$ and the length of the right spine of the right subtree of $x$. By length of the left spine of a tree we mean the number of nodes we pass if we keep following the left pointer from the root, and similarly for the right spine.
 \end{itemize}
 Throughout this section we will deal with a treap $T$ with nodes $x_1, x_2, \ldots, x_n$ where node $x_i$ has associated key $k_i$ and priority $p_i$, and $k_1 < k_2 < \cdots < k_n$. We now introduce the following indicator random variables:
 \begin{align*}
@@ -114,7 +114,13 @@ Note that we consider each node an ancestor of itself. We then have:
     \end{enumerate}
 \end{thm}
 \begin{proof}
-\todo{.}
+(i): Nodes on the path from $x_{\ell}$ to the root are exactly the nodes which $x_{\ell}$ has as ancestors.
+
+(ii): First we assume that $x_{\ell}$ has a left subtree $L$. This has the nodes $x_i$ with $i < \ell$. The lowest node on the right spine of $L$ is $x_{\ell-1}$. This means that every node on the right spine of $L$ is an ancestor of $x_{\ell-1}$. Nodes in $L$ outside the right spine are not ancestors of $x_{\ell-1}$. Since none of the nodes in $L$ are ancestors of $x_{\ell}$ we have that $C_{i;\ell-1,\ell} = 0$ for all $i < \ell$, and hence the formula holds.
+
+Now assume that $x_{\ell}$ has no left subtree. If $\ell = 1$ then the sum correctly evaluates to 0. If $\ell > 1$ then it must be the case that $x_{\ell-1}$ is an ancestor of $x_{\ell}$, and then every ancestor of $x_{\ell-1}$ is a common ancestor of $x_{\ell-1}$ and $x_{\ell}$, so the formula again correctly evaluates to 0.
+
+(iii): This argument is symmetrical to the one for (ii).
 \end{proof}
 
 If we let $a_{i,j} = \mathbb{E}[A_{i,j}]$ and $c_{i;\ell,m} = \mathbb{E}[C_{i;\ell,m}]$ then by linearity of expectation we get:
@@ -141,13 +147,52 @@ and
 \]
 Determining these probabilities is made possible through the ancestor lemma:
 \begin{lem}[Ancestor lemma]
-Assuming all priorities are distinct, then $x_i$ is an ancestor of $x_j$ in $T$ if and only if $p_i \geq p_h$ for all $i \leq h \leq j$.
+Assuming that all priorities are distinct, then $x_i$ is an ancestor of $x_j$ in $T$ if and only if $p_i \geq p_h$ for all $i \leq h \leq j$.
 \end{lem}
+\begin{proof}
+Let $x_m$ be the item with the highest priority in $T$. Let
+\[
+    L = \makeset{x_{\nu}}{1 \leq \nu < m}
+    \quad
+    \text{and}
+    \quad
+    R = \makeset{x_{\mu}}{m < \mu \leq n}.
+\]
+Note that since $x_m$ is the node with the highest priority in $T$ it is actually the root, so we may consider $L$ and $R$ as the left and right subtrees of $x_m$. Note that $L$ and $R$ are treaps also.
+
+For every $x_{\ell} \in L$ we have that $x_m$ is an ancestor of $x_{\ell}$ and $p_m \geq p_h$ for all $\ell \leq h \leq m$. Thus it follows that any pair with $x_m$ and $x_{\ell} \in L$ satisfy the ancestor characterization. Similarly every pair with $x_m$ and any node in $R$ satisfies the characterization. Now, note that a pair with $x_i \in L$ and $x_j \in R$ trivially satisfy the characterization, as they are not ancestor related.
+
+We may then by recursion use the same argument on $L$ and $R$, and this way we end out showing that the characterization is true for all pairs in $T$.
+\end{proof}
+
+An immediate consequence of the ancestor lemma is the common ancestor lemma:
+\begin{lem}[Common ancestor lemma]
+Let $1 \leq \ell, m, i \leq n$ with $\ell < m$. Assuming that all priorities are distinct, then $x_i$ is a common ancestor of $x_{\ell}$ and $x_m$ in T if and only if
+\[
+    p_i = \max\makeset{p_{\nu}}{\min\curly{i,\ell,m} \leq \nu \leq \max\curly{i,\ell,m}}.
+\]
+\end{lem}
+
+\begin{cor}
+$a_{i,j} = \displaystyle \frac{1}{\abs{i - j} + 1}$.
+\end{cor}
 \begin{proof}
 \todo{.}
 \end{proof}
 
-\newpage
+\begin{cor}
+$c_{i;\ell,m} = \displaystyle \frac{1}{\max\curly{i,\ell,m} - \min\curly{i,\ell,m} + 1}$.
+\end{cor}
+\begin{proof}
+\todo{.}
+\end{proof}
+
+The harmonic numbers are given by $H_n = \sum_{i=1}^n \frac{1}{i}$ and they satisfy
+\[
+    \ln n < H_n < 1 + \ln n
+\]
+for all $n > 1$. \todo{Find proof or reference.}
+
 \begin{thm}
 Let $1 \leq \ell \leq m$. In a randomized search tree with $n$ nodes the following expectations hold:
 \begin{enumerate}[(i)]
@@ -175,7 +220,8 @@ For (ii) we have
     &= \frac{1}{\ell - (\ell - 1)} - \frac{1}{\ell} \quad \text{(The above is a telescoping sum)} \\
     &= 1 - \frac{1}{\ell}.
 \end{align*}
-For (iii) we note that the proof is basically the same as for (ii).
+For (iii) we note that the proof is basically the same as for (ii) so we omit it.
 \end{proof}
 
+\todo{Argue that search, insert and delete have the required bounds}
 \todo{Show that 2 rotations are the expected amount}

@@ -75,7 +75,7 @@ We define a \textit{randomized search tree} to be a treap $T$ where the prioriti
 
 The main result we will work towards in this section is the following:
 
-\begin{thm}
+\begin{thm} \label{thm:treapmainthm}
 A randomized search tree storing $n$ items has the expected performance characteristics listed in the table below:
 \begin{table}[h!]
 \centering
@@ -147,7 +147,7 @@ and
 \]
 Determining these probabilities is made possible through the ancestor lemma:
 \begin{lem}[Ancestor lemma]
-Assuming that all priorities are distinct, then $x_i$ is an ancestor of $x_j$ in $T$ if and only if $p_i \geq p_h$ for all $i \leq h \leq j$.
+Assuming that all priorities are distinct, then $x_i$ is an ancestor of $x_j$ in $T$ if and only if $p_i \geq p_h$ for all $h$ in between and including $i$ and $j$.
 \end{lem}
 \begin{proof}
 Let $x_m$ be the item with the highest priority in $T$. Let
@@ -165,35 +165,54 @@ For every $x_{\ell} \in L$ we have that $x_m$ is an ancestor of $x_{\ell}$ and $
 We may then by recursion use the same argument on $L$ and $R$, and this way we end out showing that the characterization is true for all pairs in $T$.
 \end{proof}
 
-An immediate consequence of the ancestor lemma is the common ancestor lemma:
 \begin{lem}[Common ancestor lemma]
 Let $1 \leq \ell, m, i \leq n$ with $\ell < m$. Assuming that all priorities are distinct, then $x_i$ is a common ancestor of $x_{\ell}$ and $x_m$ in T if and only if
-\[
+\begin{equation} \label{eq:commonacenstorproperty}
     p_i = \max\makeset{p_{\nu}}{\min\curly{i,\ell,m} \leq \nu \leq \max\curly{i,\ell,m}}.
-\]
+\end{equation}
 \end{lem}
+\begin{proof}
+Equation (\ref{eq:commonacenstorproperty}) is equivalent to the following cases:
+\begin{itemize}
+    \item $p_i = \max\makeset{p_{\nu}}{i \leq \nu \leq m}$ if $1 \leq i \leq \ell$.
+    \item $p_i = \max\makeset{p_{\nu}}{\ell \leq \nu \leq m}$ if $\ell \leq i \leq m$.
+    \item $p_i = \max\makeset{p_{\nu}}{\ell \leq \nu \leq i}$ if $m \leq i \leq n$.
+\end{itemize}
+The fact that the lemma is true for each of these cases is a direct consequence of the ancestor lemma.
+\end{proof}
 
-\begin{cor}
+\begin{cor} \label{cor:propofancestor}
 $a_{i,j} = \displaystyle \frac{1}{\abs{i - j} + 1}$.
 \end{cor}
 \begin{proof}
-\todo{.}
+By the ancestor lemma $x_i$ is an ancestor of $x_j$ if and only if
+\[
+    p_i = \max\makeset{p_h}{\min\curly{i, j} \leq h \leq \max\curly{i, j}}.
+\]
+Since the $p_i$ are independent and identically distributed continuous random variables, this happens with probability
+\[
+    \frac{1}{\abs{\makeset{h \in \N}{\min\curly{i, j} \leq h \leq \max\curly{i, j}}}} = \frac{1}{\abs{i - j} + 1}.
+\]
 \end{proof}
 
 \begin{cor}
 $c_{i;\ell,m} = \displaystyle \frac{1}{\max\curly{i,\ell,m} - \min\curly{i,\ell,m} + 1}$.
 \end{cor}
 \begin{proof}
-\todo{.}
+By the common ancestor lemma $x_i$ is a common ancestor of $x_{\ell}$ and $x_m$ if and only if
+\[
+    p_i = \max\makeset{p_{\nu}}{\min\curly{i,\ell,m} \leq \nu \leq \max\curly{i,\ell,m}}.
+\]
+Like in the proof of Lemma \ref{cor:propofancestor} we then use that the $p_i$ are i.i.d to conclude that the probability is the reciprocal of the cardinality of the set we are taking the maximum of, and this cardinality is $\max\curly{i,\ell,m} - \min\curly{i,\ell,m} + 1$.
 \end{proof}
 
-The harmonic numbers are given by $H_n = \sum_{i=1}^n \frac{1}{i}$ and they satisfy
+Now we are ready to find upper bounds on the expectations of the quantities we are interested in. In order to do this, we will need the harmonic numbers, which are are given by $H_n = \sum_{i=1}^n \frac{1}{i}$. Their crucial property is the inequalities
 \[
     \ln n < H_n < 1 + \ln n
 \]
 for all $n > 1$. \todo{Find proof or reference.}
 
-\begin{thm}
+\begin{thm} \label{thm:treapbounds}
 Let $1 \leq \ell \leq m$. In a randomized search tree with $n$ nodes the following expectations hold:
 \begin{enumerate}[(i)]
     \item $\mathbb{E}[D(x_{\ell})] = H_{\ell} + H_{n+1-\ell} - 1 < 1 + 2 \cdot \ln n = \mathcal{O}(\log n)$.
@@ -223,5 +242,29 @@ For (ii) we have
 For (iii) we note that the proof is basically the same as for (ii) so we omit it.
 \end{proof}
 
-\todo{Argue that search, insert and delete have the required bounds}
-\todo{Show that 2 rotations are the expected amount}
+By combining Lemma \ref{lem:treaprotationbound} and Lemma \ref{lem:treapoperationsbounds} below we obtain a proof of Theorem \ref{thm:treapmainthm}, which will complete our analysis of treaps:
+
+\begin{lem} \label{lem:treapoperationsbounds}
+The operations \textsc{Search}, \textsc{Insert} and \textsc{Delete} take expected $\mathcal{O}(\log n)$ time.
+\end{lem}
+\begin{proof}
+Searching for the spot for an element $x$ takes expected
+\[
+    \mathbb{E}[D(\textsc{Pred}(x)) + D(\textsc{Succ}(x))] = \mathcal{O}(\log n)
+\]
+time, where $\textsc{Pred}(x)$ finds a predecessor for $x$, e.g. finding the element in $T$ with the largest key less than or equal to $x\textsf{.key}$, and $\textsc{Succ}(x)$ finds a successor for $x$, e.g. finding the element in $T$ with the smallest key greater than or equal to $x\textsf{.key}$.
+
+For insertion we first need to perform a search, and then afterwards the number of times we rotate is at most the length of the path traversed during search. The bound thus follows from the bound for search.
+
+Since a deletion is basically just the reversal of an insertion the bounds follow.
+\end{proof}
+
+\begin{lem} \label{lem:treaprotationbound}
+Let $x_{\ell}$ be an element of a treap which is to be deleted, or an element which has just been inserted into a treap. Let $R(x_{\ell})$ be the number of rotations which were needed during the update of the treap. Then $\mathbb{E}[R(x_{\ell})] \leq 2$.
+\end{lem}
+\begin{proof}
+First, we note that since in terms of rotations a deletion is an exact reversal of an insertion it suffices to analyze the number of rotations that occur during a deletion. First, we note that if a node $x$ is right-rotated down, then $SL(x)$ decreases by one, and if a node $x$ is left-rotated down, then $SR(x)$ decreases by one. Once $x$ has been rotated down such that it is a leaf $y$, we have $SL(y) = SR(y) = 0$. It follows by recursion that $R(x) = SL(x) + SR(x)$. Then linearity of expectation and Theorem \ref{thm:treapbounds} gives us that
+\[
+    \mathbb{E}[R(x_{\ell})] = \mathbb{E}[SL(x_{\ell})] + \mathbb{E}[SR(x_{\ell})] = 2 - \para{\frac{1}{\ell} + \frac{1}{n + 1 - \ell}} \leq 2.
+\]
+\end{proof}

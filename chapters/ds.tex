@@ -23,6 +23,7 @@ We will store the current configuration of the beach line in a binary search tre
 
 The binary tree will only be updated at site and circle events. First we describe what happens at a site event.
 
+\subsection{Inserting at site events}
 During the first site event, the tree will be empty (we say it is \textsc{nil}), so to add an arc $\alpha$ to it, we simply turn the tree into a leaf, which describes the new arc, and we have it point to the first site $p$, illustrated as follows:
 \[
     \includegraphics[scale=0.75]{images/tree_insert_base}
@@ -31,22 +32,23 @@ Now we look at the general case. We assume that $\alpha$ is an arc on the beach 
 \[
     \includegraphics[scale=0.75]{images/tree_insert}
 \]
-The leaf $\alpha$ gets replaced by the tree on the right. The dashed arrows represent the pointers for our doubly-linked lists of arcs, and not depicted but also necessary is that we need to connect $\alpha_1$ to $\alpha$\textsf{.leftArc} and connect $\alpha_2$ to $\alpha$\textsf{.rightArc} by setting the appropriate pointers.
+The leaf $\alpha$ gets replaced by the tree on the right. The dashed arrows represent the pointers for our doubly linked lists of arcs, and not depicted but also necessary is that we need to connect $\alpha_1$ to $\alpha$\textsf{.leftArc} and connect $\alpha_2$ to $\alpha$\textsf{.rightArc} by setting the appropriate pointers.
 
-\todo{Describe how we delete from the tree at a circle event}
+\subsection{Deleting at circle events}
+At a circle event two breakpoints $x$ and $y$ converge into a single breakpoint $z$ and an arc $\gamma$ disappears. In terms of the tree we must modify, the fact that the breakpoints $x$ and $y$ are converging means that $y$ is the successor of $x$. What this means for the structure of the tree depends on whether $x$ is an ancestor of $y$, or if $y$ is an ancestor of $x$. First, we assume that $x$ is an ancestor of $y$. Then $y$ is the lowest internal node on the left spine of $x$\textsf{.right}, and our modification is as illustrated:
 \[
-    \includegraphics[scale=0.75]{images/tree_remove}
+    \includegraphics[scale=0.6]{images/tree_remove_xy}
 \]
+We replace $y$ by $T = y\textsf{.right}$, effectively removing $y$ and $\gamma$. Then we replace $x$ by $z$. This way the tree stays a binary tree, and the new structure of the beach line is now rightfully represented.
 
-\section{Doubly-connected edge list}
+On the other hand, if $y$ is an ancestor of $x$, then $x$ is the lowest internal node on the right spine of $y$\textsf{.left}. We then make the following modification:
+\[
+    \includegraphics[scale=0.6]{images/tree_remove_yx}
+\]
+We replace $x$ by $T = x\textsf{.left}$, effectively removing $x$ and $\gamma$. Then we replace $y$ by $z$. Again, this way the tree stays a binary tree, and the new structure of the beach line is now rightfully represented.
 
-\todo{Describe how we modify the DCEL at a site event}
+We would like the tree to be balanced in order for search to be fast, so we need to balance the tree after inserting and deleting. We'll look at an approach to do this in the next section.
 
-\todo{Describe how we modify the DCEL at a circle event}
-
-\todo{Describe how we intersect the DCEL with a bounding box when we have been through the event queue}
-
-\newpage
 \section{Balancing the BST by using a treap}
 There are multiple viable strategies for balancing a binary search tree. In this section we look at a particular strategy which utilizes randomness. We will introduce the treap data structure, which is a randomized self-balancing binary search tree. The presentation follows the paper \todo{Ref}, but only describes the things that we will need.
 
@@ -287,3 +289,18 @@ First, we note that since in terms of rotations a deletion is an exact reversal 
     \mathbb{E}[R(x_{\ell})] = \mathbb{E}[SL(x_{\ell})] + \mathbb{E}[SR(x_{\ell})] = 2 - \para{\frac{1}{\ell} + \frac{1}{n + 1 - \ell}} \leq 2.
 \]
 \end{proof}
+
+\newpage
+\section{Doubly-connected edge list}
+
+\todo{Describe how we modify the DCEL at a site event}
+\[
+    \includegraphics[scale=0.6]{images/dcel_site_event}
+\]
+
+\todo{Describe how we modify the DCEL at a circle event}
+\[
+    \includegraphics[scale=0.6]{images/dcel_circle_event}
+\]
+
+\todo{Describe how we intersect the DCEL with a bounding box when we have been through the event queue}

@@ -14,10 +14,29 @@ The priority queue stores the site and circle events, and enables the algorithm 
 For the implementation of the priority queue we will use a binary heap. These are described in CLRS \todo{Ref}, and the implementation has been taken from \todo{Ref}.
 
 \section{Binary search tree}
+We will store the current configuration of the beach line in a binary search tree, which has some additional information stored:
+\begin{itemize}
+    \item Leaves correspond to arcs on the beach line. Every leaf has a pointer to a site in $P$, and it also has a pointer to a potential circle event at which the arc will disappear. If no circle event has been detected yet, the pointer will simply be \textsc{nil}. Every arc will also store \textsf{.leftArc} and \textsf{.rightArc} pointers to the two arcs that surround it, so that we get a doubly linked list of arcs that are currently on the beach line. These pointers are \textsc{nil} if the leaf has no neighbour in that particular direction. In our figures the leaves will be depicted by squares.
+    
+    \item Internal nodes correspond to breakpoints on the beach line. Every breakpoint stores an ordered pair $(p, q)$, where $p$ and $q$ are sites in $P$. The order is important since the intersection of the hyperbolas defined by $p$ and $q$ consists of two points, and the order lets us tell these breakpoints apart. If we consider the beach line as running from the left to the right, then at every breakpoint an arc is leaving, and another is entering it. Thus the tuple $(p, q)$ tells us that we are interested in the breakpoint at which an arc pointing to $p$ leaves, and an arc pointing to $q$ is entering. In our figures the internal nodes will be depicted by circles.
+\end{itemize}
 
-\todo{Describe how we insert into the tree at a site event}
+The binary tree will only be updated at site and circle events. First we describe what happens at a site event.
+
+During the first site event, the tree will be empty (we say it is \textsc{nil}), so to add an arc $\alpha$ to it, we simply turn the tree into a leaf, which describes the new arc, and we have it point to the first site $p$, illustrated as follows:
+\[
+    \includegraphics[scale=0.75]{images/tree_insert_base}
+\]
+Now we look at the general case. We assume that $\alpha$ is an arc on the beach line, which points to a point $p$, and that we at a site event discover a new point $q$ which is located below the arc $\alpha$ (e.g. a vertical line going through $q$ intersects $\alpha$). At this site event, the arc $\alpha$ will be split into two arcs $\alpha_1$ to the left, and $\alpha_2$ to the right, and two breakpoints $x$ and $y$ with $x \leq y$ will be introduced. We update the tree locally as illustrated in the figure below:
+\[
+    \includegraphics[scale=0.75]{images/tree_insert}
+\]
+The leaf $\alpha$ gets replaced by the tree on the right. The dashed arrows represent the pointers for our doubly-linked lists of arcs, and not depicted but also necessary is that we need to connect $\alpha_1$ to $\alpha$\textsf{.leftArc} and connect $\alpha_2$ to $\alpha$\textsf{.rightArc} by setting the appropriate pointers.
 
 \todo{Describe how we delete from the tree at a circle event}
+\[
+    \includegraphics[scale=0.75]{images/tree_remove}
+\]
 
 \section{Doubly-connected edge list}
 
@@ -28,8 +47,8 @@ For the implementation of the priority queue we will use a binary heap. These ar
 \todo{Describe how we intersect the DCEL with a bounding box when we have been through the event queue}
 
 \newpage
-\section{Using a treap as the binary search tree}
-In this section we will introduce the treap data structure, which is a randomized self-balancing binary search tree. The presentation follows the paper \todo{Ref}, but only describes the things that we will need.
+\section{Balancing the BST by using a treap}
+There are multiple viable strategies for balancing a binary search tree. In this section we look at a particular strategy which utilizes randomness. We will introduce the treap data structure, which is a randomized self-balancing binary search tree. The presentation follows the paper \todo{Ref}, but only describes the things that we will need.
 
 \begin{defn}[Treap]
 Let $T$ be a tree where each node $x \in T$ has properties
@@ -242,7 +261,7 @@ For (ii) we have
 For (iii) we note that the proof is basically the same as for (ii) so we omit it.
 \end{proof}
 
-By combining Lemma \ref{lem:treaprotationbound} and Lemma \ref{lem:treapoperationsbounds} below we obtain a proof of Theorem \ref{thm:treapmainthm}, which will complete our analysis of treaps:
+By combining Lemma \ref{lem:treapoperationsbounds} and Lemma \ref{lem:treaprotationbound} below we obtain a proof of Theorem \ref{thm:treapmainthm}, which will complete our analysis of treaps:
 
 \begin{lem} \label{lem:treapoperationsbounds}
 The operations \textsc{Search}, \textsc{Insert} and \textsc{Delete} take expected $\mathcal{O}(\log n)$ time.

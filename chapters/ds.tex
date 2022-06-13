@@ -34,8 +34,10 @@ Now we look at the general case. We assume that $\alpha$ is an arc on the beach 
 \]
 The leaf $\alpha$ gets replaced by the tree on the right. The dashed arrows represent the pointers for our doubly linked lists of arcs, and not depicted but also necessary is that we need to connect $\alpha_1$ to $\alpha$\textsf{.leftArc} and connect $\alpha_2$ to $\alpha$\textsf{.rightArc} by setting the appropriate pointers.
 
-\subsection{Deleting at circle events}
-At a circle event two breakpoints $x$ and $y$ converge into a single breakpoint $z$ and an arc $\gamma$ disappears. In terms of the tree we must modify, the fact that the breakpoints $x$ and $y$ are converging means that $y$ is the successor of $x$. What this means for the structure of the tree depends on whether $x$ is an ancestor of $y$, or if $y$ is an ancestor of $x$. First, we assume that $x$ is an ancestor of $y$. Then $y$ is the lowest internal node on the left spine of $x$\textsf{.right}, and our modification is as illustrated:
+\subsection{Deleting at circle events} \label{sec:deletingatsiteevents}
+At a circle event two breakpoints $x$ and $y$, with $x \leq y$, converge into a single breakpoint $z$ and an arc $\gamma$ disappears. We assume that $x$ points to the tuple $(p_i, p_j)$ and $y$ points to the tuple $(p_j, p_k)$. Then we make $z$ point to the tuple $(p_i, p_k)$.
+
+In terms of the tree we must modify, the fact that the breakpoints $x$ and $y$ are converging means that $y$ is the successor of $x$. What this means for the structure of the tree depends on whether $x$ is an ancestor of $y$, or if $y$ is an ancestor of $x$. First, we assume that $x$ is an ancestor of $y$. Then $y$ is the lowest internal node on the left spine of $x$\textsf{.right}, and our modification is as illustrated:
 \[
     \includegraphics[scale=0.6]{images/tree_remove_xy}
 \]
@@ -299,7 +301,7 @@ First, we note that since in terms of rotations a deletion is an exact reversal 
     \includegraphics[scale=0.6]{images/dcel_site_event}
 \]
 
-\subsection{Updating DCEL at circle event}
+\subsection{Updating DCEL at circle event} \label{sec:dcelatcircleevents}
 \todo{Describe how we modify the DCEL at a circle event}
 \[
     \includegraphics[scale=0.6]{images/dcel_circle_event}

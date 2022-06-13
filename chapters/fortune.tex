@@ -1,8 +1,8 @@
 \chapter{Description of Fortune's algorithm}
 
-We are now ready to describe Fortune's algorithm. We start with describing an overview of the algorithm, and then in the next section we describe some of the details thoroughly.
+We are now ready to describe Fortune's algorithm. We start with describing an overview of the algorithm, and then in the next section we describe some of the details thoroughly -- so anytime the algorithm says ``see detail $n$'', then this detail can be found in the next section.
 
-\begin{alg} \textsc{VoronoiDiagram}(P) \\
+\begin{alg} \label{alg:fortune} \textsc{VoronoiDiagram}(P) \\
 \textit{Input:} A set $P = \curly{p_1, \ldots, p_n}$ of point sites in the plane. \\
 \textit{Output:} The Voronoi diagram $\Vor(P)$ given inside a bounding box in a doubly-connected edge list $\mathcal{D}$.
 \begin{enumerate}
@@ -30,7 +30,11 @@ We are now ready to describe Fortune's algorithm. We start with describing an ov
 
 \begin{proc} \textsc{HandleCircleEvent}$(e)$
 \begin{enumerate}
-    \item hi
+    \item Let $\alpha$ be the arc pointed to by $e$, which is about to disappear from the beach line.
+    \item Delete all circle events from $\mathcal{Q}$ which involve $\alpha$: The one where $\alpha$ is the middle arc has already been deleted, and the other two possible circle events where $\alpha$ is the left and right arc respectively can be found through $\alpha$'s \textsf{.leftArc} and \textsf{.rightArc} pointers. (See detail \#)
+    \item Delete $\alpha$ from $\mathcal{T}$, how this is done is described in Section \ref{sec:deletingatsiteevents}.
+    \item Add the center $c$ of the circle describing $e$ as a new vertex of $\mathcal{D}$. Connect the half-edges in $\mathcal{D}$ that converge at $e$, and create a new half-edge which starts at $c$ and setup the appropriate pointers. The details are given in Section \ref{sec:dcelatcircleevents}.
+    \item As $\alpha$ disappears from the beach line, we get new triples of consecutive arcs which might have converging breakpoints that can lead to a circle event. Check these and add circle events if needed. (See detail \#)
 \end{enumerate}
 \end{proc}
 
@@ -42,3 +46,11 @@ We are now ready to describe Fortune's algorithm. We start with describing an ov
 \subsection*{Detail 4: Finding a circle through 3 points}
 \subsection*{Detail 5: Deleting false alarms during a circle event}
 \subsection*{Detail 6: Intersecting a bounding box with the in-progress DCEL to get the final DCEL}
+
+\section{Correctness}
+\begin{lem}
+Algorithm \label{alg:fortune} can be implemented such that it runs in $\mathcal{O}(n \log n)$ time and uses $\mathcal{O}(n)$ storage.
+\end{lem}
+\begin{proof}
+\todo{.}
+\end{proof}

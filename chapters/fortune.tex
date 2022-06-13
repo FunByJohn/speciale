@@ -40,7 +40,45 @@ We are now ready to describe Fortune's algorithm. We start with describing an ov
 
 \section{Details}
 
-\subsection*{Detail 1: Choose breakpoint based on the ordering of tuple}
+\subsection*{Detail 1: Intersecting lines}
+As a subroutine in several steps during the algorithm we will need to intersect line segments or rays with each other. We start by describing a solution to this in general. This detail assumes that the reader is familiar with basic linear algebra. We want to find the intersection between 2 lines. We parametrize the lines as follows:
+\[
+    \gamma_1(t) = p + t d_1 \quad \text{and} \quad
+    \gamma_2(s) = q + s d_2,
+\]
+where $p$ and $q$ are points on the lines, and $d_1$ and $d_2$ are direction vectors which tells us which way the lines point. The situation is illustrated as follows:
+\[
+    \includegraphics[scale=0.8]{intersect_lines}
+\]
+To find an intersection point, we must find $s, t \in \R$ such that
+\[
+    \gamma_1(t) = \gamma_2(s).
+\]
+That is, we want to solve
+\[
+    p + t d_1 = q + s d_2.
+\]
+This can be rewritten into the matrix equation
+\[
+    A \begin{pmatrix}
+        s \\
+        -t
+    \end{pmatrix}
+    =
+    q - p,
+\]
+where $A = \begin{pmatrix} \mid & \mid \\ d_1 & d_2 \\ \mid & \mid \end{pmatrix}$ is the matrix which has $d_1$ and $d_2$ as left and right columns, respectively. The equation system has a unique solution if $d_1$ and $d_2$ are linearly independent, and if they are, the solution is given by
+\[
+    \begin{pmatrix}
+        s \\
+        -t
+    \end{pmatrix}
+    =
+    A^{-1} (q - p).
+\]
+This linear independence property is equivalent to checking that the determinant $\det(A)$ is non-zero. So, in order to check if two lines intersect, we first check if $\det(A) \ne 0$. If not, we say the lines don't intersect. Otherwise, they intersect, and we use the above solution to find the intersection point.
+
+\subsection*{Detail 2: Choose breakpoint based on the ordering of tuple}
 Let $p_i$ and $p_j$ be two sites and let $\beta_i$ and $\beta_j$ be the hyperbolas that they describe. If a breakpoint stores the tuple $(p_i, p_j)$ then we want a way to find the $x$ coordinate of that breakpoint. Since the intersection of two hyperbolas may contain 2 intersection points, we need to pick the correct one. We already described this when discussing internal tree nodes at the start of Section \ref{sec:bst}, but let's recap: The order is important since the intersection of the hyperbolas defined by $p_i$ and $p_j$ consists of two points, and the order lets us tell these breakpoints apart. If we consider the beach line as running from the left to the right, then at every breakpoint an arc is leaving, and another is entering it. Thus the tuple $(p_i, p_j)$ tells us that we are interested in the breakpoint at which an arc pointing to $p_i$ leaves, and an arc pointing to $p_j$ is entering the beach line. We will need the following result:
 
 \begin{prop} \label{prop:highschool1}
@@ -111,15 +149,59 @@ if and only if
 \]
 This gives us a criterion for deciding which intersection point describes the breakpoint in question.
 
-\subsection*{Detail 2: How to find the arc vertically above a point}
-\subsection*{Detail 3: How to check if two breakpoints are converging}
+\subsection*{Detail 3: How to find the arc vertically above a point}
+\subsection*{Detail 4: How to check if two breakpoints are converging}
 \[
     \includegraphics[scale=0.8]{ray_intersection}
 \]
 
-\subsection*{Detail 4: Finding a circle through 3 points}
-\subsection*{Detail 5: Deleting false alarms during a circle event}
-\subsection*{Detail 6: Intersecting a bounding box with the in-progress DCEL to get the final DCEL}
+\subsection*{Detail 5: Finding a circle through 3 points}
+As a part of the algorithm, we need to find the circle $C$ through 3 points $p_1, p_2, p_3$. It turns out if we intersect $\bi(p_1, p_2)$ and $\bi(p_2, p_3)$ we find the center of $C$, and then to find the radius we just need to find the distance from the center to one of the points. This is because if $x \in \bi(p_1, p_2) \cap \bi(p_2, p_3)$ then
+\[
+    \dist(x, p_1) = \dist(x, p_2) = \dist(x, p_3),
+\]
+so $x$ is exactly the center of a circle through $p_1, p_2, p_3$.
+
+To intersect the bisectors, we form the midpoints
+\[
+    m_1 = \frac{1}{2}(p + q) \quad \text{and} \quad m_2 = \frac{1}{2}(q + r)
+\]
+and then we let $d_1$ and $d_2$ denote $q - p$ and $r - q$ rotated 90 degrees counterclockwise. Then $s \mapsto m_1 + s d_1$ and $t \mapsto m_2 + t d_2$ parametrize $\bi(p_1, p_2)$ and $\bi(p_2, p_3)$, respectively. To intersect $\bi(p_1, p_2)$ and $\bi(p_2, p_3)$ we then need to find $s, t \in \R$ such that
+\[
+    m_1 + s d_1 = m_2 + t d_2.
+\]
+This can be rewritten into the matrix equation
+\[
+    \begin{pmatrix}
+        \mid & \mid \\
+        d_1 & d_2 \\
+        \mid & \mid
+    \end{pmatrix} \begin{pmatrix}
+        s \\
+        -t
+    \end{pmatrix}
+    =
+    m_2 - m_1,
+\]
+and if $d_1$ and $d_2$ are linearly independent then it has the unique solution
+\[
+    \begin{pmatrix}
+        s \\
+        -t
+    \end{pmatrix}
+    =
+    \begin{pmatrix}
+        \mid & \mid \\
+        d_1 & d_2 \\
+        \mid & \mid
+    \end{pmatrix}^{-1} (m_2 - m_1).
+\]
+\[
+    \includegraphics[scale=0.8]{circle_3_points}
+\]
+
+\subsection*{Detail 6: Deleting false alarms during a circle event}
+\subsection*{Detail 7: Intersecting a bounding box with the in-progress DCEL to get the final DCEL}
 
 \section{Correctness}
 \begin{lem}

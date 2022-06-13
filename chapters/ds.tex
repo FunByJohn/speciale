@@ -23,7 +23,7 @@ We will store the current configuration of the beach line in a binary search tre
 
 The binary tree will only be updated at site and circle events. First we describe what happens at a site event.
 
-\subsection{Inserting at site events}
+\subsection{Inserting at site events} \label{sec:insertingatsiteevents}
 During the first site event, the tree will be empty (we say it is \textsc{nil}), so to add an arc $\alpha$ to it, we simply turn the tree into a leaf, which describes the new arc, and we have it point to the first site $p$, illustrated as follows:
 \[
     \includegraphics[scale=0.75]{images/tree_insert_base}
@@ -293,11 +293,13 @@ First, we note that since in terms of rotations a deletion is an exact reversal 
 \newpage
 \section{Doubly-connected edge list}
 
+\subsection{Updating DCEL at site event} \label{sec:dcelatsiteevents}
 \todo{Describe how we modify the DCEL at a site event}
 \[
     \includegraphics[scale=0.6]{images/dcel_site_event}
 \]
 
+\subsection{Updating DCEL at circle event}
 \todo{Describe how we modify the DCEL at a circle event}
 \[
     \includegraphics[scale=0.6]{images/dcel_circle_event}

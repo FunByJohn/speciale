@@ -19,58 +19,7 @@ for all $x, y \in \R$. Here is the example diagram with this norm from earlier:
       \includegraphics[scale=0.18]{naive-voronoi-graph-L2}
     }
 \end{figure}
-The diagram consists of line segments and vertices. Now, a natural question arises: how do we store Voronoi diagrams on a computer? 
-
-% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
-%
-% How to store a Voronoi diagram? DCELs
-%
-% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
-
-\section{The DCEL data structure}
-We'll need the following geometric data structure:
-\begin{defn}[DCEL] \label{defn:dcel}
-A \emph{double connected edge list} (DCEL) is a data structure which represents a subdivision of $\R^2$. A DCEL consists of a lists of vertices, faces and edges. For every edge we will have two copies of it, with opposite orientations, so we will refer to each copy as a directed edge and call it a half-edge, so we actually store a list of half-edges. These three structures are represented as follows:
-\begin{description}
-  \item[\textsf{Vertex}] $v$ -- represents a vertex of the subdivision. Properties:
-  \begin{itemize}
-    \item $v.\textsf{position} \in \R^2$: Describes the position of $v$.
-    \item $v.\textsf{edge} \text{ is a } \textsf{HalfEdge}$: Points to a half-edge which has $v$ as its start vertex.
-  \end{itemize}
-  \item[\textsf{Face}] $f$ -- represents a face of the subdivision. Properties:
-  \begin{itemize}
-    \item $f.\textsf{edge} \text{ is a } \textsf{HalfEdge}$: Points to a half-edge which lies on $\partial f$, and which is a part of a cycle of half-edges which goes around $f$ in counterclockwise order.
-  \end{itemize}
-  \item[\textsf{HalfEdge}] $e$ -- represents a half-edge of the subdivision. Properties:
-  \begin{itemize}
-    \item $e.\textsf{origin} \text{ is a } \textsf{Vertex}$: Since the half-edge is directed, we have a first and a second vertex in relation to the edge's direction, and this points to the first vertex.
-    \item $e.\textsf{twin} \text{ is a } \textsf{HalfEdge}$: Points to the half-edge with the same vertices as $e$, but pointing in the opposite direction.
-    \item $e.\textsf{face} \text{ is a } \textsf{Face}$: Points to the face which lies to the left of $e$.
-    \item $e.\textsf{next} \text{ is a } \textsf{HalfEdge}$: Around $e.\textsf{face}$ we have a cycle half-edges which is oriented counterclockwise, and given $e$ in this cycle, $e.\textsf{next}$ gives us the next edge.
-    \item $e.\textsf{prev} \text{ is a } \textsf{HalfEdge}$: Around $e.\textsf{face}$ we have a cycle half-edges which is oriented counterclockwise, and given $e$ in this cycle, $e.\textsf{prev}$ gives us the previous edge.
-  \end{itemize}
-\end{description}
-\end{defn}
-
-\begin{rmk}
-In the CompGeo book the DCEL structure allows a face to have holes, but since Voronoi diagrams and Delaunay triangulations don't have holes in their faces, we have chosen to omit this feature.
-\end{rmk}
-
-\begin{ex}
-Consider a graph $G$ with 9 vertices and 10 edges embedded into $\R^2$, which is given as the black figure in the following:
-\[
-    \includegraphics[width=\textwidth]{dcel_example} % \includegraphics[scale=0.37]{temp-fig-10}
-\]
-Then this induces a subdivision of $\R^2$ which we represent as a DCEL. The half-edges are given as the blue arrows, the faces as $f_1, f_2, f_3$ and the vertices are the vertices of $G$. Some of the pointers are visible on the figure.
-
-\todo{Make a complete table of everything in the DCEL like the example in the CompGeo book.}
-\end{ex}
-
-Note that the DCEL does not support infinite edges, so what we do is put a bounding box $B$ with some padding around the vertices of $\Vor(P)$, and then intersect the infinite edges and faces with the boundary of $B$ and only keep the part inside the bounding box.
-\[
-    \includegraphics[width=\textwidth]{voronoi_bounding_box} % \includegraphics[scale=0.25]{temp-fig-3}
-\]
-The aim of our algorithms will then be to calculate the DCEL in the right figure.
+We note that the diagram consists of straight lines, rays and line segments. In the following sections we will describe the shape of the diagram in detail.
 
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 %
@@ -198,18 +147,6 @@ Multiplying (\ref{eq:eulersformulaapplied}) by $3$, isolating $3 (n_v + 1)$ and 
 \end{align*}
 This proves the theorem.
 \end{proof}
-\begin{rmk} \label{rmk:boxalsohaslinearnumedges}
-In practice, we would like to enclose $\Vor(P)$ in a box containing all its vertices in order to be able to represent it as a DCEL $\Delta$. How does intersecting the edges of $\Vor(P)$ with such a bounding box $B$ affect the number of edges?
-\[
-    \includegraphics[scale=0.25]{temp-fig-9}
-\]
-If we intersect $\VorG(P)$ with the bounding box $B$ then $B$ adds at most 2 edges to every cell: The bounded cells inside $B$ stay intact, and for unbounded cells we have two cases. Either a vertex of $B$ is contained in the cell, and then 2 edges will be added, otherwise a single edge is added. Hence in the worst case we add an edge for each point in $P$, and then an edge for each of the 4 corners of $B$, so the DCEL $\Delta$ representing $\Vor(P)$ then has at most
-\[
-    (3n - 6) + (n + 4) = 4n - 2 = \mathcal{O}(n)
-\]
-edges.
-\todo{This is wrong. If we have a diagram with only 2 sites and 2 edges, we can construct it in such a way that it has 7 edges, contradicting the upper bound $4n - 2$. It's instead the case that every cell may get at most 4 new edges, one for each side of the bounding box.}
-\end{rmk}
 
 \section{Characterizing bisectors in the diagram}
 We have seen that we have a linear number of vertices and edges $\VorG(P)$, but we have a quadratic number of bisectors $\bi(p_i, p_j)$ of which every edge of $\VorG(P)$ is a subset of, and every vertex in $\VorG(P)$ is an intersection point of two such bisectors. Thus it would be interesting to characterize when a particular bisector is a part of $\VorG(P)$. First, we need a definition:
@@ -246,3 +183,67 @@ We prove each statement individually:
     ``$\Rightarrow$'': Let $e \subset \bi(p_i, p_j)$ be an edge of $\VorG(P)$. For $q \in e$ we have that $\dist(q, p_i) = \dist(q, p_j)$, and that $q$ touches $\mathcal{V}(p_i)$ and $\mathcal{V}(p_j)$. By applying the same contradiction proof as in (i) ``$\Rightarrow$'' we have that there is no point in $P$ which is closer to $q$ than $p_i$ and $p_j$, thus $\partial C_P(q) \cap P = \curly{p_i, p_j}$.
 \end{enumerate}
 \end{proof}
+
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
+%
+% How to store a Voronoi diagram? DCELs
+%
+% % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
+
+\section{The DCEL data structure}
+We want to write an algorithm to compute the Voronoi diagram, which leads us to a natural question: how do we store Voronoi diagrams on a computer?  We'll need the following geometric data structure:
+\begin{defn}[DCEL] \label{defn:dcel}
+A \emph{double connected edge list} (DCEL) is a data structure which represents a subdivision of $\R^2$. A DCEL consists of a lists of vertices, faces and edges. For every edge we will have two copies of it, with opposite orientations, so we will refer to each copy as a directed edge and call it a half-edge, so we actually store a list of half-edges. These three structures are represented as follows:
+\begin{description}
+  \item[\textsf{Vertex}] $v$ -- represents a vertex of the subdivision. Properties:
+  \begin{itemize}
+    \item $v.\textsf{position} \in \R^2$: Describes the position of $v$.
+    \item $v.\textsf{edge} \text{ is a } \textsf{HalfEdge}$: Points to a half-edge which has $v$ as its start vertex.
+  \end{itemize}
+  \item[\textsf{Face}] $f$ -- represents a face of the subdivision. Properties:
+  \begin{itemize}
+    \item $f.\textsf{edge} \text{ is a } \textsf{HalfEdge}$: Points to a half-edge which lies on $\partial f$, and which is a part of a cycle of half-edges which goes around $f$ in counterclockwise order.
+  \end{itemize}
+  \item[\textsf{HalfEdge}] $e$ -- represents a half-edge of the subdivision. Properties:
+  \begin{itemize}
+    \item $e.\textsf{origin} \text{ is a } \textsf{Vertex}$: Since the half-edge is directed, we have a first and a second vertex in relation to the edge's direction, and this points to the first vertex.
+    \item $e.\textsf{twin} \text{ is a } \textsf{HalfEdge}$: Points to the half-edge with the same vertices as $e$, but pointing in the opposite direction.
+    \item $e.\textsf{face} \text{ is a } \textsf{Face}$: Points to the face which lies to the left of $e$.
+    \item $e.\textsf{next} \text{ is a } \textsf{HalfEdge}$: Around $e.\textsf{face}$ we have a cycle half-edges which is oriented counterclockwise, and given $e$ in this cycle, $e.\textsf{next}$ gives us the next edge.
+    \item $e.\textsf{prev} \text{ is a } \textsf{HalfEdge}$: Around $e.\textsf{face}$ we have a cycle half-edges which is oriented counterclockwise, and given $e$ in this cycle, $e.\textsf{prev}$ gives us the previous edge.
+  \end{itemize}
+\end{description}
+\end{defn}
+
+\begin{rmk}
+In the CompGeo book the DCEL structure allows a face to have holes, but since Voronoi diagrams and Delaunay triangulations don't have holes in their faces, we have chosen to omit this feature.
+\end{rmk}
+
+\begin{ex}
+Consider a graph $G$ with 9 vertices and 10 edges embedded into $\R^2$, which is given as the black figure in the following:
+\[
+    \includegraphics[width=\textwidth]{dcel_example} % \includegraphics[scale=0.37]{temp-fig-10}
+\]
+Then this induces a subdivision of $\R^2$ which we represent as a DCEL. The half-edges are given as the blue arrows, the faces as $f_1, f_2, f_3$ and the vertices are the vertices of $G$. Some of the pointers are visible on the figure.
+
+\todo{Make a complete table of everything in the DCEL like the example in the CompGeo book.}
+\end{ex}
+
+Note that the DCEL does not support infinite edges, so what we do is put a bounding box $B$ with some padding around the vertices of $\Vor(P)$, and then intersect the infinite edges and faces with the boundary of $B$ and only keep the part inside the bounding box.
+\[
+    \includegraphics[width=\textwidth]{voronoi_bounding_box} % \includegraphics[scale=0.25]{temp-fig-3}
+\]
+The aim of our algorithms will then be to calculate the DCEL in the right figure.
+
+\begin{rmk} \label{rmk:boxalsohaslinearnumedges}
+In practice, we would like to enclose $\Vor(P)$ in a box containing all its vertices in order to be able to represent it as a DCEL $\Delta$. How does intersecting the edges of $\Vor(P)$ with such a bounding box $B$ affect the number of edges?
+\[
+    \includegraphics[scale=0.25]{temp-fig-9}
+\]
+If we intersect $\VorG(P)$ with the bounding box $B$ then $B$ adds at most 2 edges to every cell: The bounded cells inside $B$ stay intact, and for unbounded cells we have two cases. Either a vertex of $B$ is contained in the cell, and then 2 edges will be added, otherwise a single edge is added. Hence in the worst case we add an edge for each point in $P$, and then an edge for each of the 4 corners of $B$, so the DCEL $\Delta$ representing $\Vor(P)$ then has at most
+\[
+    (3n - 6) + (n + 4) = 4n - 2 = \mathcal{O}(n)
+\]
+edges.
+\todo{This is wrong. If we have a diagram with only 2 sites and 2 edges, we can construct it in such a way that it has 7 edges, contradicting the upper bound $4n - 2$. It's instead the case that every cell may get at most 4 new edges, one for each side of the bounding box.}
+\end{rmk}

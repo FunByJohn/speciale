@@ -1,3 +1,44 @@
 \chapter{Description of Fortune's algorithm}
 
-kjdf
+We are now ready to describe Fortune's algorithm. We start with describing an overview of the algorithm, and then in the next section we describe some of the details thoroughly.
+
+\begin{alg} \textsc{VoronoiDiagram}(P) \\
+\textit{Input:} A set $P = \curly{p_1, \ldots, p_n}$ of point sites in the plane. \\
+\textit{Output:} The Voronoi diagram $\Vor(P)$ given inside a bounding box in a doubly-connected edge list $\mathcal{D}$.
+\begin{enumerate}
+    \item Initialize the event queue $\mathcal{Q}$ with a site event for every point in $P$, initialize the beach line tree $\mathcal{T}$ to be \textsc{nil}, and let the DCEL $\mathcal{D}$ be empty.
+    \item Repeat the following until $\mathcal{Q}$ is empty:
+    \begin{enumerate}[i.]
+        \item Remove the event $e$ with the largest $y$-coordinate from $\mathcal{Q}$.
+        \item If $e$ is a site event call \textsc{HandleSiteEvent}$(e)$.
+        \item If $e$ is a site event call \textsc{HandleCircleEvent}$(e)$.
+    \end{enumerate}
+    \item At this point the internal nodes in $\mathcal{T}$ represent the infinite edges of $\Vor(P)$. Compute a bounding box $B$ which contains all points in $P$, as well as all the vertices of $\Vor(P)$, which are contained in $\mathcal{D}$. Intersect the infinite edges in $\mathcal{T}$ with $B$ and let these intersection points be new vertices in $\mathcal{D}$. Add new edges and pointers to make sure we still have a proper DCEL structure.
+\end{enumerate}
+\end{alg}
+
+\begin{proc} \textsc{HandleSiteEvent}$(e)$
+\begin{enumerate}
+    \item Let $p_i$ denote the site that $e$ points to.
+    \item If $\mathcal{T} = \textsc{nil}$ then let $\mathcal{T}$ store the single arc that is described by $p_i$ and return.
+    \item Otherwise, $\mathcal{T} \ne \textsc{nil}$. Search in $\mathcal{T}$ for the arc $\alpha$ vertically above $p_i$, that is the arc at which the vertical line through $p_i$ intersects the beach line. (See detail \#)
+    \item If $\alpha$ has a pointer to a circle event $e'$, then remove $e'$ from $\mathcal{Q}$, as this circle event is now a false alarm since $\alpha$ is about to disappear earlier than we initially thought.
+    \item Create the new arc $\beta$ defined by $p_i$ and insert it into $\mathcal{T}$ as described in Section \ref{sec:insertingatsiteevents}. Update $\mathcal{D}$ by creating the new half-edges which will be traced out by the two new breakpoints as described in Section \ref{sec:dcelatsiteevents}.
+    \item Check the triple of consecutive arcs where the new arc for $p_i$ is the left arc to see if the breakpoints converge. If so, insert the circle event into $\mathcal{Q}$ and add pointers between the node in $\mathcal{T}$ and the node in $\mathcal{Q}$. Do the same for the triple where the new arc is the right arc. (See detail \#)
+\end{enumerate}
+\end{proc}
+
+\begin{proc} \textsc{HandleCircleEvent}$(e)$
+\begin{enumerate}
+    \item hi
+\end{enumerate}
+\end{proc}
+
+\section{Details}
+
+\subsection*{Detail 1: Position of a breakpoint based on the ordering of tuple}
+\subsection*{Detail 2: How to find the arc vertically above a point}
+\subsection*{Detail 3: How to check if two breakpoints are converging}
+\subsection*{Detail 4: Finding a circle through 3 points}
+\subsection*{Detail 5: Deleting false alarms during a circle event}
+\subsection*{Detail 6: Intersecting a bounding box with the in-progress DCEL to get the final DCEL}

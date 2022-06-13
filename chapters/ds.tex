@@ -13,7 +13,7 @@ The priority queue stores the site and circle events, and enables the algorithm 
 
 For the implementation of the priority queue we will use a binary heap. These are described in CLRS \todo{Ref}, and the implementation has been taken from \todo{Ref}.
 
-\section{Binary search tree}
+\section{Binary search tree} \label{sec:bst}
 We will store the current configuration of the beach line in a binary search tree, which has some additional information stored:
 \begin{itemize}
     \item Leaves correspond to arcs on the beach line. Every leaf has a pointer to a site in $P$, and it also has a pointer to a potential circle event at which the arc will disappear. If no circle event has been detected yet, the pointer will simply be \textsc{nil}. Every arc will also store \textsf{.leftArc} and \textsf{.rightArc} pointers to the two arcs that surround it, so that we get a doubly linked list of arcs that are currently on the beach line. These pointers are \textsc{nil} if the leaf has no neighbour in that particular direction. In our figures the leaves will be depicted by squares.

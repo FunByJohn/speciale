@@ -294,6 +294,8 @@ First, we note that since in terms of rotations a deletion is an exact reversal 
 
 \newpage
 \section{Doubly-connected edge list}
+To store the actual Voronoi diagram we use a DCEL, which we defined in Chapter 2. We the details of how we intersect the half-infinite edges with a bounding box are explained in the next chapter, since it relies on how the general algorithm is described.
+
 When initializing $\mathcal{D}$ we create a face for every $p_i \in P$, and this face will describe $\mathcal{V}(p_i)$. We now describe how we modify the DCEL $\mathcal{D}$ at site and circle events.
 
 \subsection{Updating DCEL at site event} \label{sec:dcelatsiteevents}
@@ -311,7 +313,7 @@ Consider the circle event defined by the sites $p_i, p_j, p_k$ where two breakpo
 \[
     \includegraphics[scale=0.8]{images/dcel_circle_event}
 \]
-Note \textsf{edge1} and \textsf{edge2} in the figure. Now, since \textsf{vertex1} and \textsf{vertex2} are colliding, they will combine into a new breakpoint, and therefore we must detach them from the breakpoint they were following before. We must also delete one of them from our list of vertices, say \textsf{vertex2}, and then copy \textsf{vertex1} to be the new \textsf{.origin} of \textsf{edge2}.
+Note \textsf{edge1} and \textsf{edge2} in the figure. Now, since \textsf{vertex1} and \textsf{vertex2} are colliding, they will combine into a new breakpoint, and therefore we must detach them from the breakpoints they were following before. We must also delete one of them from our list of vertices, say \textsf{vertex2}, and then copy \textsf{vertex1} to be the new \textsf{.origin} of \textsf{edge2}.
 
 Let \textsf{fromVertex} denote \textsf{vertex1}, and create a new DCEL vertex \textsf{toVertex} and a new twin pair of half-edges \textsf{halfEdge} and \textsf{oppHalfEdge}. Attach \textsf{toVertex} to the new breakpoint, and let \textsf{fromVertex} be the origin of \textsf{halfEdge}, and let \textsf{toVertex} be the origin of \textsf{oppHalfEdge}.
 

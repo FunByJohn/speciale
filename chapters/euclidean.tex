@@ -238,12 +238,12 @@ The aim of our algorithms will then be to calculate the DCEL in the right figure
 \begin{rmk} \label{rmk:boxalsohaslinearnumedges}
 In practice, we would like to enclose $\Vor(P)$ in a box containing all its vertices in order to be able to represent it as a DCEL $\Delta$. How does intersecting the edges of $\Vor(P)$ with such a bounding box $B$ affect the number of edges?
 \[
-    \includegraphics[scale=0.25]{temp-fig-9}
+    \includegraphics[scale=0.7]{dcel_edges_example}
 \]
-If we intersect $\VorG(P)$ with the bounding box $B$ then $B$ adds at most 2 edges to every cell: The bounded cells inside $B$ stay intact, and for unbounded cells we have two cases. Either a vertex of $B$ is contained in the cell, and then 2 edges will be added, otherwise a single edge is added. Hence in the worst case we add an edge for each point in $P$, and then an edge for each of the 4 corners of $B$, so the DCEL $\Delta$ representing $\Vor(P)$ then has at most
-\[
-    (3n - 6) + (n + 4) = 4n - 2 = \mathcal{O}(n)
-\]
-edges.
-\todo{This is wrong. If we have a diagram with only 2 sites and 2 edges, we can construct it in such a way that it has 7 edges, contradicting the upper bound $4n - 2$. It's instead the case that every cell may get at most 4 new edges, one for each side of the bounding box.}
+In the worst case, as depicted on the left figure, 4 new edges may be added to a single unbounded face. In the general case however, as depicted on the right figure, we only introduce between 1-3 edges per face. Thus Theorem \ref{thm:numberofvertsandedges} implies that the complexity is still linear.
+%If we intersect $\VorG(P)$ with the bounding box $B$ then $B$ adds at most 2 edges to every cell: The bounded cells inside $B$ stay intact, and for unbounded cells we have two cases. Either a vertex of $B$ is contained in the cell, and then 2 edges will be added, otherwise a single edge is added. Hence in the worst case we add an edge for each point in $P$, and then an edge for each of the 4 corners of $B$, so the DCEL $\Delta$ representing $\Vor(P)$ then has at most
+%\[
+%    (3n - 6) + (n + 4) = 4n - 2 = \mathcal{O}(n)
+%\]
+%edges.
 \end{rmk}

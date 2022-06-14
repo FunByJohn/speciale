@@ -58,8 +58,16 @@ In order to make proving some theoretical properties easier, and to avoid not ev
 The points in $P$ are in general position, which we define to mean that no two points in $P$ have the same $x$-coordinate or the same $y$-coordinate.
 \end{assume}
 
+\begin{assume} \label{ass:notsameline}
+The points in $P$ do not all lie on the same line.
+\end{assume}
+
+\begin{assume} \label{ass:notcocircular}
+No more than 3 points from $P$ lie on the same circle.
+\end{assume}
+
 \begin{rmk}
-We may make the above assumption without loss of generality, because if $\Theta \subset \R$ is the set of all of the angles that $\overline{p_i p_j}$ make with the $x$-axis for all $p_i \ne p_j$ in $P$, then $\Theta$ is finite and $\R \setminus \Theta$ is infinite, so generating a random number $\theta \in \R \setminus \Theta$ and letting
+We may make Assumption \ref{ass:generalposition} without loss of generality, because if $\Theta \subset \R$ is the set of all of the angles that $\overline{p_i p_j}$ make with the $x$-axis for all $p_i \ne p_j$ in $P$, then $\Theta$ is finite and $\R \setminus \Theta$ is infinite, so generating a random number $\theta \in \R \setminus \Theta$ and letting
 \[
     \varphi (x, y) = \begin{pmatrix} \cos \theta & -\sin \theta \\ \sin \theta & \cos \theta \end{pmatrix} \begin{pmatrix} x \\ y \end{pmatrix}
     = (\cos(\theta) x - \sin(\theta) y, \sin(\theta) x + \cos(\theta) y)
@@ -71,12 +79,8 @@ be the rotation about the origin with the angle $\theta$, then the set
 is in general position with probability 1. After having computed the Voronoi diagram for $\varphi(P)$, we may then rotate the diagram by the angle $-\theta$ to obtain $\Vor(P)$.
 \end{rmk}
 
-\begin{assume} \label{ass:notsameline}
-The points in $P$ do not all lie on the same line.
-\end{assume}
-
 \begin{rmk}
-If $P$ is collinear then every point $p \in P$ lies on a line $\ell$. Theorem \ref{prop:structureofentirevoronoidiagram} gives us that $\VorG(P)$ consists of parallel lines and Theorem \ref{thm:characterizationofbisectors} gives us that these parallel lines are the bisectors of pairs of adjacent points on $\ell$. By sorting the points on $P$ along $\ell$ and then marking all the bisectors between adjacent points we then compute the Voronoi diagram of $\VorG(P)$ in $\mathcal{O}(n \log n)$ time. With this out of the way, it is now reasonable to make the above assumption.
+If $P$ is collinear then every point $p \in P$ lies on a line $\ell$. Theorem \ref{prop:structureofentirevoronoidiagram} gives us that $\VorG(P)$ consists of parallel lines and Theorem \ref{thm:characterizationofbisectors} gives us that these parallel lines are the bisectors of pairs of adjacent points on $\ell$. By sorting the points on $P$ along $\ell$ and then marking all the bisectors between adjacent points we then compute the Voronoi diagram of $\VorG(P)$ in $\mathcal{O}(n \log n)$ time. With this out of the way, it is now reasonable to assume Assumption \ref{ass:notsameline}.
 \end{rmk}
 
 \section{The beach line}

@@ -67,7 +67,7 @@ This can be rewritten into the matrix equation
     =
     q - p,
 \]
-where $A = \begin{pmatrix} \mid & \mid \\ d_1 & d_2 \\ \mid & \mid \end{pmatrix}$ is the matrix which has $d_1$ and $d_2$ as left and right columns, respectively. The equation system has a unique solution if $d_1$ and $d_2$ are linearly independent, and if they are, the solution is given by
+where $A = \begin{pmatrix} \mid & \mid \\ d_1 & d_2 \\ \mid & \mid \end{pmatrix}$ is the $2 \times 2$ matrix which has $d_1$ and $d_2$ as left and right columns, respectively. The equation system has a unique solution if $d_1$ and $d_2$ are linearly independent, and if they are, the solution is given by
 \[
     \begin{pmatrix}
         s \\
@@ -77,6 +77,12 @@ where $A = \begin{pmatrix} \mid & \mid \\ d_1 & d_2 \\ \mid & \mid \end{pmatrix}
     A^{-1} (q - p).
 \]
 This linear independence property is equivalent to checking that the determinant $\det(A)$ is non-zero. So, in order to check if two lines intersect, we first check if $\det(A) \ne 0$. If not, we say the lines don't intersect. Otherwise, they intersect, and we use the above solution to find the intersection point.
+
+Now in the case of line segments and rays, we also need some constraints on $s$ and $t$, it is not enough that the lines themselves intersect.
+
+To intersect line segments, where the first line segment is given as the points between $p_1$ and $p_2$, and the second line segment is given as the points between $q_1$ and $q_2$, then we let $p = p_1$ and $q = q_1$ and then set $d_1 = p_2 - p_1$ and $d_2 = q_2 - q_1$ and then we solve the equation system as above. If there is a solution to the equation system, then we also need to check that $s \in [0, 1]$ and $t \in [0, 1]$ in order for the intersection point to lie on both of the line segments.
+
+Finally, we look at intersecting two rays. We describe the rays as the lines at the start of this detail, but now we have the requirement that $s, t \geq 0$, which gives us that the rays start at $p$ and $q$, and then they shoot out in the direction of $d_1$ and $d_2$, respectively.
 
 \subsection*{Detail 2: Choose breakpoint based on the ordering of tuple}
 Let $p_i$ and $p_j$ be two sites and let $\beta_i$ and $\beta_j$ be the hyperbolas that they describe. If a breakpoint stores the tuple $(p_i, p_j)$ then we want a way to find the $x$ coordinate of that breakpoint. Since the intersection of two hyperbolas may contain 2 intersection points, we need to pick the correct one. We already described this when discussing internal tree nodes at the start of Section \ref{sec:bst}, but let's recap: The order is important since the intersection of the hyperbolas defined by $p_i$ and $p_j$ consists of two points, and the order lets us tell these breakpoints apart. If we consider the beach line as running from the left to the right, then at every breakpoint an arc is leaving, and another is entering it. Thus the tuple $(p_i, p_j)$ tells us that we are interested in the breakpoint at which an arc pointing to $p_i$ leaves, and an arc pointing to $p_j$ is entering the beach line. We will need the following result:
@@ -133,13 +139,17 @@ which gives us the intersection points $q_1 = (r_1, \beta_i(r_1))$ and $q_2 = (r
 \[
     \frac{d \beta_i}{dx}(r_k) > \frac{d \beta_j}{dx}(r_k).
 \]
-\todo{Draw a figure with two arcs on the beach line, where we see one exiting and another entering, and draw the differentials.} Proposition \ref{prop:highschool1} garantuees that either
+This is illustrated in the following figure, with a slight abuse of notation:
+\[
+    \includegraphics[scale=0.8]{derivativedirections}
+\]
+Proposition \ref{prop:highschool1} garantuees that either
 \begin{align*}
     \frac{d \beta_i}{dx}(r_1) > \frac{d \beta_j}{dx}(r_1) &\text{ and } \frac{d \beta_i}{dx}(r_2) < \frac{d \beta_j}{dx}(r_2) \\
     &\text{or} \\
     \frac{d \beta_i}{dx}(r_1) < \frac{d \beta_j}{dx}(r_1) &\text{ and } \frac{d \beta_i}{dx}(r_2) > \frac{d \beta_j}{dx}(r_2),
 \end{align*}
-so it is possible to make the right choice. Now, note that
+so it is possible to make the right choice. Now, note that by some simple algebraic manipulations we have that
 \[
     \frac{d \beta_i}{dx}(r_k) > \frac{d \beta_j}{dx}(r_k)
 \]
@@ -147,35 +157,50 @@ if and only if
 \[
     (r_k - p_x) (q_y - \ell_y) > (r_k - q_x) (p_y - \ell_y).
 \]
-This gives us a criterion for deciding which intersection point describes the breakpoint in question.
+This gives us a criterion for deciding which intersection point describes the breakpoint in question, and this is the criterion used in the implementation.
 
 \subsection*{Detail 3: How to find the arc vertically above a point}
+At a site event when we discover a new point $p$ we want to find the arc $\alpha$ vertically above $p$, as illustrated here:
+\[
+    \includegraphics[scale=0.8]{locate_arc}
+\]
+Let $x_1, x_2, \ldots, x_k$ denote the breakpoints on the beach line. These are stored as internal nodes in our BST $\mathcal{T}$. Since the keys for the internal nodes are the $x$-values of the breakpoints, we may locate the arc $\alpha$ using binary search in $\mathcal{T}$. Starting at an internal node $x$ in $\mathcal{T}$ we visit its left subtree if $x\textsf{.key} < p_x$, and we visit its right subtree if $x\textsf{.key} \geq p_x$. The key property is computed at every check, since it is a function of the current position of the sweep line, see Detail 2 for how the key is computed. Eventually we will reach the leaf which stores the arc $\alpha$.
+
 \subsection*{Detail 4: How to check if two breakpoints are converging}
+Let $p, q, r$ be three sites from $P$. Let $x$ and $y$ be two breakpoints, where $x$ is sliding along $\bi(p, q)$ and $y$ is sliding along $\bi(q, r)$ as we vary $\ell$. We want to check whether $x$ and $y$ converge, and if so, what is the location of their intersection, and when during the sweep of $\ell$ will this occur. The two possible scenarios are illustrated below:
+\begin{figure}[H]
+    \centering
+    \subfloat{
+      \includegraphics[scale=0.6]{converging_breakpoints_example}
+    }
+    \subfloat{
+      \includegraphics[scale=0.6]{converging_breakpoints_nonexample}
+    }
+\end{figure}
+In the divergent case we include the case where the bisectors are collinear. 
+
+To check for convergence, we transform the problem into a problem of intersecting two rays. Let $x$ and $y$ denote the current location of the breakpoints, and let $x'$ and $y'$ denote the breakpoints new positions after moving the sweep line some arbitrary amount downwards, and then let $d_1 = x' - x$ and $d_2 = y' - y$. Then $s \mapsto x + s d_1$ and $t \mapsto y + t d_2$ parametrize $\bi(p, q)$ and $\bi(q, r)$, respectively. The setup, in the case where the rays do intersect, looks like this:
+\[
+    \includegraphics[scale=0.8]{ray_intersection}
+\]
+Now, as we saw in Detail 1, then the two rays converge if $t \geq 0$ and $s \geq 0$.
+
+This can be interpreted as follows: If $s$ is positive, then that means that $x$ will hit $y$ in the future, and likewise if $t$ is positive, then $y$ will hit $x$ in the future. This is important as we are treating the events chronologically, and if $x$ and $y$ already intersected in the past (or the lines they describe, rather) then they can define no future circle event.
+
+\subsection*{Detail 5: Finding a circle through 3 points}
+As a part of the algorithm, we need to find the circle $C$ through 3 points $p, q, r$. It turns out if we intersect $\bi(p, q)$ and $\bi(q, r)$ we find the center of $C$, and then to find the radius we just need to find the distance from the center to one of the points. This is because if $x \in \bi(p, q) \cap \bi(q, r)$ then
+\[
+    \dist(x, p) = \dist(x, q) = \dist(x, r),
+\]
+so $x$ is exactly the center of a circle through $p, q, r$. This is illustrated in this figure:
+\[
+    \includegraphics[scale=0.8]{circle_3_points}
+\]
 To intersect the bisectors, we form the midpoints
 \[
     m_1 = \frac{1}{2}(p + q) \quad \text{and} \quad m_2 = \frac{1}{2}(q + r)
 \]
-and then we let $d_1$ and $d_2$ denote $q - p$ and $r - q$ rotated 90 degrees counterclockwise. Then $s \mapsto m_1 + s d_1$ and $t \mapsto m_2 + t d_2$ parametrize $\bi(p_1, p_2)$ and $\bi(p_2, p_3)$, respectively.
-\[
-    \includegraphics[scale=0.8]{ray_intersection}
-\]
-
-\subsection*{Detail 5: Finding a circle through 3 points}
-As a part of the algorithm, we need to find the circle $C$ through 3 points $p_1, p_2, p_3$. It turns out if we intersect $\bi(p_1, p_2)$ and $\bi(p_2, p_3)$ we find the center of $C$, and then to find the radius we just need to find the distance from the center to one of the points.
-\[
-    \includegraphics[scale=0.8]{circle_3_points}
-\]
-This is because if $x \in \bi(p_1, p_2) \cap \bi(p_2, p_3)$ then
-\[
-    \dist(x, p_1) = \dist(x, p_2) = \dist(x, p_3),
-\]
-so $x$ is exactly the center of a circle through $p_1, p_2, p_3$.
-
-To intersect $\bi(p_1, p_2)$ and $\bi(p_2, p_3)$ we then need to find $s, t \in \R$ such that
-\[
-    m_1 + s d_1 = m_2 + t d_2.
-\]
-See detail 1 for how this is done.
+and then we let $d_1$ and $d_2$ denote $q - p$ and $r - q$ rotated 90 degrees counterclockwise. Then $s \mapsto m_1 + s d_1$ and $t \mapsto m_2 + t d_2$ parametrize $\bi(p, q)$ and $\bi(q, r)$, respectively. Then we solve the linear system as in Detail 1.
 
 \subsection*{Detail 6: Deleting false alarms during a circle event}
 \subsection*{Detail 7: Intersecting a bounding box with the in-progress DCEL to get the final DCEL}

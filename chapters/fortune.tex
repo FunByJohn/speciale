@@ -204,17 +204,17 @@ and then we let $d_1$ and $d_2$ denote $q - p$ and $r - q$ rotated 90 degrees co
 
 \newpage
 \subsection*{Detail 6: Deleting false alarms during a circle event}
-At a circle event an arc disappears from the beach line, along with two breakpoints. Consider the following example, where at one time we have the arcs $\alpha_1, \alpha_2, \ldots, \alpha_7$ on the beach line along with the breakpoints $x$ and $y$ that $\alpha_5$ lies inbetween, and then after a circle event the arc $\alpha_5$ disappears after the breakpoints $x$ and $y$ intersect and get replaced by a new breakpoint $z$:
+At a circle event an arc disappears from the beach line, along with two breakpoints. Consider the following example, where at one point in time we have the arcs $\alpha_1, \alpha_2, \ldots, \alpha_7$ on the beach line along with the breakpoints $x$ and $y$ that $\alpha_5$ lies inbetween, and then after a circle event the arc $\alpha_5$ disappears after the breakpoints $x$ and $y$ intersect and get replaced by a new breakpoint $z$:
 \[
     \includegraphics[scale=0.8]{circle_event_beachline_merge}
 \]
-When this happens, we have to remove the circle events that involve the breakpoints $x$ and $y$ merging with any other breakpoints.
+When this happens, we have to remove the circle events that involve the breakpoints $x$ and $y$ merging with any other breakpoints. Since we set up a linked list of arcs, we can find the arcs $\alpha_4$ and $\alpha_6$ through the \textsf{.leftArc} and \textsf{.rightArc} pointers that $\alpha_5$ has, and if these arcs point to a circle event, then we remove those circle events from $\mathcal{Q}$ if they exist. This covers removing the false alarms, since we have removed circle events from every arc that surrounds $x$ and $y$. This example is general enough to explain the general case.
 
 \subsection*{Detail 7: Intersecting a bounding box with the in-progress DCEL to get the final DCEL}
 
 \section{Correctness}
 \begin{lem}
-Algorithm \label{alg:fortune} can be implemented such that it runs in $\mathcal{O}(n \log n)$ time and uses $\mathcal{O}(n)$ storage.
+Algorithm \ref{alg:fortune} can be implemented such that it runs in $\mathcal{O}(n \log n)$ time and uses $\mathcal{O}(n)$ storage.
 \end{lem}
 \begin{proof}
 \todo{.}

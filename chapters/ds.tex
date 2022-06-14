@@ -294,17 +294,23 @@ First, we note that since in terms of rotations a deletion is an exact reversal 
 
 \newpage
 \section{Doubly-connected edge list}
+When initializing $\mathcal{D}$ we create a face for every $p_i \in P$, and this face will describe $\mathcal{V}(p_i)$. We now describe how we modify the DCEL $\mathcal{D}$ at site and circle events.
 
 \subsection{Updating DCEL at site event} \label{sec:dcelatsiteevents}
-\todo{Describe how we modify the DCEL at a site event}
+For the first site event where $\mathcal{T}$ is empty we do nothing. Now, consider a site event where a new point $p_i$ is introduced, and assume that a previously discovered point $p_j$ describes the arc which $p_i$ is under. Just above $p_i$ we create two new breakpoints \textsf{leftBreakpoint} and \textsf{rightBreakpoint} which initially are at the same point, but as the sweep line continues its downward motion, a new edge of the Voronoi diagram starts being traced out:
 \[
-    \includegraphics[scale=0.6]{images/dcel_site_event}
+    \includegraphics[scale=0.8]{images/dcel_site_event}
 \]
+To describe this in $\mathcal{D}$ we create two new vertices \textsf{fromVertex} and \textsf{toVertex}, one for each breakpoint, and for now we have the breakpoints dictate the position of the vertices -- that is we attach \textsf{fromVertex} to \textsf{rightBreakpoint}, and we attach \textsf{toVertex} to \textsf{leftBreakpoint}. We then create a new half-edge \textsf{halfEdge}, which has \textsf{fromVertex} as its \textsf{.origin}, and then we create a matching twin for \textsf{halfEdge} which has \textsf{toVertex} as its \textsf{.origin} property. We also connect \textsf{halfEdge} to the face which will describe $\mathcal{V}(p_i)$.
 
+The orientations have been chosen such that \textsf{halfEdge} and its future predecessors and successors will form a counterclockwise cycle around the Voronoi cell $\mathcal{V}(p_i)$.
+
+\newpage
 \subsection{Updating DCEL at circle event} \label{sec:dcelatcircleevents}
-\todo{Describe how we modify the DCEL at a circle event}
+Consider the circle event defined by the sites $p_i, p_j, p_k$ where two breakpoints have just intersected each other, the first breakpoint sliding along $\bi(p_i, p_j)$ and the second sliding along $\bi(p_j, p_k)$. Let \textsf{vertex1} describe the DCEL vertex which was following the breakpoint along $\bi(p_i, p_j)$ and let \textsf{vertex2} describe the DCEL vertex which was following the breakpoint along $\bi(p_j, p_k)$. Let \textsf{edge1} denote \textsf{vertex1.edge} and let \textsf{edge2} denote \textsf{vertex2.edge}.
 \[
-    \includegraphics[scale=0.6]{images/dcel_circle_event}
+    \includegraphics[scale=0.8]{images/dcel_circle_event}
 \]
+Note \textsf{edge1} and \textsf{edge2} in the figure. Now, since \textsf{vertex1} and \textsf{vertex2} are colliding, they will combine into a new breakpoint, and therefore we must detach them from the breakpoint they were following before. We must also delete one of them from our list of vertices, say \textsf{vertex2}, and then copy \textsf{vertex1} to be the new \textsf{.origin} of \textsf{edge2}.
 
-\todo{Describe how we intersect the DCEL with a bounding box when we have been through the event queue}
+Let \textsf{fromVertex} denote \textsf{vertex1}, and create a new DCEL vertex \textsf{toVertex} and a new twin pair of half-edges \textsf{halfEdge} and \textsf{oppHalfEdge}. Attach \textsf{toVertex} to the new breakpoint, and let \textsf{fromVertex} be the origin of \textsf{halfEdge}, and let \textsf{toVertex} be the origin of \textsf{oppHalfEdge}.

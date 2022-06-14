@@ -7,7 +7,7 @@ const Config = {
     sloMoFactor                : 0.05,
     debugShowTree              : false,
     debugShowBreakpointNames   : false,
-    debugShowCircleEvents      : true,
+    debugShowCircleEvents      : false,
     debugDCELShowOrientedEdges : false,
     debugDCELShowFacePointers  : false, /* requires debugDCELShowOrientedEdge to be true */
     debugDCELShowNextPointers  : false, /* requires debugDCELShowOrientedEdge to be true */

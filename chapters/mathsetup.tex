@@ -47,8 +47,6 @@ The fact that $x \mapsto x^2$ is strictly increasing on $[0, \infty)$ and $0 \le
 
 Now let $B = (b_1, b_2, \ldots, b_n)$ denote $A$ in sorted order, i.e. $i < j$ implies $b_i < b_j$. We'll now see how we can recover $B$ using $\Vor(P)$. We assume that the algorithm outputs a DCEL $\Delta$ of $\Vor(P)$. The property (\ref{goodsortingproperty}) implies that $\partial \mathcal{V}(\varphi(b_i))$ and $\partial \mathcal{V}(\varphi(b_j))$ share an edge when $i = j + 1$. This means that given $\mathcal{V}(\varphi(b_i))$ for $i < n$ we may find $b_{i+1}$ by traversing the edges of $\mathcal{V}(\varphi(b_i))$ in $\Delta$ until we find the face which belongs to $b_{i+1}$. We identify this face as the one which minimizes $a_j - b_i > 0$ where $\mathcal{V}(\varphi(a_j))$ is an adjacent face. In linear time we may find $\ell$ such that $a_{\ell} < a_i$ for all $i \ne \ell$. Let $b_1 := a_{\ell}$. Now assume that $b_i = a_j$ for $i < n$ and some $j$, and that we have the face $F = \mathcal{V}(\varphi(a_j)) \in \Delta$. We traverse the edges of $F$ until we find the face $F' = \mathcal{V}(\varphi(a_k)) \in \Delta$ which belongs to $b_{i+1}$, and we let $b_{i+1} := a_k$. In the worst case we iterate through every edge of every face of $\Delta$, but Remark \ref{rmk:boxalsohaslinearnumedges} gives us that there is $\mathcal{O}(n)$ edges in total, so we find all the $b_i$ in linear time. This means we can use an algorithm which computes $\Vor(P)$ to sort, which proves the claim.
 \end{proof}
-\todo{Choose a computation model in order for the above to make sense.}
-
 This means that the promised running time of Fortune's algorithm is optimal.
 
 \section{Theoretical assumptions}
@@ -94,7 +92,11 @@ Define
 \[
     B_i = \makeset{q \in \R^2}{\dist(q, p_i) = \dist(q, \ell)}
 \]
-for all $i$. If $(p_i)_y > \ell_y$, it turns out we may parametrize $B_i$ by a parabola: Let $p = (p_x, p_y)$ denote $p_i$ and let $q = (x, y) \in B_i$. Since distances are non-negative, instead of looking at the original definition of $B_i$, it is equivalent to look at satisfying $\dist(q, p)^2 = \dist(q, \ell)^2$. We have:
+for all $i$. If $(p_i)_y > \ell_y$, it turns out we may parametrize $B_i$ by a parabola:
+\[
+    \includegraphics[scale=0.8]{hyperbola_intro}
+\]
+Let $p = (p_x, p_y)$ denote $p_i$ and let $q = (x, y) \in B_i$. Since distances are non-negative, instead of looking at the original definition of $B_i$, it is equivalent to look at satisfying $\dist(q, p)^2 = \dist(q, \ell)^2$. We have:
 \[
     \dist(q, p)^2 = \dist(q, \ell)^2 \iff (p_x - x)^2 + (p_y - y)^2 = (y - \ell_y)^2.
 \]
@@ -109,6 +111,9 @@ Since $p_y \ne \ell_y$ by assumption, we obtain the parabola:
 which parametrizes $B_i$ if $(p_i)_y > \ell_y$. Now we look at the situation where $(p_i)_y = \ell_y$. Then
 \[
     \dist(q, p)^2 = \dist(q, \ell)^2 \iff (p_x - x)^2 + (p_y - y)^2 = (p_y - y)^2.
+\]
+\[
+    \includegraphics[scale=0.8]{vertical_arc}
 \]
 Then it must be the case that $p_x = x$, so $B_i$ is a subset of a vertical line, and is a line segment if there is some $B_k$ above $B_i$ and a half-line which starts at $p_i$ otherwise. Finally, if $(p_i)_y < \ell_y$, we let $B_i = \varnothing$. We now for all $i$ define the maps
 \[

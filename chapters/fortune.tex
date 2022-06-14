@@ -143,7 +143,7 @@ This is illustrated in the following figure, with a slight abuse of notation:
 \[
     \includegraphics[scale=0.8]{derivativedirections}
 \]
-Proposition \ref{prop:highschool1} garantuees that either
+Proposition \ref{prop:highschool1} guarantees that either
 \begin{align*}
     \frac{d \beta_i}{dx}(r_1) > \frac{d \beta_j}{dx}(r_1) &\text{ and } \frac{d \beta_i}{dx}(r_2) < \frac{d \beta_j}{dx}(r_2) \\
     &\text{or} \\
@@ -167,7 +167,7 @@ At a site event when we discover a new point $p$ we want to find the arc $\alpha
 Let $x_1, x_2, \ldots, x_k$ denote the breakpoints on the beach line. These are stored as internal nodes in our BST $\mathcal{T}$. Since the keys for the internal nodes are the $x$-values of the breakpoints, we may locate the arc $\alpha$ using binary search in $\mathcal{T}$. Starting at an internal node $x$ in $\mathcal{T}$ we visit its left subtree if $x\textsf{.key} < p_x$, and we visit its right subtree if $x\textsf{.key} \geq p_x$. The key property is computed at every check, since it is a function of the current position of the sweep line, see Detail 2 for how the key is computed. Eventually we will reach the leaf which stores the arc $\alpha$.
 
 \subsection*{Detail 4: How to check if two breakpoints are converging}
-Let $p, q, r$ be three sites from $P$. Let $x$ and $y$ be two breakpoints, where $x$ is sliding along $\bi(p, q)$ and $y$ is sliding along $\bi(q, r)$ as we vary $\ell$. We want to check whether $x$ and $y$ converge, and if so, what is the location of their intersection, and when during the sweep of $\ell$ will this occur. The two possible scenarios are illustrated below:
+Let $p, q, r$ be three sites from $P$ which define 3 consecutive arcs on the beach line. Let $x$ and $y$ be two breakpoints, where $x$ is sliding along $\bi(p, q)$ and $y$ is sliding along $\bi(q, r)$ as we vary $\ell$. We want to check whether $x$ and $y$ converge, and if so, what is the location of their intersection, and when during the sweep of $\ell$ will this occur. The two possible scenarios are illustrated below:
 \begin{figure}[H]
     \centering
     \subfloat{
@@ -202,7 +202,14 @@ To intersect the bisectors, we form the midpoints
 \]
 and then we let $d_1$ and $d_2$ denote $q - p$ and $r - q$ rotated 90 degrees counterclockwise. Then $s \mapsto m_1 + s d_1$ and $t \mapsto m_2 + t d_2$ parametrize $\bi(p, q)$ and $\bi(q, r)$, respectively. Then we solve the linear system as in Detail 1.
 
+\newpage
 \subsection*{Detail 6: Deleting false alarms during a circle event}
+At a circle event an arc disappears from the beach line, along with two breakpoints. Consider the following example, where at one time we have the arcs $\alpha_1, \alpha_2, \ldots, \alpha_7$ on the beach line along with the breakpoints $x$ and $y$ that $\alpha_5$ lies inbetween, and then after a circle event the arc $\alpha_5$ disappears after the breakpoints $x$ and $y$ intersect and get replaced by a new breakpoint $z$:
+\[
+    \includegraphics[scale=0.8]{circle_event_beachline_merge}
+\]
+When this happens, we have to remove the circle events that involve the breakpoints $x$ and $y$ merging with any other breakpoints.
+
 \subsection*{Detail 7: Intersecting a bounding box with the in-progress DCEL to get the final DCEL}
 
 \section{Correctness}

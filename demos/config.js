@@ -8,7 +8,7 @@ const Config = {
     debugShowTree              : false,
     debugShowBreakpointNames   : false,
     debugShowCircleEvents      : false,
-    debugDCELShowOrientedEdges : true,
+    debugDCELShowOrientedEdges : false,
     debugDCELShowFacePointers  : false, /* requires debugDCELShowOrientedEdge to be true */
     debugDCELShowNextPointers  : false, /* requires debugDCELShowOrientedEdge to be true */
     debugShowBoundingBox       : true,

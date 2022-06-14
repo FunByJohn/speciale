@@ -13,7 +13,7 @@ We are now ready to describe Fortune's algorithm. We start with describing an ov
         \item If $e$ is a site event call \textsc{HandleSiteEvent}$(e)$.
         \item If $e$ is a site event call \textsc{HandleCircleEvent}$(e)$.
     \end{enumerate}
-    \item At this point the internal nodes in $\mathcal{T}$ represent the infinite edges of $\Vor(P)$. Compute a bounding box $B$ which contains all points in $P$, as well as all the vertices of $\Vor(P)$, which are contained in $\mathcal{D}$. Intersect the infinite edges in $\mathcal{T}$ with $B$ and let these intersection points be new vertices in $\mathcal{D}$. Add new edges and pointers to make sure we still have a proper DCEL structure.
+    \item At this point the internal nodes in $\mathcal{T}$ represent the infinite edges of $\Vor(P)$. Compute a bounding box $B$ which contains all points in $P$, as well as all the vertices of $\Vor(P)$, which are contained in $\mathcal{D}$. Intersect the infinite edges in $\mathcal{T}$ with $B$ and let these intersection points be new vertices in $\mathcal{D}$. Add new edges and pointers to make sure we still have a proper DCEL structure. (See detail \#)
 \end{enumerate}
 \end{alg}
 
@@ -40,7 +40,7 @@ We are now ready to describe Fortune's algorithm. We start with describing an ov
 
 \section{Details}
 
-\subsection*{Detail 1: Intersecting lines}
+\subsection*{Detail 1: Intersecting lines, rays and segments}
 As a subroutine in several steps during the algorithm we will need to intersect line segments or rays with each other. We start by describing a solution to this in general. This detail assumes that the reader is familiar with basic linear algebra. We want to find the intersection between 2 lines. We parametrize the lines as follows:
 \[
     \gamma_1(t) = p + t d_1 \quad \text{and} \quad
@@ -202,15 +202,28 @@ To intersect the bisectors, we form the midpoints
 \]
 and then we let $d_1$ and $d_2$ denote $q - p$ and $r - q$ rotated 90 degrees counterclockwise. Then $s \mapsto m_1 + s d_1$ and $t \mapsto m_2 + t d_2$ parametrize $\bi(p, q)$ and $\bi(q, r)$, respectively. Then we solve the linear system as in Detail 1.
 
-\newpage
 \subsection*{Detail 6: Deleting false alarms during a circle event}
 At a circle event an arc disappears from the beach line, along with two breakpoints. Consider the following example, where at one point in time we have the arcs $\alpha_1, \alpha_2, \ldots, \alpha_7$ on the beach line along with the breakpoints $x$ and $y$ that $\alpha_5$ lies inbetween, and then after a circle event the arc $\alpha_5$ disappears after the breakpoints $x$ and $y$ intersect and get replaced by a new breakpoint $z$:
 \[
     \includegraphics[scale=0.8]{circle_event_beachline_merge}
 \]
-When this happens, we have to remove the circle events that involve the breakpoints $x$ and $y$ merging with any other breakpoints. Since we set up a linked list of arcs, we can find the arcs $\alpha_4$ and $\alpha_6$ through the \textsf{.leftArc} and \textsf{.rightArc} pointers that $\alpha_5$ has, and if these arcs point to a circle event, then we remove those circle events from $\mathcal{Q}$ if they exist. This covers removing the false alarms, since we have removed circle events from every arc that surrounds $x$ and $y$. This example is general enough to explain the general case.
+When this happens, we have to remove the circle events that involve the breakpoints $x$ and $y$ merging with any other breakpoints. Since we set up a linked list of arcs, we can find the arcs $\alpha_4$ and $\alpha_6$ through the \textsf{.leftArc} and \textsf{.rightArc} pointers that $\alpha_5$ has, and if these arcs point to a circle event, then we remove those circle events from $\mathcal{Q}$ if they exist. These are of course found before deleting $\alpha_5$. This covers removing the false alarms, since we have removed circle events from every arc that surrounds $x$ and $y$. This example is general enough to explain the general case.
 
-\subsection*{Detail 7: Intersecting a bounding box with DCEL}
+\subsection*{Detail 7: Checking consecutive arcs for circle events}
+First we consider the case of a site event. Assume the beach line is made out of the arcs $\alpha, \beta, \gamma, \delta$ and $\varepsilon$, and assume that $\gamma$ is the new arc we just created. Just a moment later the beach line looks something like this:
+\[
+    \includegraphics[scale=0.8]{cons_arcs_site_event}
+\]
+The arcs we need to check for converging breakpoints are then $(\alpha, \beta, \gamma)$ and $(\gamma, \delta, \varepsilon)$. To be more precise, if $p_{\alpha}, p_{\beta}, p_{\gamma}, p_{\delta}$ and $p_{\varepsilon}$ denote the associated sites, then we need to check the convergence of the breakpoints defined by $(p_{\alpha}, p_{\beta})$ and $(p_{\beta}, p_{\gamma})$, and to check the convergence of the breakpoints defined by $(p_{\gamma}, p_{\delta})$ and $(p_{\delta}, p_{\varepsilon})$, and in case of convergence we must add circle events.
+
+Now we consider the case of a circle event. Assume the beach line just before the circle event contained the consecutive arcs $\alpha, \beta, \gamma, \delta$ and $\varepsilon$. At the circle event the arc $\gamma$ then disappears, now connecting $\beta$ and $\delta$, leaving us with the following picture:
+\[
+    \includegraphics[scale=0.8]{cons_arcs_circle_event}
+\]
+We now have triples of consecutive arcs which were not triples before, namely $(\alpha, \beta, \delta)$ and $(\beta, \delta, \varepsilon)$. We must check these, and in case of convergence we must add circle events.
+
+\subsection*{Detail 8: Intersecting a bounding box with DCEL}
+a
 
 \section{Correctness}
 \begin{lem}

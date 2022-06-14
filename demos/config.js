@@ -11,7 +11,7 @@ const Config = {
     debugDCELShowOrientedEdges : false,
     debugDCELShowFacePointers  : false, /* requires debugDCELShowOrientedEdge to be true */
     debugDCELShowNextPointers  : false, /* requires debugDCELShowOrientedEdge to be true */
-    debugShowBoundingBox       : true,
-    debugBoundingBoxPadding    : 100,
+    debugShowBoundingBox       : false,
+    debugBoundingBoxPadding    : 0,
     ipeScale                   : 0.5
 };

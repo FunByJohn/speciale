@@ -78,7 +78,7 @@ Assume that the points in $P$ are collinear. By applying an isometry to $P$, we 
 \[
     P = \curly{(x_1, 0), (x_2, 0), \ldots, (x_n, 0)},
 \]
-where we assume that $x_1 < x_2 < \cdots < x_n$ by rearranging the points if necessary. See the proof of Theorem \ref{thm:voronoicansort} for a visualization of $\Vor(P)$. By definition, we have that $p \in \VorG(P)$ if and only if $p \not\in \mathcal{V}(x_i, 0)$ for all $i$. Let $(x, y) \in \R^2$ such that $x_i < x < x_{i+1}$. Then $(x, y) \in \VorG(P)$ if
+where we assume that $x_1 < x_2 < \cdots < x_n$ by rearranging the points if necessary. By definition, we have that $p \in \VorG(P)$ if and only if $p \not\in \mathcal{V}(x_i, 0)$ for all $i$. Let $(x, y) \in \R^2$ such that $x_i < x < x_{i+1}$. Then $(x, y) \in \VorG(P)$ if
 \[
     \dist((x, y), (x_i, 0)) = \dist((x, y), (x_{i+1}, 0)).
 \]
@@ -88,7 +88,7 @@ If furthermore $(x, y) \in \VorG(P)$ then we get
     \iff &\sqrt{(x - x_i)^2 + y^2} = \sqrt{(x - x_{i+1})^2 + y^2} \\
     \iff &\abs{x - x_i} = \abs{x - x_{i+1}}.
 \end{align*}
-Thus if $(x, 0) \in \VorG(P)$ then $(x, y) \in \VorG(P)$ for all $y \in \R$. This shows that $\bi((x_i, 0), (x_{i+1}, 0)) \subset \VorG(P)$ for all $i < n$. Every point of $\VorG(P)$ is on one of these bisectors, and the bisectors are all parallel, which proves the claim. \todo{Clean up above argument and consider if anything is missing.}
+Thus if $(x, 0) \in \VorG(P)$ then $(x, y) \in \VorG(P)$ for all $y \in \R$. This shows that $\bi((x_i, 0), (x_{i+1}, 0)) \subset \VorG(P)$ for all $i < n$. Every point of $\VorG(P)$ is on one of these bisectors, and the bisectors are all parallel, which proves the claim.
 
 Assume that the points in $P$ are not collinear. First, we show that the edges of $\VorG(P)$ are either segments or half-lines. Suppose for a contradiction that there is an edge $e$ of $\VorG(P)$ that is a full line and assume that $e \subset \partial\mathcal{V}(p_i) \cap \partial\mathcal{V}(p_j)$. Let $p_k \in P$ be a point which is not collinear with $p_i$ and $p_j$. Then the line $\bi(p_j, p_k)$ is not parallel to the line $e$, hence they have an intersection point. Then there exists a point $v \in e \cap {}^{\circ}h(p_k, p_j)$. The situation is visualized here:
 \[
@@ -98,8 +98,8 @@ We have that $v \in \partial\mathcal{V}(p_j)$ by definition of $e$. Now note tha
 \[
     \partial \mathcal{V}(p_j) = \partial \para{\bigcap_{a \ne j} h(p_j, p_a)} \subset^{\footnotemark} \bigcup_{a \ne j} \partial h(p_j, p_a) = \bigcup_{a \ne j} \bi(p_j, p_a).
 \]
-\footnotetext{Here we used that $\partial(A \cap B) \subset \partial A \cup \partial B$, a proof is here: \url{https://proofwiki.org/wiki/Boundary_of_Intersection_is_Subset_of_Union_of_Boundaries} \todo{Remove this footnote and add the result to some topology appendix}}As $v \in h(p_k, p_j)$ we have that $\dist(v, p_k) < \dist(v, p_j)$, hence $v \not\in \bi(p_j, p_k)$, so $v \not\in \partial{V}(v_j)$ by the above characterization of $\partial \mathcal{V}(p_j)$.
-This is a contradiction, so $e$ can't be a full line. Now we show that $\VorG(P)$ is connected. Assume for the sake of a contradiction that $\VorG(P)$ is not connected. Then there exists a $\partial \mathcal{V}(p_i)$ which is not path connected. This can only happen if $\partial \mathcal{V}(p_i)$ consists of two parallel lines \todo{Why?}. This contradicts the fact that $\VorG(P)$ contains no lines. Thus $\VorG(P)$ is connected.
+\footnotetext{Here we used that $\partial(A \cap B) \subset \partial A \cup \partial B$.}As $v \in h(p_k, p_j)$ we have that $\dist(v, p_k) < \dist(v, p_j)$, hence $v \not\in \bi(p_j, p_k)$, so $v \not\in \partial{V}(v_j)$ by the above characterization of $\partial \mathcal{V}(p_j)$.
+This is a contradiction, so $e$ can't be a full line. Now we show that $\VorG(P)$ is connected. Assume for the sake of a contradiction that $\VorG(P)$ is not connected. Then there exists a $\partial \mathcal{V}(p_i)$ which is not path connected. This can only happen if $\partial \mathcal{V}(p_i)$ consists of two parallel lines. This contradicts the fact that $\VorG(P)$ contains no lines. Thus $\VorG(P)$ is connected.
 \end{proof}
 
 Finally, we show that that the complexity of the vertices and edges is $\mathcal{O}(n)$:
@@ -115,7 +115,7 @@ Then let $B_r(p) \subset \R^2$ denote the open ball with center $p$ and radius $
 \[
     \includegraphics[width=\textwidth]{projective_embedding} % \includegraphics[scale=0.2]{temp-fig-5}
 \]
-In this way we can turn $\VorG(P)$ into a planar graph. For a planar graph $G$, Euler's formula\footnote{\todo{Add a reference and/or proof of Euler's formula in some topology appendix}} states that
+In this way we can turn $\VorG(P)$ into a planar graph. For a planar graph $G$, Euler's polyhedra formula from topology states that
 \begin{equation} \label{eq:eulerformulainproof}
     V - E + F = 2,
 \end{equation}
@@ -157,12 +157,18 @@ For a $q \in \R^2$ we define $C_P(q)$ to be \emph{the largest empty circle of $q
     C_P(q) = B_r(q), \quad \text{where} \quad r = \sup\makeset{\lambda \in \R^+}{B_{\lambda}(q) \cap P = \varnothing}.
 \]
 \end{defn}
+\[
+    \includegraphics[scale=0.8]{largest_empty_circle}
+\]
 \begin{thm} \label{thm:characterizationofbisectors} The bisectors and their intersections are characterized by:
 \begin{enumerate}[{(}i{)}]
     \item $q \in \R^2$ is a vertex of $\VorG(P)$ if and only if \[ \abs{\partial C_P(q) \cap P} \geq 3. \]
     \item $\bi(p_i, p_j)$ defines an edge of $\VorG(P)$ if and only if \[ \exists q \in \bi(p_i, p_j) \colon \partial C_P(q) \cap P = \curly{p_i, p_j}. \]
 \end{enumerate}
 \end{thm}
+\[
+    \includegraphics[scale=0.8]{vert_edge_char}
+\]
 \begin{proof}
 We prove each statement individually:
 \begin{enumerate}[{(}i{):}]
@@ -225,18 +231,16 @@ Consider a graph $G$ with 9 vertices and 10 edges embedded into $\R^2$, which is
     \includegraphics[width=\textwidth]{dcel_example} % \includegraphics[scale=0.37]{temp-fig-10}
 \]
 Then this induces a subdivision of $\R^2$ which we represent as a DCEL. The half-edges are given as the blue arrows, the faces as $f_1, f_2, f_3$ and the vertices are the vertices of $G$. Some of the pointers are visible on the figure.
-
-\todo{Make a complete table of everything in the DCEL like the example in the CompGeo book.}
 \end{ex}
 
+\begin{rmk} \label{rmk:boxalsohaslinearnumedges}
 Note that the DCEL does not support infinite edges, so what we do is put a bounding box $B$ with some padding around the vertices of $\Vor(P)$, and then intersect the infinite edges and faces with the boundary of $B$ and only keep the part inside the bounding box.
 \[
     \includegraphics[width=\textwidth]{voronoi_bounding_box} % \includegraphics[scale=0.25]{temp-fig-3}
 \]
 The aim of our algorithms will then be to calculate the DCEL in the right figure.
 
-\begin{rmk} \label{rmk:boxalsohaslinearnumedges}
-In practice, we would like to enclose $\Vor(P)$ in a box containing all its vertices in order to be able to represent it as a DCEL $\Delta$. How does intersecting the edges of $\Vor(P)$ with such a bounding box $B$ affect the number of edges?
+How does intersecting the edges of $\Vor(P)$ with such a bounding box $B$ affect the number of edges?
 \[
     \includegraphics[scale=0.7]{dcel_edges_example}
 \]

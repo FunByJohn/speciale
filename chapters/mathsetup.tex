@@ -1,6 +1,6 @@
-\chapter{Mathematical setup for Fortune's algorithm}
+\chapter{Theory for Fortune's algorithm}
 
-In this chapter we start our treatment on Fortune's algorithm, and it will be our focus for the next three chapters. It is an algorithm for computing the Euclidean Voronoi diagram which has a running time of $\mathcal{O}(n \log n)$. Before we describe the steps of the algorithm, we have to do some mathematical ground work which will help explain why the algorithm works.
+In this chapter we start our treatment on Fortune's algorithm, and it will be our focus for the next three chapters. It is an algorithm for computing the Euclidean Voronoi diagram which has a running time of $\mathcal{O}(n \log n)$. Before we describe the steps of the algorithm, we have to do some theoretical ground work which will help explain why the algorithm works.
 
 \section{Voronoi diagrams can be used to sort}
 Before we begin, we show that:
@@ -132,14 +132,15 @@ and $V$ is all the vertical parts not hidden behind other parabolas
     V = \makeset{B_i - \curly{(p_i)_x} \times (\textsf{LB}((p_i)_x), \infty)}{i = 1, \ldots, n \text{ where } (p_i)_y = \ell_y}.
 \]
 \end{defn}
-\begin{ex}
-\todo{Draw the beach line for some points}
-\end{ex}
+In the figure below the beach line is illustrated by the blue curves:
+\[
+    \includegraphics[width=\textwidth]{beachline}
+\]
 \begin{rmk}
 From the definition we see that the beach line consists of parts of parabolas, and vertical line segments or half-lines. For this reason, it is easy to see that the intersection between any vertical line and the beach line has at most one component.
 \end{rmk}
 \begin{rmk}
-For a sweep line $\ell$ which does not intersect any of the points in $P$, it follows from the definition of beach line that the map $\textsf{LB}(x)$ parametrizes the beach line. This was used to make a simple demo visualing the beach line, which can be found in $\boxed{\textsf{demos/beachline}}$.
+For a sweep line $\ell$ which does not intersect any of the points in $P$, it follows from the definition of beach line that the map $\textsf{LB}(x)$ parametrizes the beach line. This was used in the demo to visualize the beach line.
 \end{rmk}
 \begin{defn}[Breakpoint]
 Every point $q$ on the beach line such that $q \in B_i \cap B_j$ for two different $i, j$ is called a \textit{breakpoint}.
@@ -147,8 +148,8 @@ Every point $q$ on the beach line such that $q \in B_i \cap B_j$ for two differe
 
 \begin{figure}[H]
     \centering
-    \includegraphics[scale=0.24]{temp-fig-6}
-    \caption{The red crosses indicate breakpoints and the blue lines represent the beach line.}
+    \includegraphics[scale=0.8]{breakpoint} %\includegraphics[scale=0.24]{temp-fig-6}
+    \caption{The red dots indicate the breakpoints.}
     \label{fig:example-of-breakpoint}
 \end{figure}
 
@@ -186,7 +187,7 @@ As the sweep line $\ell$ sweeps the plane from top to bottom, the combinatorial 
 
 First we will consider when new arcs appear on the beach line. As $\ell$ sweeps down and hits a point, a vertical segment is added to the beach line, and then as $\ell$ continues to move, the vertical line spreads out into a new parabolic arc, as seen in this figure:
 \[
-    \includegraphics[scale=0.25]{temp-fig-7}
+    \includegraphics[width=\textwidth]{siteevent} % \includegraphics[scale=0.25]{temp-fig-7}
 \]
 \begin{defn}[Site event]
 When $\ell$ encounters a point $p_i \in P$, that is when $\ell_y = (p_i)_y$, we say that we encounter a \emph{site event}.

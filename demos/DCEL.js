@@ -113,8 +113,94 @@ class DCEL {
     getDisplayLists(sweepLineY) {
         let vertices = [];
         let lines = [];
+        let screenWidth = window.innerWidth;
+        let screenHeight = window.innerHeight;
+        let screenCorners = [
+            new Point(0, 0),
+            new Point(screenWidth, 0),
+            new Point(screenWidth, screenHeight),
+            new Point(0, screenHeight),
+            new Point(0, 0)
+        ];
+
+        function visibleOnScreen(point) {
+            return (point.x >= 0 && point.y >= 0 && point.x <= screenWidth && point.y <= screenHeight);
+        }
+
+        function constrainLine(arr) {
+            let [from, to] = arr;
+            let fromVisible = visibleOnScreen(from);
+            let toVisible = visibleOnScreen(to);
+
+            if (fromVisible && toVisible)
+                return arr;
+
+            let intersections = [];
+            let line1Point = from;
+            let line1Dir = Point.sub(to, from);
+
+            for (var i = 1; i < screenCorners.length; i++) {
+                let line2Point = screenCorners[i - 1];
+                let line2Dir = Point.sub(screenCorners[i], line2Point);
+                let result = intersectLines(line1Point, line1Dir, line2Point, line2Dir);
+
+                if (result !== null) {
+                    let [s, t, intersection] = result;
+
+                    if (0.0 <= s && s <= 1.0 && 0.0 <= t && t <= 1.0) {
+                        intersections.push({dist: s, point: intersection});
+                    }
+                }
+            }
+
+            let newFrom;
+            let newTo;
+
+            if (fromVisible) {
+                newFrom = from;
+            } else {
+                if (intersections.length == 0) {
+                    newFrom = from;
+                } else if (intersections.length == 1) {
+                    newFrom = intersections[0].point;
+                } else if (intersections.length == 2) {
+                    if (intersections[0].dist < intersections[1].dist) {
+                        newFrom = intersections[0].point;
+                    } else {
+                        newFrom = intersections[1].point;
+                    }
+                }
+            }
+
+            if (toVisible) {
+                newTo = to;
+            } else {
+                if (intersections.length == 0) {
+                    newTo = to;
+                } else if (intersections.length == 1) {
+                    newTo = intersections[0].point;
+                } else if (intersections.length == 2) {
+                    if (intersections[0].dist < intersections[1].dist) {
+                        newTo = intersections[1].point;
+                    } else {
+                        newTo = intersections[0].point;
+                    }
+                }
+            }
+
+            return [newFrom, newTo];
+        }
 
         for (let halfEdge of this.halfEdges) {
+            if (!Config.debugDCELShowOrientedEdges && halfEdge._drawn)
+                continue;
+
+            if (!Config.debugShowBoundingBox && halfEdge._onBoundingBox)
+                continue;
+
+            halfEdge._drawn = true;
+            halfEdge.twin._drawn = true;
+
             let from = halfEdge.origin.getPosition(sweepLineY);
             let to = halfEdge.twin.origin.getPosition(sweepLineY);
 
@@ -129,46 +215,46 @@ class DCEL {
                 from = Point.add(from, offset);
                 to = Point.add(to, offset);
 
-                lines.push([
+                lines.push(constrainLine([
                     Point.add(offset.scale(-0.5), Point.add(from, unitDir.scale(0.5 * len - arrowStart))),
                     Point.add(from, unitDir.scale(0.5 * len))
-                ]);
+                ]));
                 
-                lines.push([
+                lines.push(constrainLine([
                     Point.add(offset.scale(0.5), Point.add(from, unitDir.scale(0.5 * len - arrowStart))),
                     Point.add(from, unitDir.scale(0.5 * len))
-                ]);
+                ]));
 
-                lines.push([from, to]);
-            } else {
-                lines.push([from, to]);
-            }
+                lines.push(constrainLine([from, to]));
 
-            if (Config.debugDCELShowFacePointers && halfEdge.face != null)
-                lines.push([Point.add(mid, offset), halfEdge.face.site.position]);
+                if (Config.debugDCELShowFacePointers && halfEdge.face != null)
+                    lines.push(constrainLine([Point.add(mid, offset), halfEdge.face.site.position]));
 
-            if (Config.debugDCELShowNextPointers) {
-                let nextEdge = halfEdge.next;
-                if (nextEdge != null) {
-                    let nextFrom = nextEdge.origin.getPosition(sweepLineY);
-                    let nextTo = nextEdge.twin.origin.getPosition(sweepLineY);
-                    let nextOffset = Point.sub(nextTo, nextFrom).hat();
-                    let nextMid = Point.add(nextFrom, nextTo).scale(0.5);
+                if (Config.debugDCELShowNextPointers) {
+                    let nextEdge = halfEdge.next;
+                    if (nextEdge != null) {
+                        let nextFrom = nextEdge.origin.getPosition(sweepLineY);
+                        let nextTo = nextEdge.twin.origin.getPosition(sweepLineY);
+                        let nextOffset = Point.sub(nextTo, nextFrom).hat();
+                        let nextMid = Point.add(nextFrom, nextTo).scale(0.5);
 
-                    nextOffset = nextOffset.scale(1 / nextOffset.norm()).scale(5.0);
+                        nextOffset = nextOffset.scale(1 / nextOffset.norm()).scale(5.0);
 
-                    let conFrom = Point.add(mid, offset);
-                    let conTo = Point.add(nextOffset, nextMid);
-                    let conOffset = Point.sub(conTo, conFrom).hat();
+                        let conFrom = Point.add(mid, offset);
+                        let conTo = Point.add(nextOffset, nextMid);
+                        let conOffset = Point.sub(conTo, conFrom).hat();
 
-                    conOffset = conOffset.scale(1 / conOffset.norm());
+                        conOffset = conOffset.scale(1 / conOffset.norm());
 
-                    let conControlPoint = Point.add(conOffset.scale(20.0), Point.add(conFrom, conTo).scale(0.5));
+                        let conControlPoint = Point.add(conOffset.scale(20.0), Point.add(conFrom, conTo).scale(0.5));
 
-                    //lines.push([conFrom, conTo]);
-                    lines.push([conFrom, conControlPoint]);
-                    lines.push([conControlPoint, conTo]);
+                        //lines.push([conFrom, conTo]);
+                        lines.push(constrainLine([conFrom, conControlPoint]));
+                        lines.push(constrainLine([conControlPoint, conTo]));
+                    }
                 }
+            } else {
+                lines.push(constrainLine([from, to]));
             }
         }
 
@@ -183,7 +269,7 @@ class DCEL {
         lines.push([b3, b4]);
         lines.push([b4, b1]);*/
 
-        if (this.boundingBox != null) {
+        if (Config.debugShowBoundingBox && this.boundingBox != null) {
             let [minX, maxX, minY, maxY] = this.boundingBox;
             let b1 = new Point(minX, minY);
             let b2 = new Point(maxX, minY);
@@ -214,6 +300,15 @@ class DCEL {
     }
 
     computeBoundingBox(viewport, padding) {
+        let viewportWithPadding = {};
+
+        viewportWithPadding.x = viewport.x + padding;
+        viewportWithPadding.y = viewport.y + padding;
+        viewportWithPadding.width = viewport.width - 2 * padding;
+        viewportWithPadding.height = viewport.height - 2 * padding;
+
+        viewport = viewportWithPadding;
+
         function findBoundary(list) {
             let min = list[0];
             let max = list[0];
@@ -256,12 +351,12 @@ class DCEL {
         let [minX, maxX] = findBoundary(xs);
         let [minY, maxY] = findBoundary(ys);
 
-        if (padding != 0) {
+        /*if (padding != 0) {
             minX -= padding;
             minY -= padding;
             maxX += padding;
             maxY += padding;
-        }
+        }*/
 
         return [minX, maxX, minY, maxY];
     }
@@ -270,7 +365,7 @@ class DCEL {
         this.cleanUpDeadVertices();
 
         let _this = this;
-        let [minX, maxX, minY, maxY] = this.computeBoundingBox(viewport, 25);
+        let [minX, maxX, minY, maxY] = this.computeBoundingBox(viewport, Config.debugBoundingBoxPadding);
         let b1 = new Point(minX, minY);
         let b2 = new Point(maxX, minY);
         let b3 = new Point(maxX, maxY);
@@ -350,8 +445,10 @@ class DCEL {
                 
                 edge.origin = fromVert;
                 edge.twin = oppEdge;
+                edge._onBoundingBox = true;
                 oppEdge.origin = toVert;
                 oppEdge.twin = edge;
+                oppEdge._onBoundingBox = true;
 
                 if (prevEdge != null) {
                     pair(prevEdge, edge);
@@ -391,8 +488,10 @@ class DCEL {
                     edge.origin = lastVert;
                     edge.twin = oppEdge;
                     edge.face = vertex.edge.face;
+                    edge._onBoundingBox = true;
                     oppEdge.origin = vertex;
                     oppEdge.twin = edge;
+                    oppEdge._onBoundingBox = true;
 
                     pair(edge, vertex.edge);
 
@@ -431,8 +530,10 @@ class DCEL {
                 edge.origin = lastVert;
                 edge.twin = oppEdge;
                 edge.face = lastVert.edge.twin.face;
+                edge._onBoundingBox = true;
                 oppEdge.origin = toVert;
                 oppEdge.twin = edge;
+                oppEdge._onBoundingBox = true;
 
                 pair(lastVert.edge.twin, edge);
 
@@ -556,5 +657,7 @@ class DCEL_HalfEdge {
         this.face = null;
         this.next = null;
         this.prev = null;
+        this._drawn = false;
+        this._onBoundingBox = false;
     }
 }

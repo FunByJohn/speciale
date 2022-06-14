@@ -20,7 +20,7 @@ let sweepLineY = 0;
 let lockedSweepLine = false;
 let shiftDown = false;
 let shiftDownY = 0;
-let showingTikZ = false;
+let showingIpe = false;
 let currentDrawing = [];
 
 function circleShape(x, y, radius, filled) {
@@ -67,10 +67,10 @@ function init(event) {
     resizeWindow();
 
     let selector = document.getElementById('programSelector');
-    let tikzButton = document.getElementById('tikzButton');
+    let ipeButton = document.getElementById('ipeButton');
     
     selector.addEventListener('change', programSelectorChanged);
-    tikzButton.addEventListener('click', clickTikZButton);
+    ipeButton.addEventListener('click', clickIpeButton);
 
     window.addEventListener('resize', resizeWindow);
     window.addEventListener('keydown', handleKeyDown);
@@ -192,63 +192,76 @@ function programSelectorChanged(event) {
     draw();
 }
 
-function clickTikZButton() {
-    let tikzButton = document.getElementById('tikzButton');
-    let tikzTextarea = document.getElementById('tikzCode');
+function clickIpeButton() {
+    let ipeButton = document.getElementById('ipeButton');
+    let ipeTextarea = document.getElementById('ipeCode');
 
-    tikzButton.blur();
+    ipeButton.blur();
 
-    if (showingTikZ) {
-        tikzButton.value = "TikZ";
-        tikzTextarea.style.display = 'none';
-        showingTikZ = false;
+    if (showingIpe) {
+        ipeButton.value = "Ipe";
+        ipeTextarea.style.display = 'none';
+        showingIpe = false;
     } else {
-        tikzButton.value = "Hide TikZ";
-        tikzTextarea.value = generateTikZCode();
-        tikzTextarea.style.display = 'block';
-        showingTikZ = true;
+        ipeButton.value = "Hide Ipe";
+        ipeTextarea.value = generateIpeCode();
+        ipeTextarea.style.display = 'block';
+        showingIpe = true;
     }
 }
 
-function generateTikZCode() {
-    var code = '';
-    var indent = '  ';
+function generateIpeCode() {
+    let scale = Config.ipeScale
+    let code = '';
 
-    code += '\\begin{tikzpicture}[x=0.01cm,y=0.01cm]\n';
+    code += `<page>\n`;
+    code += `<layer name="alpha"/>\n`;
+    code += `<view layers="alpha" active="alpha"/>\n`;
 
     for (var op of currentDrawing) {
         switch (op.type) {
             case ShapeType.Circle:
             {
-                let fill = '';
+                let fill = ``;
 
                 if (op.filled)
-                    fill = '[black,fill=black]';
+                    fill = ` fill="black"`;
 
-                code += `${indent}\\draw${fill} (${op.x},${op.y}) circle (${op.radius});\n`;
+                code += `<path layer="alpha" stroke="black"${fill}>\n`;
+                code += `${scale * op.radius} 0 0 ${scale * op.radius} ${scale * op.x} ${scale * op.y} e\n`;
+                code += `</path>\n`;
                 
                 break;
             };
 
             case ShapeType.LineSegment:
             {
-                code += `${indent}\\draw (${op.x1},${op.y1}) -- (${op.x2},${op.y2});\n`;
+                code += `<path layer="alpha" stroke="black">\n`;
+                code += `${scale * op.x1} ${scale * op.y1} m\n`;
+                code += `${scale * op.x2} ${scale * op.y2} l\n`;
+                code += `</path>\n`;
                 
                 break;
             };
 
             case ShapeType.LineSequence:
             {
-                let transformed = op.points.map(p => `(${p[0]},${p[1]})`);
+                code += `<path layer="alpha" stroke="black">\n`;
 
-                code += `${indent}\\draw ${transformed.join(' -- ')};\n`;
+                for (var i = 0; i < op.points.length; i++) {
+                    let point = op.points[i];
+                    let ch = (i == 0) ? 'm' : 'l';
+                    code += `${scale * point[0]} ${scale * point[1]} ${ch}\n`;
+                }
+
+                code += `</path>\n`;
                 
                 break;
             };
         }
     }
 
-    code += '\\end{tikzpicture}';
+    code += `</page>`;
 
     return code;
 }
@@ -513,10 +526,10 @@ function draw() {
         }
     }
 
-    // Update TikZ if visible
-    if (showingTikZ) {
-        let tikzTextarea = document.getElementById('tikzCode');
-        tikzTextarea.value = generateTikZCode();
+    // Update Ipe if visible
+    if (showingIpe) {
+        let ipeTextarea = document.getElementById('ipeCode');
+        ipeTextarea.value = generateIpeCode();
     }
 }
 

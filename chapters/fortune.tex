@@ -151,54 +151,31 @@ This gives us a criterion for deciding which intersection point describes the br
 
 \subsection*{Detail 3: How to find the arc vertically above a point}
 \subsection*{Detail 4: How to check if two breakpoints are converging}
+To intersect the bisectors, we form the midpoints
+\[
+    m_1 = \frac{1}{2}(p + q) \quad \text{and} \quad m_2 = \frac{1}{2}(q + r)
+\]
+and then we let $d_1$ and $d_2$ denote $q - p$ and $r - q$ rotated 90 degrees counterclockwise. Then $s \mapsto m_1 + s d_1$ and $t \mapsto m_2 + t d_2$ parametrize $\bi(p_1, p_2)$ and $\bi(p_2, p_3)$, respectively.
 \[
     \includegraphics[scale=0.8]{ray_intersection}
 \]
 
 \subsection*{Detail 5: Finding a circle through 3 points}
-As a part of the algorithm, we need to find the circle $C$ through 3 points $p_1, p_2, p_3$. It turns out if we intersect $\bi(p_1, p_2)$ and $\bi(p_2, p_3)$ we find the center of $C$, and then to find the radius we just need to find the distance from the center to one of the points. This is because if $x \in \bi(p_1, p_2) \cap \bi(p_2, p_3)$ then
+As a part of the algorithm, we need to find the circle $C$ through 3 points $p_1, p_2, p_3$. It turns out if we intersect $\bi(p_1, p_2)$ and $\bi(p_2, p_3)$ we find the center of $C$, and then to find the radius we just need to find the distance from the center to one of the points.
+\[
+    \includegraphics[scale=0.8]{circle_3_points}
+\]
+This is because if $x \in \bi(p_1, p_2) \cap \bi(p_2, p_3)$ then
 \[
     \dist(x, p_1) = \dist(x, p_2) = \dist(x, p_3),
 \]
 so $x$ is exactly the center of a circle through $p_1, p_2, p_3$.
 
-To intersect the bisectors, we form the midpoints
-\[
-    m_1 = \frac{1}{2}(p + q) \quad \text{and} \quad m_2 = \frac{1}{2}(q + r)
-\]
-and then we let $d_1$ and $d_2$ denote $q - p$ and $r - q$ rotated 90 degrees counterclockwise. Then $s \mapsto m_1 + s d_1$ and $t \mapsto m_2 + t d_2$ parametrize $\bi(p_1, p_2)$ and $\bi(p_2, p_3)$, respectively. To intersect $\bi(p_1, p_2)$ and $\bi(p_2, p_3)$ we then need to find $s, t \in \R$ such that
+To intersect $\bi(p_1, p_2)$ and $\bi(p_2, p_3)$ we then need to find $s, t \in \R$ such that
 \[
     m_1 + s d_1 = m_2 + t d_2.
 \]
-This can be rewritten into the matrix equation
-\[
-    \begin{pmatrix}
-        \mid & \mid \\
-        d_1 & d_2 \\
-        \mid & \mid
-    \end{pmatrix} \begin{pmatrix}
-        s \\
-        -t
-    \end{pmatrix}
-    =
-    m_2 - m_1,
-\]
-and if $d_1$ and $d_2$ are linearly independent then it has the unique solution
-\[
-    \begin{pmatrix}
-        s \\
-        -t
-    \end{pmatrix}
-    =
-    \begin{pmatrix}
-        \mid & \mid \\
-        d_1 & d_2 \\
-        \mid & \mid
-    \end{pmatrix}^{-1} (m_2 - m_1).
-\]
-\[
-    \includegraphics[scale=0.8]{circle_3_points}
-\]
+See detail 1 for how this is done.
 
 \subsection*{Detail 6: Deleting false alarms during a circle event}
 \subsection*{Detail 7: Intersecting a bounding box with the in-progress DCEL to get the final DCEL}

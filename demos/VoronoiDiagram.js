@@ -735,8 +735,7 @@ class VoronoiDiagram {
         }
 
         if (intersectWithBoundingBox) {
-            console.log(":D");
-            this.dcel.constrainToBoundingBox({x: 100, y: 100, width: window.innerWidth - 200, height: window.innerHeight - 200}, lastSweepLineY + 50);
+            this.dcel.constrainToBoundingBox({x: 0, y: 0, width: window.innerWidth, height: window.innerHeight}, lastSweepLineY + 50);
         }
     }
 

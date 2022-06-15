@@ -207,17 +207,27 @@ The only way in which a new arc can appear on the beach line is through a site e
 \begin{proof}
 The only other alternative is for new arcs to arise due to changes in the shape and position of existing parabolas, that is due to some parabola overtaking the beach line and breaking through it. Assume for the sake of a contradiction that a new arc appears on the beach line but $\ell_y \ne p_i$ for all $i$. Let $\beta_j$ denote the parabola which contains the new arc, associated to the point $p_j \in P$, which appears on the beach line. We have that $\beta_j$ is a full parabola since $\ell_y \ne p_j$. Now, we look at the two cases in which $\beta_j$ can appear as a new arc on the beach line.
 
+\[
+    \includegraphics[scale=0.8]{site_event_contradict_middle}
+\]
 The first possibility is that $\beta_j$ breaks through the middle of an another arc which is a part of the parabola $\beta_i$. For this to happen, there is a time at which $\beta_i$ and $\beta_j$ either coincide, or they are tangent which means they intersect in exactly one point which is on the beach line. They cannot coincide, since $p_i \ne p_j$, so they must intersect in exactly one point. By Assumption \ref{ass:generalposition} we have $(p_i)_y \ne (p_j)_y$ so $\beta_i(x) - \beta_j(x)$ is a second degree polynomial with discriminant
 \begin{equation}
     D = \frac{(p_x - q_x)^2 + (p_y - q_y)^2}{(p_y - \ell_y)(q_y - \ell_y)}.
 \end{equation}
 Since $p_y, q_y > \ell_y$ the denominator is strictly positive, and since $p_i \ne p_j$ the numerator is also strictly positive, so $D > 0$. This means that $\beta_i$ and $\beta_j$ intersect in two different points, a contradiction.
 
+\[
+    \includegraphics[scale=0.8]{site_event_contradict_between}
+\]
 The second possibility is that $\beta_j$ appears in between two arcs. Let these arcs be part of parabolas $\beta_i$ and $\beta_k$. Let $q$ be the intersection point between $\beta_i, \beta_j$ and $\beta_k$, and we assume that the arc on the beach line from $\beta_i$ is to the left of $q$, and the arc from $\beta_k$ is to the right of $q$, as in this figure:
 \[
-    \includegraphics[scale=0.25]{temp-fig-8}
+    \includegraphics[scale=0.8]{site_event_contradict} %\includegraphics[scale=0.25]{temp-fig-8}
 \]
-Now let $C$ denote the circle $C_P(q)$ and note that it has $p_i, p_j, p_k$ on its boundary, and it is tangent to $\ell$. The cyclic order on $C$, starting at the point of tangency with $\ell$ and going clockwise is $p_i, p_j, p_k$. Now, we imagine an infinitesimal downward motion of $\ell$ while keeping $C$ tangent to $\ell$ and $p_j$, we call the new circle $C'$. Now either $p_i$ or $p_k$ will be contained in the interior of $C'$, say it's $p_k$ like on the figure. Let $c$ denote the center of $C'$. Then $\dist(c, p_j)$ is equal to $\dist(c, \ell)$, but since $p_k$ is contained in the interior of $C'$ then $\dist(c, p_k)$ is strictly smaller than $\dist(c, p_j)$, which means that $p_k$ is closer to $\ell$ than $p_j$, which means $\beta_j$ cannot be on the beach line, a contradiction.
+Now let $C$ denote the circle $C_P(q)$ and note that it has $p_i, p_j, p_k$ on its boundary, and it is tangent to $\ell$. The cyclic order on $C$, starting at the point of tangency with $\ell$ and going clockwise is $p_i, p_j, p_k$. Now, we imagine an infinitesimal downward motion of $\ell$ while keeping $C$ tangent to $\ell$ and $p_j$, call the new circle $C'$.
+\[
+    \includegraphics[scale=0.8]{site_event_contradict_part2}
+\]
+Now either $p_i$ or $p_k$ will be contained in the interior of $C'$, say it's $p_k$ like on the figure. Let $c$ denote the center of $C'$. Then $\dist(c, p_j)$ is equal to $\dist(c, \ell)$, but since $p_k$ is contained in the interior of $C'$ then $\dist(c, p_k)$ is strictly smaller than $\dist(c, p_j)$, which means that $p_k$ is closer to $\ell$ than $p_j$, which means $\beta_j$ cannot be on the beach line, a contradiction.
 \end{proof}
 
 \begin{cor}
@@ -226,7 +236,7 @@ At any time the beach line consists of at most $2n-1$ arcs.
 \begin{proof}
 We prove this by induction. The first site event adds a single arc, so for $n = 1$ there is at most $2n - 1 = 1$ arcs on the beach line. Now assume during the execution of the algorithm that we've seen $k < n$ of the $n$ site events, and that the beach line consists of at most $2k - 1$ arcs. When we encounter a new site, we have seen that there are two cases:
 \[
-    \includegraphics[scale=0.25]{temp-fig-11}
+    \includegraphics[scale=0.8]{beachline_add_cases} %\includegraphics[scale=0.25]{temp-fig-11}
 \]
 In case (a) the have that an arc appears inbetween 2 existing arcs, increasing the total number by one. In case (b) an existing arc is split into two, and a new arc appears in between, which increases the total number by two. This means that after having seen $k + 1$ site events, there can be at most
 \[
@@ -236,7 +246,7 @@ parabolic arcs, which proves the claim.
 \end{proof}
 Now we've characterized exactly when new arcs appear on the beach line. We now turn to the question of when arcs disappear from the beach line. Assume we have at least 3 arcs on the beach line, name them $\alpha, \alpha', \alpha''$ and assume that $\alpha$ is adjacent to $\alpha'$, and $\alpha'$ is adjacent to $\alpha''$. We assume that $\alpha'$ is the arc which is about to disappear. We first note that $\alpha$ and $\alpha''$ cannot be a part of the same parabola. If this case the case, we'd be in the following situation:
 \[
-    \includegraphics[scale=0.25]{temp-fig-12}
+    \includegraphics[scale=0.8]{circle_event_contradict} %\includegraphics[scale=0.25]{temp-fig-12}
 \]
 Let $\beta$ denote the parabola which $\alpha$ and $\alpha''$ are a part of, and let $\beta'$ be the parabola which $\alpha'$ is a part of. When $\alpha'$ is about to disappear, then there will be a time at which $\beta$ and $\beta'$ are tangent, and then we can reuse the contradiction argument from the first part of the proof of Lemma \ref{lem:newarciffsiteevent}. Thus $\alpha, \alpha'$ and $\alpha''$ are defined by 3 distinct sites $p_i, p_j, p_k \in P$. At the moment that $\alpha'$ disappears, then the three parabolas $\beta_i \supset \alpha$, $\beta_j \supset \alpha'$ and $\beta_k \supset \alpha''$ intersect in a single point $q$. We note that
 \[
@@ -244,7 +254,7 @@ Let $\beta$ denote the parabola which $\alpha$ and $\alpha''$ are a part of, and
 \]
 So there is a circle $C$ with center $q$ passing through $p_i, p_j, p_k$ which is tangent to $\ell$ at its lowest point. The situation is illustrated as follows:
 \[
-    \includegraphics[scale=0.25]{temp-fig-13}
+    \includegraphics[scale=0.8]{site_event_contradict} %\includegraphics[scale=0.25]{temp-fig-8}
 \]
 We claim that $C = C_P(q)$. Assume for the sake of a contradiction that there is a site $p$ inside the interior of $C$. Then
 \begin{equation} \label{eq:notonthebeachlinechar}

@@ -142,6 +142,39 @@ function handleKeyDown(event) {
 
         shiftDown = true;
     }
+
+    if (event.keyCode == 49) Config.debugShowTree = !Config.debugShowTree;
+    if (event.keyCode == 50) Config.debugShowBreakpointNames = !Config.debugShowBreakpointNames;
+    if (event.keyCode == 51) Config.debugDCELShowOrientedEdges = !Config.debugDCELShowOrientedEdges;
+    if (event.keyCode == 52) Config.debugDCELShowFacePointers = !Config.debugDCELShowFacePointers;
+    if (event.keyCode == 53) Config.debugDCELShowNextPointers = !Config.debugDCELShowNextPointers;
+    if (event.keyCode == 54) Config.debugShowBoundingBox = !Config.debugShowBoundingBox;
+    if (event.keyCode == 55) Config.debugBoundingBoxPadding = Math.max(0, Config.debugBoundingBoxPadding + 10);
+    if (event.keyCode == 56) Config.debugBoundingBoxPadding = Math.max(0, Config.debugBoundingBoxPadding - 10);
+    if (event.keyCode == 57) Config.debugShowCircleEvents = !Config.debugShowCircleEvents;
+
+    if (49 <= event.keyCode && event.keyCode <= 56)
+        draw();
+
+    /*
+    const Config = {
+    epsilon                    : 10e-7, // in computations with floats we will say that x = y if abs(x - y) < epsilon 
+    pointFocusRadius           : 5.0,
+    pointBlurRadius            : 2.0,
+    beachLineStepSize          : 1,
+    deleteRadius               : 20.0,
+    sloMoFactor                : 0.05,
+    debugShowTree              : false,
+    debugShowBreakpointNames   : false,
+    debugShowCircleEvents      : false,
+    debugDCELShowOrientedEdges : false,
+    debugDCELShowFacePointers  : false, // requires debugDCELShowOrientedEdge to be true
+    debugDCELShowNextPointers  : false, // requires debugDCELShowOrientedEdge to be true
+    debugShowBoundingBox       : false,
+    debugBoundingBoxPadding    : 0,
+    ipeScale                   : 0.5
+};
+    */
 }
 
 function handleKeyUp(event) {

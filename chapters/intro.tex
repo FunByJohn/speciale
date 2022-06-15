@@ -44,7 +44,7 @@ The following figure shows how the Voronoi diagram for 9 random points looks lik
     \caption{$\Vor(P)$ of 9 random points using different $\norm{\,\cdot\,}_p$}
     \label{fig:naive-voronoi}
 \end{figure}
-The above figures were generated using a very naive algorithm, which for each each pixel determinates which of the 9 points is the closest with regards to the chosen norm. A demo is available in $\boxed{\textsf{demos/pixel-voronoi-naive}}$. \\
+The above figures were generated using a very naive algorithm, which for each each pixel determinates which of the 9 points is the closest with regards to the chosen norm. \\
 
 Note that some of the cells may be unbounded, for example the bottom left green cell in the above figure. For $p = 1$ and $p = \infty$ the boundaries of the cells $\mathcal{V}(p_i)$ are characterised by lines, rays and segments that can only point in the 8 compass directions. For $p = 2$ the boundaries consist of lines, rays and segments which can point in any direction. Interestingly, for $2 < p < \infty$ it seems that the boundary consists of smooth curves that are not necessarily part of a line. \\
 

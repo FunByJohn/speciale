@@ -271,11 +271,18 @@ so Theorem \ref{thm:characterizationofbisectors} (i) gives us that $q$ is a vert
 The only way in which an existing arc can disappear from the beach line is through a circle event.
 \end{lem}
 
-\todo{Prove Lemma 7.8: Every Voronoi vertex is detected by means of a circle event. (p. 157)}
-
+Finally, we make sure that the circle events are the tool we need:
 \begin{lem}
 Every Voronoi vertex is detected by means of a circle event.
 \end{lem}
 \begin{proof}
-a
+Let $q$ be a Voronoi vertex. Theorem \ref{thm:characterizationofbisectors} (i) and Assumption \ref{ass:notcocircular} then gives us that there exists exactly 3 sites $p_i, p_j, p_k$ such that $q$ is the center of the circle $C(p_i, p_j, p_k)$ which has the sites on its boundary, and no other sites in its interior or on its boundary. For simplicity we assume that the lowest point of $C(p_i, p_j, p_k)$ is not one of the defining sites $p_i, p_j, p_k$. Finally, assume without loss of generality that from the lowest point of $C(p_i, p_j, p_k)$, the clockwise traversal of $C(p_i, p_j, p_k)$ encounters the sites $p_i, p_j, p_k$ in this order.
+
+We must show that just before the sweep line reaches the lowest point of $C(p_i, p_j, p_k)$, there are three consecutive arcs $\alpha, \alpha'$ and $\alpha''$ on the beach line defined by the sites $p_i, p_j$, and $p_k$. Only then will the circle event take place.
+\[
+    \includegraphics[scale=0.8]{circle_events_all_verts}
+\]
+Consider the sweep line an infinitesimal amount before it reaches the lowest point of $C(p_i, p_j, p_k)$. Since $C(p_i, p_j, p_k)$ doesn't contain any other sites inside or on it, there exists a circle through $p_i$ and $p_j$ that is tangent to the sweep line, and doesn't contain sites in the interior. So there are adjacent arcs on the beach line defined by $p_i$ and $p_j$. Similarly, there are adjacent arcs on the beach line defined by $p_j$ and $p_k$. 
+
+Now, note that the two arcs defined by $p_j$ are actually the same arc, and it follows that there are three consecutive arcs on the beach line defined by $p_i$, $p_j$, and $p_k$. Therefore, the corresponding circle event is in $\mathcal{Q}$ just before the event takes place, and the Voronoi vertex is detected.
 \end{proof}

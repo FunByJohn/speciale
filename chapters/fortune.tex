@@ -227,7 +227,12 @@ We now have triples of consecutive arcs which were not triples before, namely $(
 %\subsection*{Detail 8: Intersecting a bounding box with DCEL}
 %a
 
-\section{Correctness}
+\section{Conclusion}
 \begin{thm}
 Algorithm \ref{alg:fortune} as described computes $\Vor(P)$ if $P$ satisfies our theoretical assumptions, and the algorithm can be implemented such that it runs in $\mathcal{O}(n \log n)$ time and uses $\mathcal{O}(n)$ storage.
 \end{thm}
+\begin{proof}
+The first claim follows from the lemmas we proved in Chapter 3.
+
+For the running time, we note that the primitive operations on $\mathcal{T}$ and $\mathcal{Q}$ take $\mathcal{O}(\log n)$ time. For $n$ site events we have $\mathcal{O}(n \log n)$ processing time. Now, how many circle events do we process? Note that every circle event defines a vertex of the Voronoi diagram, and we know from earlier that there are $\mathcal{O}(n)$ edges in the diagram. Also, note that false alarms are deleted from $\mathcal{Q}$ before they are processed. It follows that the number of circle events is linear, so the time and storage bounds follow.
+\end{proof}

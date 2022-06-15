@@ -1,5 +1,7 @@
 \chapter{Data structures for Fortune's algorithm}
 
+This chapter explains some of the details in Section 7.2 in \cite{CompGeo}. The treap section is based on the original treap paper, which is referenced in the section.
+
 During the algorithm we will need three data structures:
 \begin{itemize}
     \item A \textbf{priority queue} $\mathcal{Q}$ for keeping track of the site and circle events.
@@ -11,7 +13,7 @@ We explain them in detail in the next sections.
 \section{Priority queue}
 The priority queue stores the site and circle events, and enables the algorithm to handle them in order. Each element in the priority queue has a priority. For a site event the $y$-value of the point describes the priority, and for a circle event the priority is given by the $y$-value of the lowest point of the center of the circle which describes the event. Site events also store a pointer to the site, and circle events also store the center of its definining circle and a pointer to the arc in $\mathcal{T}$ which is disappearing.
 
-For the implementation of the priority queue we will use a binary heap. These are described in CLRS \todo{Ref}, and the implementation has been taken from \todo{Ref}.
+For the implementation of the priority queue we will use a binary heap. These are described in CLRS \cite{CLRS}.
 
 \section{Binary search tree} \label{sec:bst}
 We will store the current configuration of the beach line in a binary search tree, which has some additional information stored:

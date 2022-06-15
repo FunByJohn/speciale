@@ -5,4 +5,15 @@ Raimund Seidel; Cecilia~R. Aragon.
 \newblock {\em Randomized Search Trees}.
 \newblock 1996.
 
+\bibitem{CompGeo}
+Mark de~Berg; Otfried Cheong; Marc~van Kreveld; Mark~Overmars.
+\newblock {\em Computational Geometry, Algorithms and Applications, Third
+  Edition}.
+\newblock 2008.
+
+\bibitem{CLRS}
+Thomas H. Cormen; Charles E. Leiserson; Ronald L. Rivest;~Clifford Stein.
+\newblock {\em Introduction to Algorithms, Third edition}.
+\newblock 2009.
+
 \end{thebibliography}

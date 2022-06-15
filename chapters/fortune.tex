@@ -1,5 +1,7 @@
 \chapter{Description of Fortune's algorithm}
 
+This chapter continues our treatment of Section 7.2 in \cite{CompGeo}. Some details are original, as the book has left a lot of details to the reader.
+
 We are now ready to describe Fortune's algorithm. We start with describing an overview of the algorithm, and then in the next section we describe some of the details thoroughly -- so anytime the algorithm says ``see detail $n$'', then this detail can be found in the next section.
 
 \begin{alg} \label{alg:fortune} \textsc{VoronoiDiagram}(P) \\
@@ -13,7 +15,7 @@ We are now ready to describe Fortune's algorithm. We start with describing an ov
         \item If $e$ is a site event call \textsc{HandleSiteEvent}$(e)$.
         \item If $e$ is a site event call \textsc{HandleCircleEvent}$(e)$.
     \end{enumerate}
-    \item At this point the internal nodes in $\mathcal{T}$ represent the infinite edges of $\Vor(P)$. Compute a bounding box $B$ which contains all points in $P$, as well as all the vertices of $\Vor(P)$, which are contained in $\mathcal{D}$. Intersect the infinite edges in $\mathcal{T}$ with $B$ and let these intersection points be new vertices in $\mathcal{D}$. Add new edges and pointers to make sure we still have a proper DCEL structure. (See detail \#)
+    \item At this point the internal nodes in $\mathcal{T}$ represent the infinite edges of $\Vor(P)$. Compute a bounding box $B$ which contains all points in $P$, as well as all the vertices of $\Vor(P)$, which are contained in $\mathcal{D}$. Intersect the infinite edges in $\mathcal{T}$ with $B$ and let these intersection points be new vertices in $\mathcal{D}$. Add new edges and pointers to make sure we still have a proper DCEL structure.
 \end{enumerate}
 \end{alg}
 
@@ -21,20 +23,20 @@ We are now ready to describe Fortune's algorithm. We start with describing an ov
 \begin{enumerate}
     \item Let $p_i$ denote the site that $e$ points to.
     \item If $\mathcal{T} = \textsc{nil}$ then let $\mathcal{T}$ store the single arc that is described by $p_i$ and return.
-    \item Otherwise, $\mathcal{T} \ne \textsc{nil}$. Search in $\mathcal{T}$ for the arc $\alpha$ vertically above $p_i$, that is the arc at which the vertical line through $p_i$ intersects the beach line. (See detail \#)
+    \item Otherwise, $\mathcal{T} \ne \textsc{nil}$. Search in $\mathcal{T}$ for the arc $\alpha$ vertically above $p_i$, that is the arc at which the vertical line through $p_i$ intersects the beach line. (See Detail 3)
     \item If $\alpha$ has a pointer to a circle event $e'$, then remove $e'$ from $\mathcal{Q}$, as this circle event is now a false alarm since $\alpha$ is about to disappear earlier than we initially thought.
     \item Create the new arc $\beta$ defined by $p_i$ and insert it into $\mathcal{T}$ as described in Section \ref{sec:insertingatsiteevents}. Update $\mathcal{D}$ by creating the new half-edges which will be traced out by the two new breakpoints as described in Section \ref{sec:dcelatsiteevents}.
-    \item Check the triple of consecutive arcs where the new arc for $p_i$ is the left arc to see if the breakpoints converge. If so, insert the circle event into $\mathcal{Q}$ and add pointers between the node in $\mathcal{T}$ and the node in $\mathcal{Q}$. Do the same for the triple where the new arc is the right arc. (See detail \#)
+    \item Check the triple of consecutive arcs where the new arc for $p_i$ is the left arc to see if the breakpoints converge. If so, insert the circle event into $\mathcal{Q}$ and add pointers between the node in $\mathcal{T}$ and the node in $\mathcal{Q}$. Do the same for the triple where the new arc is the right arc. (See Detail 4 and 7)
 \end{enumerate}
 \end{proc}
 
 \begin{proc} \textsc{HandleCircleEvent}$(e)$
 \begin{enumerate}
     \item Let $\alpha$ be the arc pointed to by $e$, which is about to disappear from the beach line.
-    \item Delete all circle events from $\mathcal{Q}$ which involve $\alpha$: The one where $\alpha$ is the middle arc has already been deleted, and the other two possible circle events where $\alpha$ is the left and right arc respectively can be found through $\alpha$'s \textsf{.leftArc} and \textsf{.rightArc} pointers. (See detail \#)
+    \item Delete all circle events from $\mathcal{Q}$ which involve $\alpha$: The one where $\alpha$ is the middle arc has already been deleted, and the other two possible circle events where $\alpha$ is the left and right arc respectively can be found through $\alpha$'s \textsf{.leftArc} and \textsf{.rightArc} pointers. (See Detail 6)
     \item Delete $\alpha$ from $\mathcal{T}$, how this is done is described in Section \ref{sec:deletingatsiteevents}.
     \item Add the center $c$ of the circle describing $e$ as a new vertex of $\mathcal{D}$. Connect the half-edges in $\mathcal{D}$ that converge at $e$, and create a new half-edge which starts at $c$ and setup the appropriate pointers. The details are given in Section \ref{sec:dcelatcircleevents}.
-    \item As $\alpha$ disappears from the beach line, we get new triples of consecutive arcs which might have converging breakpoints that can lead to a circle event. Check these and add circle events if needed. (See detail \#)
+    \item As $\alpha$ disappears from the beach line, we get new triples of consecutive arcs which might have converging breakpoints that can lead to a circle event. Check these and add circle events if needed. (See Detail 7)
 \end{enumerate}
 \end{proc}
 
@@ -222,8 +224,8 @@ Now we consider the case of a circle event. Assume the beach line just before th
 \]
 We now have triples of consecutive arcs which were not triples before, namely $(\alpha, \beta, \delta)$ and $(\beta, \delta, \varepsilon)$. We must check these, and in case of convergence we must add the corresponding circle events to $\mathcal{Q}$.
 
-\subsection*{Detail 8: Intersecting a bounding box with DCEL}
-a
+%\subsection*{Detail 8: Intersecting a bounding box with DCEL}
+%a
 
 \section{Correctness}
 \begin{lem}

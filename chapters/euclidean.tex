@@ -1,5 +1,7 @@
 \chapter{Properties of Euclidean Voronoi Diagrams}
 
+We follow the presentation in Section 7.1 in \cite{CompGeo}.
+
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % %
 %
 % Definition
@@ -197,6 +199,8 @@ We prove each statement individually:
 % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % % 
 
 \section{The DCEL data structure}
+The basic idea in this section is based on Section 2.2 in \cite{CompGeo}.
+
 We want to write an algorithm to compute the Voronoi diagram, which leads us to a natural question: how do we store Voronoi diagrams on a computer?  We'll need the following geometric data structure:
 \begin{defn}[DCEL] \label{defn:dcel}
 A \emph{double connected edge list} (DCEL) is a data structure which represents a subdivision of $\R^2$. A DCEL consists of a lists of vertices, faces and edges. For every edge we will have two copies of it, with opposite orientations, so we will refer to each copy as a directed edge and call it a half-edge, so we actually store a list of half-edges. These three structures are represented as follows:

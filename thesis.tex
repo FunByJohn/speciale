@@ -4,6 +4,47 @@
 
 \begin{document}
 
+\begin{titlepage}
+\begin{center}
+\Huge{\textsc{Computing Voronoi Diagrams Using Fortune's Algorithm}}
+
+\par
+\vspace{0.6cm}
+
+\Large{\textsc{Student: Johannes Jensen, 201505594}}
+
+\par
+\vspace{0.33cm}
+
+\Large{\textsc{Supervisor: Gerth Stølting Brodal}}
+
+\par
+\vspace{0.33cm}
+
+\large{\textsc{Master Thesis in Mathematics}}
+\par
+\large{\textsc{Aarhus University}}
+
+\par
+\vspace{0.25cm}
+
+\normalsize{\textsc{June 15, 2022}}
+\end{center}
+\[
+    \includegraphics[scale=1.3]{frontpage}
+\]
+
+\end{titlepage}
+
+\frontmatter
+\chapter{Abstract}
+
+The main goal of this master thesis is to solve the following problem: Given a set of $n$ points $P$ in the plane called sites, draw polygons around the sites such that none of the polygons' interiors overlap, every polygon contains only one site, and such that the distance from every point inside a polygon is closer to the site inside the polygon with respect to the Euclidean distance, than it is to any of the other sites. Such a collection of polygons is called an Euclidean Voronoi diagram for the set of sites $P$.
+
+We will work towards presenting an algorithm which runs in $\mathcal{O}(n \log n)$ time, which is called Fortune's algorithm. This is a sweep line algorithm, which sweeps a hypothetical horizontal line down through the plane, uncovering the structure of the Voronoi diagram along the way.
+
+First we look at some theory, where we prove some local and global properties of Euclidean Voronoi diagrams, and how they interact with the sweep line. Afterwards we describe some data structures that we will use, and during this we will describe and prove some properties about treaps, which are randomized binary search trees. Finally, we put everything together and describe the algorithm in detail.
+
 \tableofcontents
 
 \mainmatter
@@ -14,9 +55,10 @@
 \input{chapters/fortune.tex}
 \input{chapters/delaunay.tex}
 
-%\input{chapters/voronoi.tex}
-
 \appendix
 \input{chapters/appendix/notation.tex}
+
+\bibliographystyle{plain}
+\bibliography{references}
 
 \end{document}

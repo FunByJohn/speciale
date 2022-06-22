@@ -42,6 +42,13 @@
 \DeclareMathOperator{\VorG}{Vor_{G}}
 \DeclareMathOperator{\bi}{bi}
 
+% superior (?) pause command
+\makeatletter
+\newcommand{\Pause}[1][]{\unless\ifmeasuring@\relax
+\pause[#1]%
+\fi}
+\makeatother
+
 \usetheme{Madrid}
 
 \title{Specialeforsvar}
@@ -98,7 +105,7 @@ Hvorfor virker det?
 \[
 	\includegraphics[scale=0.9]{../images/hyperbola_intro}
 \]
-Vi kan separere ethvert site $p_i \in P$ og vores sweep line $\ell$ med en andengrads kurve $B_i$\pause, således at for alle $q \in B_i$ så $\dist(q, p_i) = \dist(q, \ell)$.
+Vi kan separere ethvert site $p_i \in P$ og vores sweep line $\ell$ med en andengradskurve $B_i$\pause, således at for alle $q \in B_i$ så $\dist(q, p_i) = \dist(q, \ell)$.
 \end{frame}
 
 \begin{frame}
@@ -178,18 +185,6 @@ Nu til de tekniske detaljer...
 \end{frame}
 
 \begin{frame}
-%Let \dist(p, q) denote the Euclidean distance between two points p, q \in \R^2.
-%    
-%This is explicitly given as
-%
-%    \dist(p, q) = ||p - q||_2, where ||v|| = \/v_1^2 + v_2^2.
-%
-%Defn (Voronoi cell). Let p_1, p_2, ..., p_n denote the points in P. Then we define the Voronoi cell of the site p_i to be
-%
-%    V(p_i) = { q \in R^2 | dist(q, p_i) < dist(q, p_j) for all i != j }
-%
-%<Drawing of a small Voronoi diagram with some V(p_i) marked>
-
 \pause
 Lad $\dist(p, q)$ betegne den Euklidiske afstand mellem $p, q \in \R^2$. \pause Dvs.
 \[
@@ -203,6 +198,137 @@ For $p_i \in P$ definerer vi \textit{Voronoi cellen for} $p_i$ \pause til at væ
 	\mathcal{V}(p_i) = \makeset{q \in \R^2}{\dist(q, p_i) < dist(q, p_j) \text{ for alle } i \neq j}.
 \]
 \end{block}
+\pause
+\[
+	\includegraphics{images/cell_defn}
+\]
+\end{frame}
+
+\begin{frame}
+\pause
+\begin{block}{Definition (Voronoi diagram)}
+\pause
+$\Vor(P) = \bigcup_{i=1}^{n} \mathcal{V}(p_i)$.
+\end{block}
+\pause
+\begin{block}{Definition (Voronoi graph)}
+\pause
+$\VorG(P) = \R^2 - \Vor(P)$.
+\end{block}
+\pause
+Strengt set, så er de knuder og kanter vi har lyst til at beregne en del af $\VorG(P)$.
+\end{frame}
+
+\begin{frame}
+\pause
+\begin{block}{Definition (Bisector)}
+\pause
+For $p, q \in \R^2$ definerer vi
+\[
+	\bi(p, q) = \makeset{r \in \R^2}{\dist(r, p) = \dist(r, q)}.
+\]
+\end{block}
+\pause
+En sådan bisector splitter planen i to halvplaner, $H_p$ og $H_q$.
+\[
+	\includegraphics[scale=0.9]{../images/bisector}
+\]
+\end{frame}
+
+\begin{frame}
+\pause
+Lad $h(p, q)$ betegne det indre af $H_p$.
+\pause
+\begin{block}{Proposition}
+\pause
+$r \in h(p, q)$ hvis og kun hvis $\dist(r, p) < \dist(r, q)$.
+\end{block}
+\pause
+\[
+	\includegraphics[scale=0.75]{../images/halfplane_containment}
+\]
+\pause
+\vspace{-2em}
+\begin{block}{Korollar 1}
+\pause
+$\mathcal{V}(p_i) = \bigcap_{j \ne i} h(p_i, p_j)$.
+\end{block}
+\end{frame}
+
+\begin{frame}
+\pause
+Da $h(p_i, p_j)$ er konveks for alle $i \ne j$, har vi at $\mathcal{V}(p_i) = \bigcap_{j \ne i} h(p_i, p_j)$ også er konveks.
+\longpause
+Dvs. at Voronoi celler er konvekse ``polygoner'' med højst $n - 1$ knuder og højst $n - 1$ kanter.
+\longpause
+Nu ved vi hvordan diagrammet ser ud lokalt, men hvad med globalt?
+\end{frame}
+
+\begin{frame}
+\pause
+Korollar 1 giver os at $\partial \mathcal{V}(p_i)$ består af sammenhængende men muligvis tomme dele fra $\bi(p_i, p_j)$ for alle $i \ne j$.
+\longpause
+Dvs. at hele Voronoi diagrammet består af linjestykker, stråler og linjer, som alle ligger på forskellige bisectors $\bi(p_i, p_j)$.
+\longpause
+For at være mere præcis, så har vi at:
+\pause
+\begin{block}{Sætning 1}
+\pause
+Hvis alle punkter i $P$ ligger på den samme linje, så består $\VorG(P)$ af $n - 1$ parallelle linjer.
+\pause Hvis ikke, så er $\VorG(P)$ sammenhængende, og kanterne er enten linjestykker eller stråler.
+\end{block}
+\end{frame}
+
+\begin{frame}
+\begin{block}{Sætning 1}
+Hvis alle punkter i $P$ ligger på den samme linje, så består $\VorG(P)$ af $n - 1$ parallelle linjer.
+Hvis ikke, så er $\VorG(P)$ sammenhængende, og kanterne er enten linjestykker eller stråler.
+\end{block}
+\pause \textit{Bevis.} \pause Antag at alle punkter i $P$ ligger på den samme linje. \pause Ved at anvende en isometri på punkterne i $P$, \pause dvs. en afbildning $\varphi \colon \R^2 \to \R^2$ som opfylder at
+\[
+	\dist(p, q) = \dist(\varphi(p), \varphi(q))
+\]
+for alle $p, q \in \R^2$\pause, hvor vi bemærker at den topologiske struktur af Voronoi diagrammet dermed ikke ændres\pause, og ved dernæst at sortere punkterne\pause, kan vi uden tab af generalitet antage at
+\[
+	P = \curly{(x_1, 0), (x_2, 0), \ldots, (x_n, 0)},
+\]
+for $x_1 < x_2 < \cdots < x_n$.
+\end{frame}
+
+\begin{frame}
+\begin{block}{Sætning 1}
+Hvis alle punkter i $P$ ligger på den samme linje, så består $\VorG(P)$ af $n - 1$ parallelle linjer.
+Hvis ikke, så er $\VorG(P)$ sammenhængende, og kanterne er enten linjestykker eller stråler.
+\end{block}
+\textit{Bevis fortsat.} \pause Lad $(x, y) \in \R^2$ så $x_i < x < x_{i+1}$ for et $i < n$. \pause Bemærk så at hvis $(x,y) \in \VorG(P)$ \pause så gælder at
+\begin{align*}
+	&\norm{(x, y) - (x_i, 0)} = \norm{(x, y) - (x_{i+1}, 0)} \\ \Pause
+	\iff &\sqrt{(x - x_i)^2 + y^2} = \sqrt{(x - x_{i+1})^2 + y^2} \\ \Pause
+	\iff &\abs{x - x_i} = \abs{x - x_{i+1}}.
+\end{align*}
+\Pause
+Dvs. at hvis $(x, 0) \in \VorG(P)$ så er $(x, y) \in \VorG(P)$ for alle $y \in \R$.
+\longpause
+Det følger at $\VorG(P) = \bigcup_{i=1}^{n - 1} \bi((x_i, 0), (x_{i+1}, 0))$, og disse er alle parallelle linjer.
+\end{frame}
+
+\begin{frame}
+\begin{block}{Sætning 1}
+Hvis alle punkter i $P$ ligger på den samme linje, så består $\VorG(P)$ af $n - 1$ parallelle linjer.
+Hvis ikke, så er $\VorG(P)$ sammenhængende, og kanterne er enten linjestykker eller stråler.
+\end{block}
+\textit{Bevis fortsat.} \pause Antag nu at punkterne i $P$ ikke ligger på den samme linje. \pause Vi viser først at alle kanterne i $\VorG(P)$ enten er linjestykker eller stråler. \pause
+\vspace{0.5em}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+	\begin{center}
+		\includegraphics[scale=0.8]{../images/diagram_is_connected}
+	\end{center}
+\end{column}
+\begin{column}{0.5\textwidth}
+    Antag for modstrid at dette ikke er tilfældet\pause, hvormed der findes en kant $e \in \partial \mathcal{V}(p_i) \cap \partial \mathcal{V}(p_j)$ som er en hel linje. \pause Lad $p_k$ være et punkt som ikke ligger på $\overline{p_i p_j}$. \pause Så er $\bi(p_j, p_k)$ og $e$ ikke parallelle\pause, hvormed de har et skæringspunkt. \pause Dette giver at der findes et punkt $v \in e \cap {}^{\circ}h(p_k, p_j)$.
+\end{column}
+\end{columns}
 \end{frame}
 
 \end{document}

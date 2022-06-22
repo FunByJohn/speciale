@@ -1,0 +1,128 @@
+Layman introduction
+
+    * We are given a set P \subset R^2 of points in the plane
+
+        <Drawing of randomly generated points>
+
+    * Problem: Compute the Voronoi diagram Vor(P)
+
+        <Drawing of the same points, but now the Voronoi diagram is visible as well>
+
+    * But what is the Voronoi diagram exactly?
+
+        <Drawing of the same Voronoi diagram but now some +'s are placed, and line segments are drawn from the +'s to the sites,
+        showing that the +'s are closest to the site that defines the cell that the + is in. Do multiple examples>
+
+    * How will we compute it? Strategy: A sweep line algorithm!
+
+        <Open demo, generate 100 random points, move mouse from top of page to bottom of the page>
+
+    * Why did that work? As we sweep down the sweep line, along follows a beach line
+
+        ... todo ...
+
+        Something about showing the beach line for a single point, e.g. the parabola
+
+        Then showing how it looks with two points and how the edge is being traced out
+
+        Next, noting how when breakpoints converge we get a vertex traced out
+
+        Then as the sweep line covers the entire plane, we uncover every edge and every vertex
+
+        This is the intuition for the algorithm -- now we build up the math!
+
+
+Properties of Voronoi Diagrams
+
+    Slide
+
+        Let \dist(p, q) denote the Euclidean distance between two points p, q \in \R^2.
+    
+        This is explicitly given as
+    
+            \dist(p, q) = ||p - q||_2, where ||v|| = \/v_1^2 + v_2^2.
+    
+        Defn (Voronoi cell). Let p_1, p_2, ..., p_n denote the points in P. Then we define the Voronoi cell of the site p_i to be
+    
+            V(p_i) = { q \in R^2 | dist(q, p_i) < dist(q, p_j) for all i != j }
+
+        <Drawing of a small Voronoi diagram with some V(p_i) marked>
+        
+
+    Slide
+
+        Defn (Voronoi diagram). The Voronoi diagram, Vor(P), of P is then given as the union of all the V(p_i), that is
+
+            Vor(P) = U_i V(p_i).
+
+        This describes the Voronoi diagram in terms of its cells. What we actually want to do, however, is describe it
+        in terms of its edges and vertices. We introduce the notation
+
+            VorG(P) = R^2 - Vor(P)
+
+        to be the graph that the diagram induces.
+
+
+    Slide
+
+        Defn (Bisector). For p, q \in R^2 we define
+
+            bi(p, q) = { r \in R^2 | dist(r, p) = dist(r, q) }.
+
+        It splits the plane into two half-planes, H_p and H_q.
+
+            <Drawing of p, q, bi(p, q), H_p, H_q>
+
+
+    Slide
+
+        We define h(p, q) to be the interior of H_p.
+
+        Prop. r \in h(p, q) if and only if dist(r, p) < dist(r, q).
+
+        Proof:
+
+            Let r \in h(p, q) and let s be the projection of r onto the line segment pq.
+
+                <Drawing from thesis>
+
+            Then <pythagorean argument from thesis>. The other direction is symmetrical.
+
+
+    Slide
+
+        Cor. V(p_i) is the intersection of all h(p_i, p_j) for j != i.
+
+        Proof:
+            "=>": For r \in V(p_i) we have dist(r, p_i) < dist(r, p_j) for all i != j. Our prop then gives us that r \in h(p_i, p_j) for all i != j.
+            "<=": The other direction is symmetrical.
+
+        A Voronoi cell is the intersection of convex sets, and is therefore also convex!
+
+        Voronoi cells are open, convex (possibly unbounded) polygons with a most n - 1 vertices and n - 1 edges.
+
+
+    Slide
+
+        We now prove properties about the entire diagram. Previous corollary implies that VorG(P) is made out of the bisectors between different sites in P.
+
+        Thm. If points in P are collinear then VorG(P) consists of n - 1 parallel lines. Otherwise, VorG(P) is connected and its edges are either segments of half-lines.
+
+        Proof:
+
+            Assume points in P are collinear. We may rotate the points in P without altering the structure of the diagram
+
+                <Show the points lie on the x-axis>
+
+            So that we may assume that P = {(x_1, 0), ..., (x_n, 0)}, with x_i < x_{i+1}.
+
+
+
+
+New stuff
+
+    - Talk about treaps first
+    - Then introduce our binary tree structure
+    - For insert, delete, be explicit about how to treapify the operations
+
+    

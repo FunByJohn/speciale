@@ -143,6 +143,14 @@ function handleKeyDown(event) {
         shiftDown = true;
     }
 
+    if (event.keyCode == 82) {
+        let N = 100;
+        points = [];
+        for (let i = 0; i < N; i++) {
+           points.push([100 + (window.innerWidth - 200) * Math.random(), 100 + (window.innerHeight - 200) * Math.random()]);
+        }
+    }
+
     if (event.keyCode == 49) Config.debugShowTree = !Config.debugShowTree;
     if (event.keyCode == 50) Config.debugShowBreakpointNames = !Config.debugShowBreakpointNames;
     if (event.keyCode == 51) Config.debugDCELShowOrientedEdges = !Config.debugDCELShowOrientedEdges;

@@ -445,8 +445,6 @@ For $n \geq 3$ er antallet af knuder i $\VorG(P)$ højst $2n - 5$ og antallet af
 \pause Altså er antallet af kanter højst $3n - 6$. \pause \textbf{QED.}
 \end{frame}
 
-\end{comment}
-
 \begin{frame}
 \pause
 Vi har altså set at selvom vi har $\mathcal{O}(n^2)$ bisectors, så har vi kun $\mathcal{O}(n)$ kanter. \pause Vi vil nu karakterisere hvornår en del af en bisector faktisk udgør en knude eller kant i $\VorG(P)$.
@@ -492,9 +490,123 @@ Beviset består af nogle simple observationer og modstrider, så vi præsenterer
 \]
 \end{frame}
 
+\end{comment}
+
 \begin{frame}
 \pause
-Hej
+Nu har vi fået karakteriseret nogle af de vigtige egenskaber for Voronoi diagrammet for $P$.
+\longpause
+Vi arbejder os nu i mod at beskrive Fortune's algoritme, som er en $\mathcal{O}(n \log n)$ algoritme til at beregne $\Vor(P)$.
 \end{frame}
+
+\begin{frame}
+\pause
+Teoretiske antagelser:
+\begin{enumerate}
+	\pause \item Punkterne i $P$ er i \textit{general position}, dvs. ingen punkter i $P$ har samme $x$- eller $y$-koordinat.
+	\pause \item Punkterne i $P$ ligger ikke alle på den samme linje.
+	\pause \item Der ligger ikke mere end 3 punkter fra $P$ på samme cirkel.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\pause
+Givet et punkt $p = (p_x, p_y) \in \R^2$ \pause og en sweep line $\ell \colon y = \ell_y$ \pause så er
+\[
+	\dist(p, \ell) = \abs{p_y - \ell_y}.
+\]
+\pause Vi definerer så
+\[
+	B_i = \makeset{q \in \R^2}{\dist(q, p_i) = \dist(q, \ell)}
+\]
+for alle $i \in \curly{1, 2, \ldots, n}$.
+\end{frame}
+
+\begin{frame}
+\pause
+Hvis $(p_i)_y > \ell_y$ \pause så kan vi parametrisere $B_i$ som en parabel: \pause
+\[
+	\includegraphics[scale=0.5]{../images/hyperbola_intro}
+\]
+\pause Lad $p = (p_x, p_y)$ beskrive $p_i$ \pause og lad $q = (x, y) \in B_i$. \pause Vi kigger så på
+\[
+	\dist(q, p)^2 = \dist(q, \ell)^2 \pause \iff (p_x - x)^2 + (p_y - y)^2 = (y - \ell_y)^2.
+\]
+\pause Da $p_y \neq \ell_y$ kan vi omskrive til
+\[
+	y = \frac{1}{2(p_y - \ell_y)} (x^2 - 2 p_x x + p_x^2 + p_y^2 - \ell_y^2),
+\]
+\pause hvilket parametriserer $B_i$ hvis $(p_i)_y > \ell_y$.
+\end{frame}
+
+\begin{frame}
+\pause
+Hvis derimod $(p_i)_y = \ell_y$\pause, så får vi at
+\[
+	\dist(q, p)^2 = \dist(q, \ell)^2 \pause \iff (p_x - x)^2 + (p_y - y)^2 = (p_y - y)^2.
+\]
+\pause Dvs. $p_x = x$\pause, så $B_i$ er en vertikal stråle der starter i $p_i$.
+\[
+	\includegraphics[scale=0.8]{../images/vertical_arc}
+\]
+\longpause
+For $(p_i)_y < \ell_y$ definerer vi $B_i = \varnothing$. \pause (Bemærk fejl i speciale på s. 19!)
+\end{frame}
+
+\begin{frame}
+\pause
+For alle $i$ definerer vi nu for alle $i \in \curly{1, 2, \ldots, n}$ \pause
+\begin{align*}
+	\beta_i(x) &= \begin{cases} \Pause
+		\frac{1}{2(p_y - \ell_y)} (x^2 - 2 p_x x + p_x^2 + p_y^2 - \ell_y^2) & \text{hvis $(p_i)_y > \ell_y$} \\ \Pause
+		\infty & \text{ellers.}
+	\end{cases} \\ \Pause
+	\textsf{LB}(x) &= \Pause \min\curly{\beta_1(x), \beta_2(x), \ldots, \beta_n(x)}.
+\end{align*}
+\pause
+\begin{block}{Definition (kystlinjen)}
+\pause
+Vi definerer så \textit{kystlinjen for $P$ mht. $\ell$} som mængden
+\[
+	G \cup V,
+\]
+\pause hvor
+\[
+	G = \makeset{(x, \textsf{LB}(x)) \in \R^2}{\textsf{LB}(x) < \infty}
+\]
+og
+\[
+	V = 
+\]
+\end{block}
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \end{document}

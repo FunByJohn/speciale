@@ -433,4 +433,28 @@ For $n \geq 3$ er antallet af knuder i $\VorG(P)$ højst $2n - 5$ og antallet af
 \pause Altså er antallet af knuder højst $2n - 5$.
 \end{frame}
 
+\begin{frame}
+\begin{block}{Sætning 2}
+For $n \geq 3$ er antallet af knuder i $\VorG(P)$ højst $2n - 5$ og antallet af kanter er højst $3n - 6$.
+\end{block}
+\textit{Bevis fortsat.} \pause Mht. kanterne har vi:
+\begin{align*}
+	&3 (n_v + 1) - 3 n_e + 3n = 6 \quad \text{(Gang (\ref{eq:eulerapplied}) med 3)} \\ \Pause
+	\iff &3(n_v + 1) = 3n_e - 3n + 6 \quad \text{(Isoler $3 (n_v + 1)$)} \\ \Pause
+	\implies &2 n_e \geq 3 n_e - 3n + 6 \quad \text{(Anvend (\ref{eq:eulerineq}))} \\ \Pause
+	\implies &n_e \leq 3n - 6.
+\end{align*}
+\pause Altså er antallet af kanter højst $3n - 6$. \pause \textbf{QED.}
+\end{frame}
+
+\begin{frame}
+\pause
+Vi har altså set at selvom vi har $\mathcal{O}(n^2)$ bisectors, så har vi kun $\mathcal{O}(n)$ kanter. \pause Vi vil nu karakterisere hvornår en del af en bisector faktisk udgør en knude eller kant i $\VorG(P)$.
+\longpause
+\begin{block}{Definition (Største tomme cirkel)}
+
+\end{block}
+\end{frame}
+
+
 \end{document}

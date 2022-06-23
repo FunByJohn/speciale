@@ -61,7 +61,7 @@
  
 \frame{\titlepage}
 
-\begin{comment}
+%\begin{comment}
 
 \begin{frame}
 \pause
@@ -636,8 +636,6 @@ Vi har følgende:
 \pause Dvs. $B_i$ og $B_j$ skærer hinanden i $q$\pause, og $q$ er på kystlinjen da der ikke findes et site $p_k$ med $k \ne i, j$ tættere på $q$\pause, pr. definition af $C_P(q)$. \pause \textbf{QED.}
 \end{frame}
 
-\end{comment}
-
 \begin{frame}
 \pause
 Vi vil nu til at beskrive \textit{site} og \textit{cirkel begivenheder}\pause, og bevise at disse er de eneste tidspunkter hvorpå den topologiske struktur af kystlinjen ændres.
@@ -701,6 +699,8 @@ Den eneste måde hvorpå en ny bue kan optræde på kystlinjen er gennem en site
 \pause Lad $C$ være $C_P(q)$\pause, og bemærk at den har $p_i, p_j, p_k$ på randen\pause, og at $C$ tangerer $\ell$.
 \end{frame}
 
+%\end{comment}
+
 \begin{frame}
 \begin{block}{Lemma}
 Den eneste måde hvorpå en ny bue kan optræde på kystlinjen er gennem en site begivenhed.
@@ -712,7 +712,63 @@ Den eneste måde hvorpå en ny bue kan optræde på kystlinjen er gennem en site
 \pause Så vil enten $p_i$ eller $p_k$ være indeholdt i det indre af $C'$\pause, lad os sige det er $p_k$. \pause Lad $c$ være centrum for $C'$. \pause Så er $\dist(c, p_j) = \dist(c, \ell)$\pause, men $\dist(c, p_k) < \dist(c, p_j)$\pause, hvormed $\beta_j$ ikke kan være på kystlinjen\pause, en modstrid. \pause \textbf{QED.}
 \end{frame}
 
+\begin{frame}
+\pause
+\begin{block}{Korollar}
+\pause
+På ethvert tidspunkt indeholder kystlinjen højst $2n - 1$ buer.
+\end{block}
+\end{frame}
 
+\begin{frame}
+\pause
+Nu ser vi på hvornår buer forsvinder fra kystlinjen. \pause Antag at der er mindst 3 buer på kystlinjen\pause, lad os kalde dem $\alpha, \alpha', \alpha''$. \pause Vi antager at de ligger i forlængelse af hinanden. \pause Antag $\alpha'$ er den bue som skal til at forsvinde. Vi bemærker først at $\alpha$ og $\alpha''$ ikke kan tilhøre den samme parabel. \pause Hvis dette var tilfældet, så ville det se sådan ud:
+\[
+	\includegraphics[scale=0.7]{../images/circle_event_contradict}
+\]
+\pause Når $\alpha'$ skal til at forsvinde, så er der et tidspunkt hvorpå at $\beta$ og $\beta'$ tangerer\pause, og her kan vi genbruge den samme modstrid som i beviset for site begivenheder. \pause Altså er $\alpha, \alpha', \alpha''$ defineret ud fra 3 forskellige sites $p_i, p_j, p_k$.
+\end{frame}
+
+\begin{frame}
+\pause
+I det øjeblik hvor $\alpha'$ forsvinder, så er der 3 parabler $\beta_i \supset \alpha$, $\beta_j \supset \alpha'$ og $\beta_k \supset \alpha''$ som skærer hinanden i et enkelt punkt $q$. \pause Vi bemærker at
+\[
+	\dist(q, \ell) = \dist(q, p_i) = \dist(q, p_j) = \dist(q, p_k).
+\]
+\pause Dvs. at der findes en cirkel $C$ med centrum $q$ som går igennem $p_i, p_j, p_k$ som tangerer $\ell$ i sit laveste punkt.
+\[
+	\includegraphics[scale=0.5]{../images/site_event_contradict}
+\]
+\pause Vi påstår nu at $C = C_P(q)$. \pause Antag for modstrid at der findes et site $p \in P$ som ligger i ${}^{\circ} C_P(q)$. \pause Så er $\dist(p, q) < \dist(q, \ell)$\pause, hvilket er i modstrid med at $q$ er på kystlinjen. \pause Altså er $C = C_P(q)$.
+\end{frame}
+
+\begin{frame}
+\pause
+Bemærk nu at $\curly{p_i, p_j, p_k} \subset \partial C_P(q)$\pause, hvormed Sætning 3 giver at $q$ er en knude i $\VorG(P)$. \pause Vi ser altså at to breakpoints møder hinanden i $q$, en bue forsvinder fra kystlinjen, og to kanter fra $\VorG(P)$ mødes og danner en knude. \pause Vi er nu klar til at definere:
+\pause
+\begin{block}{Definition (Cirkel begivenhed)}
+\pause
+En \textit{cirkel begivenhed} indtræffer når $\ell$ når det laveste punkt på en cirkel $C$ \pause som går igennem 3 sites, \pause som definerer buer på kystlinjen som ligger i forlængelse af hinanden.
+\end{block}
+\pause Vi har så lige vist: \pause
+\begin{block}{Lemma}
+\pause
+Den eneste måde hvorpå en bue kan forsvinde fra kystlinjen er gennem en cirkel begivenhed.
+\end{block}
+\end{frame}
+
+\begin{frame}
+\pause
+Til sidst så kan man vise at:
+\pause
+\begin{block}{Lemma}
+\pause
+Enhver knude i $\VorG(P)$ har en tilsvarende cirkel begivenhed.
+\end{block}
+\pause
+Vi udelader beviset da der bruges lignende teknikker set tidligere.
+
+\end{frame}
 
 
 

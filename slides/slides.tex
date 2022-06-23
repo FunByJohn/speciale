@@ -9,6 +9,7 @@
 \usepackage{amssymb}
 \usepackage{amsthm}
 \usepackage{tikz}
+\usepackage{verbatim}
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\CC}{\mathbb{C}}
 \newcommand{\F}{\mathbb{F}}
@@ -32,7 +33,7 @@
 \newcommand{\ip}[2]{\langle #1, #2\rangle}
 \newcommand{\generator}[1]{\langle#1\rangle}
 \newcommand{\paraip}[2]{\left\langle #1, #2\right\rangle}
-\newcommand{\comment}[1]{\quad \para{\text{#1}}}
+%\newcommand{\comment}[1]{\quad \para{\text{#1}}}
 
 \newcommand{\longpause}{\break \break \pause}
 
@@ -59,6 +60,8 @@
 \begin{document}
  
 \frame{\titlepage}
+
+\begin{comment}
 
 \begin{frame}
 \pause
@@ -270,7 +273,7 @@ Korollar 1 giver os at $\partial \mathcal{V}(p_i)$ består af sammenhængende me
 \longpause
 Dvs. at hele Voronoi diagrammet består af linjestykker, stråler og linjer, som alle ligger på forskellige bisectors $\bi(p_i, p_j)$.
 \longpause
-For at være mere præcis, så har vi at:
+Vi viser nu:
 \pause
 \begin{block}{Sætning 1}
 \pause
@@ -326,7 +329,7 @@ Hvis ikke, så er $\VorG(P)$ sammenhængende, og kanterne er enten linjestykker 
 	\end{center}
 \end{column}
 \begin{column}{0.5\textwidth}
-    Antag for modstrid at dette ikke er tilfældet\pause, hvormed der findes en kant $e \in \partial \mathcal{V}(p_i) \cap \partial \mathcal{V}(p_j)$ som er en hel linje. \pause Lad $p_k$ være et punkt som ikke ligger på $\overline{p_i p_j}$. \pause Så er $\bi(p_j, p_k)$ og $e$ ikke parallelle\pause, hvormed de har et skæringspunkt. \pause Dette giver at der findes et punkt $v \in e \cap {}^{\circ}h(p_k, p_j)$.
+    Antag for modstrid at dette ikke er tilfældet\pause, hvormed der findes en kant $e \subset \partial \mathcal{V}(p_i) \cap \partial \mathcal{V}(p_j)$ som er en hel linje. \pause Lad $p_k$ være et punkt som ikke ligger på $\overline{p_i p_j}$. \pause Så er $\bi(p_j, p_k)$ og $e$ ikke parallelle\pause, hvormed de har et skæringspunkt. \pause Dette giver at der findes et punkt $v \in e \cap {}^{\circ}h(p_k, p_j)$.
 \end{column}
 \end{columns}
 \end{frame}
@@ -352,7 +355,82 @@ og vi har en modstrid. \pause (Bemærk fejl i speciale på s. 8!)
 Hvis alle punkter i $P$ ligger på den samme linje, så består $\VorG(P)$ af $n - 1$ parallelle linjer.
 Hvis ikke, så er $\VorG(P)$ sammenhængende, og kanterne er enten linjestykker eller stråler.
 \end{block}
-\textit{Bevis fortsat.} \pause Vi viser nu at $\VorG(P)$ er sammenhængende.
+\textit{Bevis fortsat.} \pause Vi viser nu at $\VorG(P)$ er sammenhængende. \pause Antag for modstrid at $\VorG(P)$ ikke er sammenhængende. \pause Så findes $\partial \mathcal{V}(p_i)$ som ikke er stisammenhængende. \pause Det kan kun ske hvis $\partial \mathcal{V}(p_i)$ består af to parallelle linjer\pause, hvilket er i modstrid med at $\VorG(P)$ ikke indeholder nogen linjer. \pause Altså er $\VorG(P)$ sammenhængende. \textbf{QED.}
+\end{frame}
+
+\end{comment}
+
+\begin{frame}
+\pause
+Vi viser nu at antallet af knuder og kanter i $\VorG(P)$ er $\mathcal{O}(n)$.
+\pause
+\begin{block}{Sætning 2}
+\pause
+For $n \geq 3$ er antallet af knuder i $\VorG(P)$ højst $2n - 5$ \pause og antallet af kanter er højst $3n - 6$.
+\end{block}
+\pause \textit{Bevis.} \pause Hvis punkterne i $P$ alle ligger på den samme linje, så giver Sætning 1 at $\VorG(P)$ opfylder de angivne øvre grænser.
+\longpause
+Antag nu at punkterne i $P$ ikke alle ligger på den samme linje. \pause Vi vil benytte Eulers formel, som for en plan graf med \pause $V$ knuder, \pause $E$ kanter \pause og $F$ sideflader \pause siger at
+\[
+	V - E + F = 2.
+\]
+\pause Vi har dog det problem at $\VorG(P)$ ikke er en plan graf i ovenstående forstand, da den har nogle uendelige kanter. \pause Vi laver nu en transformation af $\VorG(P)$ som gør at vi kan benytte formlen.
+\end{frame}
+
+\begin{frame}
+\begin{block}{Sætning 2}
+For $n \geq 3$ er antallet af knuder i $\VorG(P)$ højst $2n - 5$ og antallet af kanter er højst $3n - 6$.
+\end{block}
+\textit{Bevis fortsat.} \pause Lad $v_1, v_2, \ldots, v_k$ være knuderne i $\VorG(P)$. \pause Lad
+\[
+	p = \frac{1}{k} (v_1 + v_2 + \cdots + v_k) \in \R^2
+\]
+\pause og
+\[
+	r = 1 + \max\curly{\dist(p, v_1), \ldots, \dist(p, v_k)}. \pause
+\]
+Vi har så at $v_1, \ldots, v_k \in B_r(p)$ \pause og enhver kant i $\VorG(P)$ som er en stråle skærer $\partial B_r(p)$ i et entydigt punkt\pause, kald disse punkter $s_1, s_2, \ldots, s_t$. \pause Definér så $v_{\infty}$ som et vilkårligt element i $\R^2 \setminus \overline{B_r(p)}$. \pause Vi kan så forbinde enhver uendelig kant til $v_{\infty}$\pause, ved at forbinde $s_i$ til $v_{\infty}$ med en sti\pause, og vi gør det i rækkefølge, startende med det $s_i$ som ligger tættest på $v_{\infty}$.
+\end{frame}
+
+\begin{frame}
+Et eksempel på denne konstruktion er givet her:
+\pause
+\[
+	\includegraphics[width=\textwidth]{../images/projective_embedding}
+\]
+\end{frame}
+
+\begin{frame}
+\begin{block}{Sætning 2}
+For $n \geq 3$ er antallet af knuder i $\VorG(P)$ højst $2n - 5$ og antallet af kanter er højst $3n - 6$.
+\end{block}
+\textit{Bevis fortsat.} \pause Lad $G$ være grafen der fremkommer ved at transformere $\VorG(P)$. \pause Vi kan nu anvende Eulers formel på $G$. \pause Lad $n_v$ betegne antallet af knuder i $\VorG(P)$, og lad $n_e$ betegne antallet af kanter. \pause Antallet af sideflader er $n$, da vi har én Voronoi celle for hvert site. \pause Vi har kun tilføjet en enkelt knude, så ved indsættelse i Eulers formel får vi
+\begin{equation} \label{eq:eulerapplied}
+	(n_v + 1) - n_e + n = 2.
+\end{equation}
+\pause Bemærk så, at enhver knude $v$ i $G$ har $\deg(v) \geq 3$\pause, for ellers ville der være en $\mathcal{V}(p_i)$ som ikke er konveks. \pause Dvs.
+\[
+	\sum_{v \in V(G)} \deg(v) \pause \geq 3 \abs{V(G)} \pause = 3 (n_v + 1).
+\]
+\pause Vi finder nu et udtryk for venstresiden.
+\end{frame}
+
+\begin{frame}
+\begin{block}{Sætning 2}
+For $n \geq 3$ er antallet af knuder i $\VorG(P)$ højst $2n - 5$ og antallet af kanter er højst $3n - 6$.
+\end{block}
+\textit{Bevis fortsat.} \pause Bemærk at $\deg(v)$ tæller antallet af kanter som rører $v$\pause, og i $G$ så rører hver kant ved præcis $2$ knuder\pause, så $\sum_{v \in V(G)} \deg(v) = 2 n_e$. \pause Dvs.
+\begin{equation} \label{eq:eulerineq}
+	2 n_e \geq 3 (n_v + 1).
+\end{equation}
+\pause Vi får så:
+\begin{align*}
+	&2 (n_v + 1) - 2 n_e + 2n = 4 \quad \text{(Gang (\ref{eq:eulerapplied}) med 2)} \\ \Pause
+	\iff &2 n_e = (2 n_v + 1) + 2n - 4 \quad \text{(Isolér $2 n_e$)} \\ \Pause
+	\implies &3 (n_v + 1) \leq 2 (n_v + 1) + 2n - 4 \quad \text{(Anvend (\ref{eq:eulerineq}))} \\ \Pause
+	\implies &n_v \leq 2n - 5.
+\end{align*}
+\pause Altså er antallet af knuder højst $2n - 5$.
 \end{frame}
 
 \end{document}

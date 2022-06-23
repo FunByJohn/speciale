@@ -11,10 +11,14 @@
 \headcommand {\beamer@framepages {15}{24}}
 \headcommand {\slideentry {0}{0}{6}{25/32}{}{0}}
 \headcommand {\beamer@framepages {25}{32}}
-\headcommand {\slideentry {0}{0}{7}{33/42}{}{0}}
-\headcommand {\beamer@framepages {33}{42}}
-\headcommand {\beamer@partpages {1}{42}}
-\headcommand {\beamer@subsectionpages {1}{42}}
-\headcommand {\beamer@sectionpages {1}{42}}
-\headcommand {\beamer@documentpages {42}}
-\headcommand {\def \inserttotalframenumber {7}}
+\headcommand {\slideentry {0}{0}{7}{33/45}{}{0}}
+\headcommand {\beamer@framepages {33}{45}}
+\headcommand {\slideentry {0}{0}{8}{46/49}{}{0}}
+\headcommand {\beamer@framepages {46}{49}}
+\headcommand {\slideentry {0}{0}{9}{50/53}{}{0}}
+\headcommand {\beamer@framepages {50}{53}}
+\headcommand {\beamer@partpages {1}{53}}
+\headcommand {\beamer@subsectionpages {1}{53}}
+\headcommand {\beamer@sectionpages {1}{53}}
+\headcommand {\beamer@documentpages {53}}
+\headcommand {\def \inserttotalframenumber {9}}

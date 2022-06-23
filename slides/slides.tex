@@ -503,7 +503,7 @@ Vi arbejder os nu i mod at beskrive Fortune's algoritme, som er en $\mathcal{O}(
 \pause
 Teoretiske antagelser:
 \begin{enumerate}
-	\pause \item Punkterne i $P$ er i \textit{general position}, dvs. ingen punkter i $P$ har samme $x$- eller $y$-koordinat.
+	\pause \item Punkterne i $P$ er i \textit{generel position}, dvs. ingen punkter i $P$ har samme $x$- eller $y$-koordinat.
 	\pause \item Punkterne i $P$ ligger ikke alle på den samme linje.
 	\pause \item Der ligger ikke mere end 3 punkter fra $P$ på samme cirkel.
 \end{enumerate}
@@ -554,38 +554,56 @@ For $(p_i)_y < \ell_y$ definerer vi $B_i = \varnothing$. \pause (Bemærk fejl i 
 \end{frame}
 
 \begin{frame}
-\pause
-For alle $i$ definerer vi nu for alle $i \in \curly{1, 2, \ldots, n}$ \pause
+\Pause
+For alle $i$ definerer vi nu for alle $i \in \curly{1, 2, \ldots, n}$ \Pause
 \begin{align*}
 	\beta_i(x) &= \begin{cases} \Pause
 		\frac{1}{2(p_y - \ell_y)} (x^2 - 2 p_x x + p_x^2 + p_y^2 - \ell_y^2) & \text{hvis $(p_i)_y > \ell_y$} \\ \Pause
 		\infty & \text{ellers.}
 	\end{cases} \\ \Pause
-	\textsf{LB}(x) &= \Pause \min\curly{\beta_1(x), \beta_2(x), \ldots, \beta_n(x)}.
+	\textsf{LB}(x) &= \Pause \min\curly{\beta_1(x), \beta_2(x), \ldots, \beta_n(x)}. \Pause
 \end{align*}
-\pause
 \begin{block}{Definition (kystlinjen)}
 \pause
 Vi definerer så \textit{kystlinjen for $P$ mht. $\ell$} som mængden
 \[
 	G \cup V,
 \]
-\pause hvor
+\pause hvor $G$ for \textit{g}rafdel er givet ved \pause
 \[
-	G = \makeset{(x, \textsf{LB}(x)) \in \R^2}{\textsf{LB}(x) < \infty}
+	G = \makeset{(x, \textsf{LB}(x)) \in \R^2}{\textsf{LB}(x) < \infty} \pause
 \]
-og
+og $V$ for \textit{v}ertikaldel er givet ved \pause
 \[
-	V = 
+	V = \makeset{B_i - {(p_i)_x} \times (\textsf{LB}((p_i)_x), \infty)}{i = 1, \ldots, n \text{ hvor } (p_i)_y = \ell-y}.
 \]
 \end{block}
 \end{frame}
 
+\begin{frame}
+\pause
+Et eksempel på kystlinjen er givet her:
+\[
+	\includegraphics[scale=0.9]{../images/beachline}
+\]
+\pause De stykvis glatte kurver udgør $G$\pause, mens det vertikale linjestykke udgør $V$.
+\end{frame}
 
+\begin{frame}
+\pause
+\begin{block}{Definition (Breakpoint)}
+\pause
+Ethvert punkt $q$ på kystlinjen således at $q \in B_i \cap B_j$ for to forskellige $i, j$ kaldes for et \textit{breakpoint}.
+\end{block}
+\pause
+\[
+	\includegraphics[scale=1.2]{../images/breakpoint}
+\]
+\end{frame}
 
+\begin{frame}
 
-
-
+\end{frame}
 
 
 

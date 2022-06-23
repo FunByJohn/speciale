@@ -358,8 +358,6 @@ Hvis ikke, så er $\VorG(P)$ sammenhængende, og kanterne er enten linjestykker 
 \textit{Bevis fortsat.} \pause Vi viser nu at $\VorG(P)$ er sammenhængende. \pause Antag for modstrid at $\VorG(P)$ ikke er sammenhængende. \pause Så findes $\partial \mathcal{V}(p_i)$ som ikke er stisammenhængende. \pause Det kan kun ske hvis $\partial \mathcal{V}(p_i)$ består af to parallelle linjer\pause, hvilket er i modstrid med at $\VorG(P)$ ikke indeholder nogen linjer. \pause Altså er $\VorG(P)$ sammenhængende. \textbf{QED.}
 \end{frame}
 
-\end{comment}
-
 \begin{frame}
 \pause
 Vi viser nu at antallet af knuder og kanter i $\VorG(P)$ er $\mathcal{O}(n)$.
@@ -447,14 +445,56 @@ For $n \geq 3$ er antallet af knuder i $\VorG(P)$ højst $2n - 5$ og antallet af
 \pause Altså er antallet af kanter højst $3n - 6$. \pause \textbf{QED.}
 \end{frame}
 
+\end{comment}
+
 \begin{frame}
 \pause
 Vi har altså set at selvom vi har $\mathcal{O}(n^2)$ bisectors, så har vi kun $\mathcal{O}(n)$ kanter. \pause Vi vil nu karakterisere hvornår en del af en bisector faktisk udgør en knude eller kant i $\VorG(P)$.
-\longpause
-\begin{block}{Definition (Største tomme cirkel)}
-
-\end{block}
 \end{frame}
 
+\begin{frame}
+\begin{block}{Definition (Største tomme cirkel)}
+\pause
+For $q \in \R^2$ \pause definerer vi $C_P(q)$ til at være \textit{den største tommel cirkel for $q$ mht. $P$}\pause, givet ved
+\[
+	C_P(q) = B_r(q)\pause, \quad \text{hvor} \quad r = \sup\makeset{\lambda \in \R^{+}}{B_{\lambda}(q) \cap P = \emptyset}.
+\]
+\end{block}
+\pause
+\[
+	\includegraphics[scale=0.85]{../images/largest_empty_circle}
+\]
+\end{frame}
+
+\begin{frame}
+\pause
+\begin{block}{Sætning 3}
+\pause
+Vi har følgende:
+\begin{enumerate}
+	\pause \item $q \in \R^2$ er en knude i $\VorG(P)$ \pause hvis og kun hvis
+	\[
+		\abs{\partial C_P(q) \cap P} \geq 3.
+	\]
+	\pause \item $\bi(p_i, p_j)$ definerer en kant i $\VorG(P)$ \pause hvis og kun hvis
+	\[
+		\exists q \in \bi(p_i, p_j) \colon \partial C_P(q) \cap P = \curly{p_i, p_j}.
+	\]
+\end{enumerate}
+\end{block}
+\longpause
+Beviset består af nogle simple observationer og modstrider, så vi præsenterer det ikke her. \pause Denne figur bør give den intuition som er nødvendig:
+\end{frame}
+
+\begin{frame}
+\[
+	\includegraphics[scale=1.0]{../images/vert_edge_char}
+\]
+\end{frame}
+
+\begin{frame}
+\pause
+Hej
+\end{frame}
 
 \end{document}

@@ -490,8 +490,6 @@ Beviset består af nogle simple observationer og modstrider, så vi præsenterer
 \]
 \end{frame}
 
-\end{comment}
-
 \begin{frame}
 \pause
 Nu har vi fået karakteriseret nogle af de vigtige egenskaber for Voronoi diagrammet for $P$.
@@ -638,6 +636,8 @@ Vi har følgende:
 \pause Dvs. $B_i$ og $B_j$ skærer hinanden i $q$\pause, og $q$ er på kystlinjen da der ikke findes et site $p_k$ med $k \ne i, j$ tættere på $q$\pause, pr. definition af $C_P(q)$. \pause \textbf{QED.}
 \end{frame}
 
+\end{comment}
+
 \begin{frame}
 \pause
 Vi vil nu til at beskrive \textit{site} og \textit{cirkel begivenheder}\pause, og bevise at disse er de eneste tidspunkter hvorpå den topologiske struktur af kystlinjen ændres.
@@ -656,19 +656,61 @@ Når $\ell$ møder et punkt $p_i \in P$, dvs. når $\ell_y = (p_i)_y$, så siger
 \pause
 \begin{block}{Lemma}
 \pause
-Den eneste måde hvorpå en ny kurve kan optræde på kystlinjen er gennem en site begivenhed.
+Den eneste måde hvorpå en ny bue kan optræde på kystlinjen er gennem en site begivenhed.
 \end{block}
-\pause \textit{Bevis.} \pause
+\pause \textit{Bevis.} \pause Antag for modstrid at en ny bue optræder på kystlinjen mens $\ell_y \ne (p_i)_y$ for alle $i$. \pause Lad $\beta_j$ være parablen som indeholder den nye bue der optræder på kystlinjen, som tilhører $p_j \in P$. \pause Vi ser nu på 2 tilfælde hvorpå $\beta_j$ kan optræde med en ny bue på kystlinjen.
+\pause
+\[
+	\includegraphics[scale=0.7]{../images/site_event_contradict_middle}
+\]
+Det første tilfælde er hvor $\beta_j$ smadrer igennem i midten af en anden bue, som er en del af en parabel $\beta_i$.
 \end{frame}
 
+\begin{frame}
+\begin{block}{Lemma}
+Den eneste måde hvorpå en ny bue kan optræde på kystlinjen er gennem en site begivenhed.
+\end{block}
+\textit{Bevis fortsat.} \pause For at dette kan ske, så er der et tidspunkt hvorpå at $\beta_i$ og $\beta_j$ enten ligger helt oveni hinanden\pause, eller så tangerer de hinanden\pause, hvormed de skærer hinanden i præcis ét punkt. \pause Da $p_i \ne p_j$ så ligger de ikke oveni hinanden, hvormed de må skære hinanden i ét punkt.
+\longpause
+Fra vores teoretiske antagelser har vi at $(p_i)_y \ne (p_j)_y$\pause, hvormed $\beta_i(x) - \beta_j(x)$ er et andengradspolynomium \pause med discriminant
+\[
+	D = \frac{(p_x - q_x)^2 + (p_y - q_y)^2}{(p_y - \ell_y)(q_y - \ell_y)} \pause > 0.
+\]
+\pause Dvs. at $\beta_i$ og $\beta_j$ skærer hinanden i to forskellige punkter\pause, en modstrid.
+\end{frame}
 
+\begin{frame}
+\begin{block}{Lemma}
+Den eneste måde hvorpå en ny bue kan optræde på kystlinjen er gennem en site begivenhed.
+\end{block}
+\textit{Bevis fortsat.} \pause Det andet tilfælde er hvor $\beta_j$ optræder i mellem to buer.
+\[
+	\includegraphics[scale=0.7]{../images/site_event_contradict_between}
+\]
+\pause (Bemærk at øverste figur på s. 22 i specialet er forkert, og skal erstattes af ovenstående.) \pause Antag at disse buer tilhører parablerne $\beta_i$ og $\beta_k$.
+\end{frame}
 
+\begin{frame}
+\begin{block}{Lemma}
+Den eneste måde hvorpå en ny bue kan optræde på kystlinjen er gennem en site begivenhed.
+\end{block}
+\textit{Bevis fortsat.} \pause Lad $q$ være skæringspunktet mellem $\beta_i, \beta_j$ og $\beta_k$\pause, og antag at buen på kystlinjen fra $\beta_i$ ligger til venstre for $q$\pause, og at buen på kystlinjen fra $\beta_k$ ligger til højre for $q$. \pause
+\[
+	\includegraphics[scale=0.6]{../images/site_event_contradict}
+\]
+\pause Lad $C$ være $C_P(q)$\pause, og bemærk at den har $p_i, p_j, p_k$ på randen\pause, og at $C$ tangerer $\ell$.
+\end{frame}
 
-
-
-
-
-
+\begin{frame}
+\begin{block}{Lemma}
+Den eneste måde hvorpå en ny bue kan optræde på kystlinjen er gennem en site begivenhed.
+\end{block}
+\textit{Bevis fortsat.} \pause Vi forestiller os nu at vi giver $\ell$ et meget lille skub nedad\pause, mens vi holder $C$ tangent til $\ell$ og $p_j$\pause, vi kalder den nye cirkel for $C'$:
+\[
+	\includegraphics[scale=0.6]{../images/site_event_contradict_part2}
+\]
+\pause Så vil enten $p_i$ eller $p_k$ være indeholdt i det indre af $C'$\pause, lad os sige det er $p_k$. \pause Lad $c$ være centrum for $C'$. \pause Så er $\dist(c, p_j) = \dist(c, \ell)$\pause, men $\dist(c, p_k) < \dist(c, p_j)$\pause, hvormed $\beta_j$ ikke kan være på kystlinjen\pause, en modstrid. \pause \textbf{QED.}
+\end{frame}
 
 
 

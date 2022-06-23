@@ -597,12 +597,45 @@ Ethvert punkt $q$ på kystlinjen således at $q \in B_i \cap B_j$ for to forskel
 \end{block}
 \pause
 \[
-	\includegraphics[scale=1.2]{../images/breakpoint}
+	\includegraphics[scale=1.0]{../images/breakpoint}
 \]
 \end{frame}
 
 \begin{frame}
+\pause
+Vi viser nu at breakpoints optegner $\VorG(P)$ når $\ell$ bevæger sig gennem hele $\R$: \pause
+\begin{block}{Proposition}
+\pause
+Vi har følgende:
+\begin{enumerate}
+	\pause \item For enhver sweep line $\ell \colon y = \ell_y$ \pause gælder det at ethvert breakpoint ligger på $\VorG(P)$.
+	\pause \item For alle $q \in \VorG(P)$ \pause findes der en position $\ell_y$ for $\ell$ \pause således at $q$ er et breakpoint.
+\end{enumerate}
+\end{block}
+\pause \textit{Bevis.} \pause (1): \pause Antag at $\ell$ har mindst et breakpoint, og lad $q$ være et af dem. \pause Så gælder at $q \in B_i \cap B_j$ for $i \ne j$\pause, hvilket vil sige at
+\[
+	\dist(q, \ell) = \dist(q, p_i) = \dist(q, p_j).
+\]
+\pause Sidste lighedstegn giver at $q \not\in \mathcal{V}(p_k)$ for alle $k$\pause, hvormed $q \in \VorG(P)$.
+\end{frame}
 
+\begin{frame}
+\begin{block}{Proposition}
+Vi har følgende:
+\begin{enumerate}
+	\item For enhver sweep line $\ell \colon y = \ell_y$ gælder det at ethvert breakpoint ligger på $\VorG(P)$.
+	\item For alle $q \in \VorG(P)$ findes der en position $\ell_y$ for $\ell$ således at $q$ er et breakpoint.
+\end{enumerate}
+\end{block}
+\textit{Bevis fortsat.} \pause (2): \pause Lad $q = (q_x, q_y) \in \VorG(P)$. \pause Da $q$ enten er en knude eller en kant\pause, så giver Sætning 3 at $\abs{\partial C_P(q) \cap P} \geq 2$. \pause Så lad $p_i, p_j \in \partial C_P(q) \cap P$ så $p_i \ne p_j$. \pause Vi sætter så
+\[
+	\ell_y := q_y - \dist(q, p_i).
+\]
+\pause Så er
+\[
+	\dist(q, \ell) = \dist(q, p_i) = \dist(q, p_j).
+\]
+\pause Dvs. $B_i$ og $B_j$ skærer hinanden i $q$\pause, og $q$ er på kystlinjen da der ikke findes et site $p_k$ med $k \ne i, j$ tættere på $q$\pause, pr. definition af $C_P(q)$. \pause \textbf{QED.}
 \end{frame}
 
 

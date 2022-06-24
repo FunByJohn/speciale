@@ -61,14 +61,14 @@
  
 \frame{\titlepage}
 
-%\begin{comment}
-
 \begin{frame}
 \pause
 \[
 	\huge\text{Introduktion}
 \]
 \end{frame}
+
+%\begin{comment}
 
 \begin{frame}
 \pause
@@ -699,8 +699,6 @@ Den eneste måde hvorpå en ny bue kan optræde på kystlinjen er gennem en site
 \pause Lad $C$ være $C_P(q)$\pause, og bemærk at den har $p_i, p_j, p_k$ på randen\pause, og at $C$ tangerer $\ell$.
 \end{frame}
 
-%\end{comment}
-
 \begin{frame}
 \begin{block}{Lemma}
 Den eneste måde hvorpå en ny bue kan optræde på kystlinjen er gennem en site begivenhed.
@@ -757,6 +755,8 @@ Den eneste måde hvorpå en bue kan forsvinde fra kystlinjen er gennem en cirkel
 \end{block}
 \end{frame}
 
+%\end{comment}
+
 \begin{frame}
 \pause
 Til sidst så kan man vise at:
@@ -767,13 +767,79 @@ Enhver knude i $\VorG(P)$ har en tilsvarende cirkel begivenhed.
 \end{block}
 \pause
 Vi udelader beviset da der bruges lignende teknikker set tidligere.
-
 \end{frame}
 
+\begin{frame}
+\pause
+\[
+	\huge\text{Addendum til treaps}
+\]
+\end{frame}
 
+\begin{frame}
+\pause
+I specialet beskrives det at vi bruger et selvbalancerende binært søgetræ til at holde styr på kystlinjen.
+\longpause
+Et forslag er at bruge en treap som et selvbalancerende binært søgetræ, og det bevises at treaps har de rigtige kørselstider \textit{i forventning}.
+\longpause
+Det nævnes dog ikke hvordan man sørger for at træstrukturen forbliver en treap ved hhv. indsættelser og sletninger. \pause Dette snakker jeg lige kort om.
+\longpause
+Først skal det gøres klart at når vi bruger en treap til det søgetræ vi har beskrevet, så antager vi at det kun er de indre knuder som har en prioritet.
+\end{frame}
 
+\begin{frame}
+\pause
+Indsættelse
+\[
+	\includegraphics[scale=0.6]{../images/tree_insert}
+\]
+\pause
+Lad $w$ betegne forælderen til $x$. \pause For at sørge for at det forbliver en treap, så har vi så valget om at rotere $x$ op først, og så $y$\pause, og ellers så rotere vi $y$ op først, og så $x$.
+\longpause
+Vi kan få et problem hvis vi vælger at kigge på $y$ først, for det kan godt ske at $x\textsf{.priority} > y\textsf{.priority}$ men $w\textsf{.priority} < x\textsf{.priority}$\longpause
+Vi vælger derfor at rotere $x$ op til sin rigtige plads først, og så derefter $y$.
+\end{frame}
 
+\begin{frame}
+\pause
+Sletning
+\begin{columns}
+\begin{column}{0.5\textwidth}
+	\begin{center}
+		\includegraphics[scale=0.4]{../images/tree_remove_xy}
+	\end{center}
+\end{column}
+\begin{column}{0.5\textwidth}
+    \pause Vi antager at $x$ er en forfader til $y$. \pause Lad $w$ betegne forælderen til $x$ og $z$. \pause Lad $T_1$ og $T_2$ betegne hhv venstre og højre undertræ for $z$. \pause Bemærk at $T_1$ og $T_2$ forbliver treaps. \pause Vi skal så bare se på $z$. \pause Hvis
+    \[
+    	w > z > T_1, T_2
+    \]
+    så gør vi intet, da vi har en treap. \pause Ellers, så gælder enten
+    \begin{enumerate}
+    	\pause \item $w < z$.
+    	\pause \item $z < T_1$ eller $z < T_2$.
+    \end{enumerate}
+\end{column}
+\end{columns}
+\end{frame}
 
+\begin{frame}
+Sletning
+\begin{columns}
+\begin{column}{0.5\textwidth}
+	\begin{center}
+		\includegraphics[scale=0.4]{../images/tree_remove_xy}
+	\end{center}
+\end{column}
+\begin{column}{0.5\textwidth}
+    \pause Hvis $w < z$\pause, så da $T_1, T_2 < w$ \pause har vi at $T_1, T_2 < z$. \pause Så vi skal bare rotere $z$ op indtil at prioriteterne passer.
+    \longpause Hvis $z < T_1$ eller $z < T_2$ \pause så roterer vi $z$ ned\pause, og vi roterer med det undertræ som har den højeste prioritet. \pause Sådan bliver vi ved indtil $z$ sidder det rigtige sted.
+\end{column}
+\end{columns}
+\longpause
+\vspace{1em}
+På denne måde bevarer vi de teoretiske garantier, og vi kan så bruge en treap i vores implementation til at opnå forventet $\mathcal{O}(n \log n)$ tid på Fortunes algoritme.
+\end{frame}
 
 
 
